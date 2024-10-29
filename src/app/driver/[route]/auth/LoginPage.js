@@ -1,12 +1,12 @@
 import React from "react";
 import Link from "next/link";
-import styles from "./LoginPage.module.css";
+import styles from "./AuthPage.module.css";
 
-const RegisterPage = () => {
-  return (
+const LoginPage = () => (
+  <div>
     <div className={styles.container}>
       <div className={styles.formContainer}>
-        <h1 className={styles.header}>Đăng Ký Tài Khoản Tài Xế</h1>
+        <h1 className={styles.header}>Đăng Nhập Tài Khoản Tài Xế</h1>
         <form>
           <input type="text" placeholder="Tên đăng nhập" className={styles.inputField} />
           <input type="password" placeholder="Mật khẩu" className={styles.inputField} />
@@ -14,19 +14,15 @@ const RegisterPage = () => {
         </form>
         <div className={styles.linkContainer}>
           <span>Quên mật khẩu? </span>
-          <Link href="/driver/forgot-password" legacyBehavior>
-            <a className={styles.link}>Quên mật khẩu</a>
-          </Link>
+          <Link href="/driver/forgot-password" className={styles.link}>Quên mật khẩu</Link>
         </div>
         <div className={styles.linkContainer}>
           <span>Chưa có tài khoản </span>
-          <Link href="/driver/signup" legacyBehavior>
-            <a className={styles.link}>Đăng ký</a>
-          </Link>
+          <Link href="/driver/signup" className={styles.link}>Đăng ký</Link>
         </div>
       </div>
     </div>
-  );
-};
+  </div>
+);
 
-export default RegisterPage;
+export default LoginPage;

@@ -1,9 +1,9 @@
 import React from "react";
 import Link from "next/link";
-import styles from "./RegisterPage.module.css";
+import styles from "./AuthPage.module.css";
 
-const RegisterPage = () => {
-  return (
+const SignupPage = () => (
+  <div>
     <div className={styles.container}>
       <div className={styles.formContainer}>
         <h1 className={styles.header}>Đăng Ký Tài Khoản Tài Xế</h1>
@@ -18,13 +18,11 @@ const RegisterPage = () => {
         </form>
         <div className={styles.linkContainer}>
           <span>Đã có tài khoản? </span>
-          <Link href="/driver/login" legacyBehavior>
-            <a className={styles.link}>Đăng nhập</a>
-          </Link>
+          <Link href="/driver/login" className={styles.link}>Đăng nhập</Link>
         </div>
       </div>
     </div>
-  );
-};
+  </div>
+);
 
-export default RegisterPage;
+export default SignupPage;
