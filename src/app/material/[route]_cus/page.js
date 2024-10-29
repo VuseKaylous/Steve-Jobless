@@ -2,9 +2,9 @@
 
 import React from "react";
 import { usePathname } from "next/navigation";
-import LoginPage from "./auth/LoginPage";
-import SignupPage from "./auth/SignupPage";
-import ForgotPasswordPage from "./auth/ForgotPasswordPage";
+import LoginPage from "../../customer/login/page.js";
+import SignupPage from "../../customer/signup/page.js";
+import ForgotPasswordPage from "../../customer/forgot-password/page.js";
 
 const AuthPage = () => {
   const pathName = usePathname();

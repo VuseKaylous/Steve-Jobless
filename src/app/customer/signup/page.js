@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import styles from "./AuthPage.module.css";
+import styles from "../AuthPage.module.css";
 
 const SignupPage = () => (
   <div>
