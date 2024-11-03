@@ -1,0 +1,23 @@
+.sidebar {
+    width: 15%;
+    height: 92vh;
+    background-color: white;
+    overflow-y: scroll;
+    display: inline-block;
+    padding: 10px;
+}
+
+.sidebar .section_title {
+    background-color: white;
+    padding: 10px;
+    font-weight: bold;
+    color: #00b14f;
+    cursor: pointer;
+}
+
+.sticky_header {
+    position: sticky;
+    top: 0; /* Để tiêu đề dính ở đầu khi cuộn */
+    background-color: white; /* Nền trắng để tiêu đề dễ nhìn khi cuộn */
+    z-index: 1; /* Đảm bảo tiêu đề nổi lên trên các hàng dữ liệu */
+}

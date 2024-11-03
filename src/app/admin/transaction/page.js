@@ -1,0 +1,110 @@
+import React from "react";
+import styles from "./Transaction.module.css";
+
+const FailedTransaction = [
+    {trans_id: "t_5", cus_id: "cus_1", driver_id: "driver_2", information: "time, des,...", state: "failed"},
+    {trans_id: "t_7", cus_id: "cus_9", driver_id: "driver_5", information: "", state: "failed"},
+    {trans_id: "t_9", cus_id: "cus_3", driver_id: "driver_4", information: "", state: "failed"},
+    {trans_id: "t_11", cus_id: "cus_10", driver_id: "driver_7", information: "", state: "failed"},
+]
+
+const SuccessfulTransaction = [
+    {trans_id: "t_1", cus_id: "cus_2", driver_id: "driver_1", information: "", state: "finished"},
+    {trans_id: "t_2", cus_id: "cus_4", driver_id: "driver_7", information: "", state: "finished"},
+    {trans_id: "t_3", cus_id: "cus_3", driver_id: "driver_3", information: "", state: "finished"},
+    {trans_id: "t_6", cus_id: "cus_5", driver_id: "driver_4", information: "", state: "finished"},
+    {trans_id: "t_8", cus_id: "cus_12", driver_id: "driver_6", information: "", state: "finished"},
+]
+
+
+const AdminTransaction = () => (
+    <div>
+        {/* Admin Navbar */}
+        <nav className="navbar bg-light">
+            <div className="container-fluid">
+                {/* Title */}
+                <span className="navbar-brand mb-0 h1" style={{ color: '#00b14f' }}>CrabForAdministration</span>
+
+                {/* User Controls */}
+                <div className="d-flex">
+                    <span style={{color: '#00b14f'}} className="me-2">
+                        WELCOME, <strong>ADMIN</strong>.
+                    </span>
+                    <div style={{cursor: "pointer", marginLeft: "20px", marginRight: "20px", display: "inline", color: "#00b14f"}}>
+                        LOG OUT
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <div className="container-fluid">
+            <div className="row">
+                {/* Sidebar */}
+                <div className={styles.sidebar}>        
+                    <div className={styles.section} style={{marginTop: "200px"}}>
+                        <div className={styles.section_title}>ACCOUNT</div>
+                    </div>
+                    <div className={styles.section} style={{marginTop: "10px"}}>
+                        <div className={styles.section_title} style={{backgroundColor: "#00b14f", color: "white"}}>TRANSACTION</div>
+                    </div>
+                </div>
+
+                <div style={{display: "inline-block", backgroundColor: "#fff", width: "85%"}}>
+                    <div className="container bg-white " style={{width: "80%", padding: "15px"}}>
+                        <div className="input-group mb-3" style={{paddingTop: "50px"}}>
+                            <input type="text" className="form-control" placeholder="Search" aria-label="Search"></input>
+                            <button className="btn btn-outline-secondary" type="button">Search</button>
+                        </div>
+                        
+                        <div style={{maxHeight: "200px", overflowY: "scroll"}}>
+                            <table className="table table-bordered table-light table-striped" style={{tableLayout: "fixed", width: "100%"}}>
+                                <thead>
+                                <tr>
+                                    <th className={`text-center ${styles.sticky_header}`} scope="col" style={{color: "white", backgroundColor: "#00b14f"}}>TRANSACTION_ID</th>
+                                    <th className={`text-center ${styles.sticky_header}`} scope="col" style={{color: "white", backgroundColor: "#00b14f"}}>CUS_ID</th>
+                                    <th className={`text-center ${styles.sticky_header}`} scope="col" style={{color: "white", backgroundColor: "#00b14f"}}>DRIVER_ID</th>
+                                    <th className={`text-center ${styles.sticky_header}`} scope="col" style={{color: "white", backgroundColor: "#00b14f"}}>INFORMATION</th>
+                                    <th className={`text-center ${styles.sticky_header}`} scope="col" style={{color: "white", backgroundColor: "#00b14f"}}>STATE</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                    {FailedTransaction.map((item) => (
+                                        <tr key={item.trans_id}>
+                                            <td className="text-center">{item.trans_id}</td>
+                                            <td className="text-center">{item.cus_id}</td>
+                                            <td className="text-center">{item.driver_id}</td>
+                                            <td className="text-center">{item.information}</td>
+                                            <td className="text-center">{item.state}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div style={{ height: "20px", backgroundColor: "white" }}></div> {/* Dòng trắng để tách biệt */}
+
+                        <div style={{ maxHeight: "180px", overflowY: "scroll" }}>
+                            <table className="table table-bordered table-light table-striped" style={{tableLayout: "fixed", width: "100%"}}>
+                                <thead>
+                                </thead>
+                                <tbody>
+                                    {SuccessfulTransaction.map((item) => (
+                                        <tr key={item.trans_id}>
+                                            <td className="text-center">{item.trans_id}</td>
+                                            <td className="text-center">{item.cus_id}</td>
+                                            <td className="text-center">{item.driver_id}</td>
+                                            <td className="text-center">{item.information}</td>
+                                            <td className="text-center">{item.state}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+);
+
+export default AdminTransaction;
