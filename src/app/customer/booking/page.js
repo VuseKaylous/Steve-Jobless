@@ -1,5 +1,6 @@
 
 import styles from "./page.module.css";
+import Found from "./found.js";
 
 const recents = [
   {
@@ -48,8 +49,9 @@ const Booking = () => (
         }
       </ul>
     </div>
-    <div>
+    <div className="" style={{flexGrow: 1}}>
       Map
+      <Found> </Found>
     </div>
   </div>
 );
