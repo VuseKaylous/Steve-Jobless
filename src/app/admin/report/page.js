@@ -27,10 +27,10 @@ const AdminTransaction = () => (
                 {/* User Controls */}
                 <div className="d-flex">
                     <span style={{ color: '#00b14f' }} className="me-2">
-                        WELCOME, <strong>ADMIN</strong>.
+                        CHÀO MỪNG, <strong>QUẢN TRỊ VIÊN</strong>.
                     </span>
                     <div style={{ cursor: "pointer", marginLeft: "20px", marginRight: "20px", display: "inline", color: "#00b14f" }}>
-                        LOG OUT
+                        ĐĂNG XUẤT
                     </div>
                 </div>
             </div>
@@ -41,10 +41,10 @@ const AdminTransaction = () => (
                 {/* Sidebar */}
                 <div className={styles.sidebar}>
                     <div className={styles.section} style={{ marginTop: "200px" }}>
-                        <div className={styles.section_title}>ACCOUNT</div>
+                        <div className={styles.section_title}>TÀI KHOẢN</div>
                     </div>
                     <div className={styles.section} style={{ marginTop: "10px" }}>
-                        <div className={styles.section_title} style={{ backgroundColor: "#00b14f", color: "white" }}>TRANSACTION</div>
+                        <div className={styles.section_title} style={{ backgroundColor: "#00b14f", color: "white" }}>GIAO DỊCH</div>
                     </div>
                 </div>
 
