@@ -1,44 +1,63 @@
 "use client";
 
-import React, { useRef, useEffect, useState } from "react";
-import L from "leaflet";
-import "leaflet/dist/leaflet.css";
-import axios from "axios";
+import React, { useState, useCallback } from "react";
+import { GoogleMap, LoadScript, Marker, Autocomplete, DirectionsRenderer } from "@react-google-maps/api";
+
+const mapContainerStyle = { width: "100vw", height: "100vh" };
+const center = { lat: 21.0285, lng: 105.8542 }; // Trung tâm bản đồ (Hà Nội)
 
 const DriverDirections = () => {
-  const mapRef = useRef(null);
   const [map, setMap] = useState(null);
-  const [start, setStart] = useState(""); // Điểm bắt đầu (lng, lat)
-  const [end, setEnd] = useState(""); // Điểm đích (lng, lat)
+  const [currentLocation, setCurrentLocation] = useState(null);
+  const [directions, setDirections] = useState(null);
+  const [startPlace, setStartPlace] = useState(null);
+  const [endPlace, setEndPlace] = useState(null);
+  const [showPopup, setShowPopup] = useState(false); // Trạng thái hiển thị pop-up
 
-  useEffect(() => {
-    const mapInstance = L.map(mapRef.current).setView([21.0285, 105.8542], 13);
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-    }).addTo(mapInstance);
+  // Dữ liệu giả khách hàng
+  const fakeCustomerData = {
+    name: "Nguyễn Văn A",
+    phone: "0123456789",
+    startPoint: "123 Đường Láng, Hà Nội",
+    endPoint: "456 Phố Huế, Hà Nội",
+    price: "100,000 VNĐ"
+  };
 
-    setMap(mapInstance);
-    return () => mapInstance.remove();
-  }, []);
+  // Xử lý sự kiện lấy chỉ đường
+  const handleGetDirections = useCallback(() => {
+    if (!startPlace || !endPlace) return;
 
-  // Lấy vị trí hiện tại của người dùng
-  const handleLocateCurrentPosition = () => {
+    const directionsService = new google.maps.DirectionsService();
+    directionsService.route(
+      {
+        origin: startPlace.geometry.location,
+        destination: endPlace.geometry.location,
+        travelMode: google.maps.TravelMode.DRIVING,
+      },
+      (result, status) => {
+        if (status === "OK") {
+          setDirections(result);
+        } else {
+          console.error("Không thể lấy chỉ đường:", status);
+        }
+      }
+    );
+  }, [startPlace, endPlace]);
+
+  // Định vị vị trí hiện tại của người dùng
+  const locateCurrentPosition = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          const { latitude, longitude } = position.coords;
-          setStart(`${longitude},${latitude}`);
-
-          // Đặt bản đồ tại vị trí người dùng
-          map.setView([latitude, longitude], 13);
-
-          // Thêm marker tại vị trí hiện tại của người dùng
-          L.marker([latitude, longitude]).addTo(map)
-            .bindPopup("Bạn đang ở đây!")
-            .openPopup();
+          const location = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          };
+          setCurrentLocation(location);
+          map.panTo(location); // Đặt vị trí bản đồ tại vị trí hiện tại
         },
         (error) => {
-          console.error("Không thể lấy vị trí hiện tại:", error);
+          console.error("Lỗi khi lấy vị trí hiện tại:", error);
         }
       );
     } else {
@@ -46,56 +65,78 @@ const DriverDirections = () => {
     }
   };
 
-  const handleGetDirections = async () => {
-    if (!start || !end) return;
+  // Hiển thị pop-up "Có Khách"
+  const handleShowPopup = () => {
+    setShowPopup(true);
+  };
 
-    try {
-      const [startLng, startLat] = start.split(",").map(Number);
-      const [endLng, endLat] = end.split(",").map(Number);
-
-      const apiKey = "5b3ce3597851110001cf62482038d6d883af4bd682bc6440d104aebf"; // Thay bằng API key của bạn từ OpenRouteService
-      const response = await axios.get(`https://api.openrouteservice.org/v2/directions/driving-car`, {
-        params: {
-          api_key: apiKey,
-          start: `${startLng},${startLat}`,
-          end: `${endLng},${endLat}`,
-        },
-      });
-
-      const coordinates = response.data.features[0].geometry.coordinates.map((coord) => [coord[1], coord[0]]);
-
-      // Xóa layer cũ nếu có
-      map.eachLayer((layer) => {
-        if (layer._leaflet_id && layer.options && layer.options.className === "route-line") {
-          map.removeLayer(layer);
-        }
-      });
-
-      // Thêm layer chỉ đường vào bản đồ
-      const routeLayer = L.polyline(coordinates, { color: "blue", weight: 5, className: "route-line" });
-      routeLayer.addTo(map);
-
-      // Điều chỉnh bản đồ để xem toàn bộ tuyến đường
-      map.fitBounds(routeLayer.getBounds());
-    } catch (error) {
-      console.error("Không thể lấy chỉ đường:", error);
-    }
+  // Đóng pop-up
+  const handleClosePopup = () => {
+    setShowPopup(false);
   };
 
   return (
-    <div style={{ width: "100vw", height: "100vh", position: "relative" }}>
-      <div style={{ display: "flex", gap: "10px", padding: "10px", backgroundColor: "#fff", position: "absolute", top: "10px", left: "10px", zIndex: 1000 }}>
-        <input
-          type="text"
-          placeholder="Điểm đích (lng, lat)"
-          value={end}
-          onChange={(e) => setEnd(e.target.value)}
-        />
-        <button onClick={handleGetDirections}>Lấy chỉ đường</button>
-        <button onClick={handleLocateCurrentPosition}>Vị trí hiện tại</button>
+    <LoadScript googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY} libraries={["places"]}>
+      <div style={{ position: "relative" }}>
+        <GoogleMap
+          mapContainerStyle={mapContainerStyle}
+          center={center}
+          zoom={13}
+          onLoad={(mapInstance) => setMap(mapInstance)}
+        >
+          {currentLocation && <Marker position={currentLocation} />}
+          {directions && <DirectionsRenderer directions={directions} />}
+        </GoogleMap>
+
+        <div style={{ display: "flex", gap: "10px", padding: "10px", backgroundColor: "#fff", position: "absolute", top: "10px", left: "10px", zIndex: 1000 }}>
+          <Autocomplete onLoad={(autocomplete) => setStartPlace(autocomplete)} onPlaceChanged={() => setStartPlace(startPlace.getPlace())}>
+            <input type="text" placeholder="Điểm xuất phát" style={{ padding: "8px", width: "200px" }} />
+          </Autocomplete>
+          <Autocomplete onLoad={(autocomplete) => setEndPlace(autocomplete)} onPlaceChanged={() => setEndPlace(endPlace.getPlace())}>
+            <input type="text" placeholder="Điểm đến" style={{ padding: "8px", width: "200px" }} />
+          </Autocomplete>
+          <button onClick={handleGetDirections} style={{ padding: "8px 12px" }}>Lấy chỉ đường</button>
+          <button onClick={locateCurrentPosition} style={{ padding: "8px 12px" }}>Vị trí hiện tại</button>
+          <button onClick={handleShowPopup} style={{ padding: "8px 12px", backgroundColor: "#4CAF50", color: "white" }}>Có Khách</button>
+        </div>
+
+        {/* Pop-up thông tin khách hàng */}
+        {showPopup && (
+          <div style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 1001,
+          }}>
+            <div style={{
+              backgroundColor: "white",
+              padding: "30px", // Tăng padding để nội dung có thêm khoảng trống
+              borderRadius: "8px",
+              width: "500px", // Tăng width để pop-up rộng hơn
+              textAlign: "center",
+              fontSize: "16px" // Tăng font-size để nội dung dễ đọc hơn
+            }}>
+              <h2 style={{ fontSize: "24px", marginBottom: "15px" }}>Thông tin khách hàng</h2>
+              <p><strong>Tên:</strong> {fakeCustomerData.name}</p>
+              <p><strong>Số điện thoại:</strong> {fakeCustomerData.phone}</p>
+              <p><strong>Điểm bắt đầu:</strong> {fakeCustomerData.startPoint}</p>
+              <p><strong>Điểm kết thúc:</strong> {fakeCustomerData.endPoint}</p>
+              <p><strong>Giá tiền:</strong> {fakeCustomerData.price}</p>
+              <div style={{ display: "flex", justifyContent: "center", gap: "10px", marginTop: "20px" }}>
+                <button onClick={handleClosePopup} style={{ padding: "10px 15px", backgroundColor: "#4CAF50", color: "white", fontSize: "16px" }}>Chấp nhận</button>
+                <button onClick={handleClosePopup} style={{ padding: "10px 15px", backgroundColor: "#f44336", color: "white", fontSize: "16px" }}>Từ chối</button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
-      <div ref={mapRef} style={{ width: "100%", height: "100%" }} />
-    </div>
+    </LoadScript>
   );
 };
 

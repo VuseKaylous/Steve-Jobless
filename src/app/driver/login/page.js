@@ -40,7 +40,6 @@ const LoginPage = () => {
             <div className="mb-5">
               <h2 className="fw-semibold mb-4">Secure Login</h2>
               <form onSubmit={handleSubmit}>
-                {/* Email field */}
                 <div className="mb-4">
                   <label className="form-label text-secondary">
                     Enter your work email
@@ -54,7 +53,6 @@ const LoginPage = () => {
                   />
                 </div>
 
-                {/* Password field */}
                 <div className="mb-4">
                   <div className="d-flex justify-content-between">
                     <label className="form-label text-secondary">
@@ -83,7 +81,6 @@ const LoginPage = () => {
                   </div>
                 </div>
 
-                {/* Login button */}
                 <button
                   type="submit"
                   className="btn btn-success w-100 py-2 mb-4"
@@ -93,7 +90,6 @@ const LoginPage = () => {
               </form>
             </div>
 
-            {/* Footer */}
             <div className="pt-4 border-top">
               <div className="d-flex justify-content-between text-secondary small">
                 <div className="gap-3">
@@ -101,7 +97,7 @@ const LoginPage = () => {
                   <a href="#" className="text-secondary text-decoration-none">Terms & Conditions</a>
                 </div>
               </div>
-              
+
               <div className="mt-3 d-flex justify-content-between align-items-center text-secondary small">
                 <span>
                   If you need support, <a href="#" className="text-success text-decoration-none">Help Centre</a>
