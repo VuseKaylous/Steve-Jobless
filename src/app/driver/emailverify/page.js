@@ -2,7 +2,6 @@
 
 import './tailwind.css';
 
-// pages/business-registration.js
 import { useState } from 'react';
 
 export default function BusinessRegistration() {
@@ -33,7 +32,13 @@ export default function BusinessRegistration() {
                         <div className="flex items-center justify-center w-8 h-8 bg-gray-300 text-gray-500 rounded-full">
                             2
                         </div>
-                        <span className="ml-2 text-gray-500">Xác minh email</span>
+                        <span className="ml-2 text-gray-500">Tải lên giấy tờ</span>
+                    </div>
+                    <div className="flex items-center">
+                        <div className="flex items-center justify-center w-8 h-8 bg-green-500 text-white rounded-full">
+                            3
+                        </div>
+                        <span className="ml-2 text-green-500 font-medium">Xác minh email</span>
                     </div>
                 </div>
                 <div className="bg-gray-100 p-6 rounded-lg">
