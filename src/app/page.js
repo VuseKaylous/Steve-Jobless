@@ -1,6 +1,6 @@
 'use client';
 
-import './tailwind.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import { useRouter } from 'next/navigation';
 
 export default function Home() {
@@ -19,19 +19,19 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen bg-cover bg-center" style={{ backgroundImage: "url('/background.jpg')" }}>
-      <h2 className="text-2xl font-bold mb-6">Bạn là ?</h2>
+    <div className="d-flex flex-column align-items-center justify-content-center min-vh-100 bg-image" style={{ backgroundImage: "url('/background.jpg')", backgroundSize: 'cover', backgroundPosition: 'center' }}>
+      <h2 className="h4 fw-bold mb-4">Bạn là ?</h2>
       <button
-        className="w-48 p-4 mb-4 text-lg font-medium text-white bg-green-500 rounded hover:bg-green-600 transition duration-300 flex items-center justify-center"
+        className="btn btn-success w-25 mb-3 d-flex align-items-center justify-content-center"
         onClick={() => handleSelection('customer')}
       >
-        <img src="/user.png" alt="Khách hàng" className="w-6 h-6 mr-2" /> Khách hàng
+        <img src="/user.png" alt="Khách hàng" className="me-2" style={{ width: '24px', height: '24px' }} /> Khách hàng
       </button>
       <button
-        className="w-48 p-4 text-lg font-medium text-white bg-blue-500 rounded hover:bg-blue-600 transition duration-300 flex items-center justify-center"
+        className="btn btn-primary w-25 d-flex align-items-center justify-content-center"
         onClick={() => handleSelection('driver')}
       >
-        <img src="/car.png" alt="Tài xế" className="w-6 h-6 mr-2" /> Tài xế
+        <img src="/car.png" alt="Tài xế" className="me-2" style={{ width: '24px', height: '24px' }} /> Tài xế
       </button>
     </div>
   );
