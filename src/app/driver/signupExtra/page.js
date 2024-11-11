@@ -1,81 +1,79 @@
 'use client';
 
-import './tailwind.css';
-
-
+import 'bootstrap/dist/css/bootstrap.min.css';
 import { useState } from 'react';
 
 export default function BusinessRegistration() {
     const [position, setPosition] = useState('');
 
     return (
-        <div className="bg-gray-100 min-h-screen p-4">
-            <div className="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-md">
-                <img
-                    src="/image.png"
-                    alt="Business banner"
-                    className="w-full mb-6 rounded-lg"
-                />
-                <h1 className="text-4xl font-bold text-gray-800 mb-2">
-                    Crab
-                </h1>
-                <p className="text-gray-600 mb-6">
-                    Quản lý nhu cầu di chuyển, đồ ăn và giao hàng của bạn
-                </p>
-                <div className="flex justify-between items-center mb-6">
-                    <div className="flex items-center">
-                        <div className="flex items-center justify-center w-8 h-8 bg-gray-300 text-gray-500 rounded-full">
-                            1
-                        </div>
-                        <span className="ml-2 text-gray-500">Thông tin cá nhân</span>
-                    </div>
-                    <div className="flex items-center">
-                        <div className="flex items-center justify-center w-8 h-8 bg-green-500 text-white rounded-full">
-                            2
-                        </div>
-                        <span className="ml-2 text-green-500 font-medium">Tải lên giấy tờ </span>
-                    </div>
-                    <div className="flex items-center">
-                        <div className="flex items-center justify-center w-8 h-8 bg-gray-300 text-gray-500 rounded-full">
-                            3
-                        </div>
-                        <span className="ml-2 text-gray-500">Xác minh email</span>
-                    </div>
-                </div>
-                <div className="bg-gray-100 p-6 rounded-lg">
-                    <h2 className="text-2xl font-bold text-gray-800 mb-4">Tải lên giấy tờ</h2>
+        <div className="bg-light min-vh-100 p-4">
+            <div className="container">
+                <div className="row justify-content-center">
+                    <div className="col-lg-9 col-md-11">
+                        <div className="card shadow-sm">
+                            <img
+                                src="/image.png"
+                                alt="Business banner"
+                                className="card-img-top rounded-top"
+                            />
+                            <div className="card-body">
+                                <h1 className="card-title h1 fw-bold text-dark mb-3">Crab</h1>
+                                <p className="text-muted mb-4">
+                                    Quản lý nhu cầu di chuyển, đồ ăn và giao hàng của bạn
+                                </p>
+                                <div className="d-flex justify-content-between align-items-center mb-4">
+                                    <div className="d-flex align-items-center">
+                                        <div className="badge bg-secondary rounded-circle p-3 text-white">1</div>
+                                        <span className="ms-2 text-muted">Thông tin cá nhân</span>
+                                    </div>
+                                    <div className="d-flex align-items-center">
+                                        <div className="badge bg-success rounded-circle p-3 text-white">2</div>
+                                        <span className="ms-2 text-success fw-medium">Tải lên giấy tờ</span>
+                                    </div>
+                                    <div className="d-flex align-items-center">
+                                        <div className="badge bg-secondary rounded-circle p-3 text-white">3</div>
+                                        <span className="ms-2 text-muted">Xác minh email</span>
+                                    </div>
+                                </div>
+                                <div className="bg-light p-4 rounded">
+                                    <h2 className="h4 fw-bold text-dark mb-4">Tải lên giấy tờ</h2>
 
-                    {/* Upload section for Vehicle Registration */}
-                    <div className="mb-6">
-                        <h3 className="text-xl font-bold text-gray-800 mb-2">Giấy đăng ký xe</h3>
-                        <p className="text-gray-500 text-sm mb-4">
-                            Hỗ trợ tập tin: PDF, DOC, DOCX, PNG, JPEG | Kích thước tập tin tối đa: 2 MB
-                        </p>
-                        <div className="border-dashed border-2 border-gray-300 p-4 rounded-lg mb-4">
-                            <label className="bg-green-500 text-white px-4 py-2 rounded-lg cursor-pointer inline-flex items-center">
-                                <span>Tải lên</span>
-                                <input type="file" className="hidden" accept=".pdf,.doc,.docx,.png,.jpeg" />
-                            </label>
-                        </div>
-                    </div>
+                                    {/* Upload section for Vehicle Registration */}
+                                    <div className="mb-6">
+                                        <h3 className="h5 fw-bold text-dark mb-2">Giấy đăng ký xe</h3>
+                                        <p className="text-muted text-sm mb-4">
+                                            Hỗ trợ tập tin: PDF, DOC, DOCX, PNG, JPEG | Kích thước tập tin tối đa: 2 MB
+                                        </p>
+                                        <div className="border border-dashed border-secondary p-4 rounded mb-4">
+                                            <label className="btn btn-success text-white px-4 py-2 rounded cursor-pointer d-inline-flex align-items-center">
+                                                <span>Tải lên</span>
+                                                <input type="file" className="d-none" accept=".pdf,.doc,.docx,.png,.jpeg" />
+                                            </label>
+                                        </div>
+                                    </div>
 
-                    {/* Upload section for Driver's License */}
-                    <div className="mb-6">
-                        <h3 className="text-xl font-bold text-gray-800 mb-2">Giấy phép lái xe</h3>
-                        <p className="text-gray-500 text-sm mb-4">
-                            Hỗ trợ tập tin: PDF, DOC, DOCX, PNG, JPEG | Kích thước tập tin tối đa: 2 MB
-                        </p>
-                        <div className="border-dashed border-2 border-gray-300 p-4 rounded-lg mb-4">
-                            <label className="bg-green-500 text-white px-4 py-2 rounded-lg cursor-pointer inline-flex items-center">
-                                <span>Tải lên</span>
-                                <input type="file" className="hidden" accept=".pdf,.doc,.docx,.png,.jpeg" />
-                            </label>
-                        </div>
-                    </div>
+                                    {/* Upload section for Driver's License */}
+                                    <div className="mb-6">
+                                        <h3 className="h5 fw-bold text-dark mb-2">Giấy phép lái xe</h3>
+                                        <p className="text-muted text-sm mb-4">
+                                            Hỗ trợ tập tin: PDF, DOC, DOCX, PNG, JPEG | Kích thước tập tin tối đa: 2 MB
+                                        </p>
+                                        <div className="border border-dashed border-secondary p-4 rounded mb-4">
+                                            <label className="btn btn-success text-white px-4 py-2 rounded cursor-pointer d-inline-flex align-items-center">
+                                                <span>Tải lên</span>
+                                                <input type="file" className="d-none" accept=".pdf,.doc,.docx,.png,.jpeg" />
+                                            </label>
+                                        </div>
+                                    </div>
 
-                    <div className="flex justify-end space-x-4">
-                        <button className="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg">Trước</button>
-                        <button className="bg-green-500 text-white px-4 py-2 rounded-lg">Tiếp theo</button>
+                                    <div className="d-flex justify-content-end gap-3">
+                                        <button className="btn btn-secondary">Trước</button>
+                                        <button className="btn btn-success">Tiếp theo</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

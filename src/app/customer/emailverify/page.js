@@ -1,59 +1,60 @@
 'use client';
 
-import './tailwind.css';
-
-// pages/business-registration.js
+import 'bootstrap/dist/css/bootstrap.min.css';
 import { useState } from 'react';
 
 export default function BusinessRegistration() {
     const [position, setPosition] = useState('');
 
     return (
-        <div className="bg-gray-100 min-h-screen p-4">
-            <div className="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-md">
-                <img
-                    src="/image.png"
-                    alt="Business banner"
-                    className="w-full mb-6 rounded-lg"
-                />
-                <h1 className="text-4xl font-bold text-gray-800 mb-2">
-                    Crab
-                </h1>
-                <p className="text-gray-600 mb-6">
-                    Quản lý nhu cầu di chuyển, đồ ăn và giao hàng của bạn
-                </p>
-                <div className="flex justify-between items-center mb-6">
-                    <div className="flex items-center">
-                        <div className="flex items-center justify-center w-8 h-8 bg-gray-300 text-gray-500 rounded-full">
-                            1
+        <div className="bg-light min-vh-100 p-4">
+            <div className="container">
+                <div className="row justify-content-center">
+                    <div className="col-lg-9 col-md-11">
+                        <div className="card shadow-sm">
+                            <img
+                                src="/image.png"
+                                alt="Business banner"
+                                className="card-img-top rounded-top"
+                            />
+                            <div className="card-body">
+                                <h1 className="card-title h1 fw-bold text-dark mb-3">Crab</h1>
+                                <p className="text-muted mb-4">
+                                    Quản lý nhu cầu di chuyển, đồ ăn và giao hàng của bạn
+                                </p>
+                                <div className="d-flex justify-content-between align-items-center mb-4">
+                                    <div className="d-flex align-items-center">
+                                        <div className="badge bg-secondary rounded-circle p-3 text-white">1</div>
+                                        <span className="ms-2 text-muted">Thông tin cá nhân</span>
+                                    </div>
+                                    <div className="d-flex align-items-center">
+                                        <div className="badge bg-success rounded-circle p-3 text-white">2</div>
+                                        <span className="ms-2 text-success fw-medium">Xác minh email</span>
+                                    </div>
+                                </div>
+                                <div className="bg-light p-4 rounded">
+                                    <h2 className="h4 fw-bold text-dark mb-4">Nhập mã OTP</h2>
+                                    <p className="text-muted mb-3">
+                                        Vui lòng kiểm tra hộp thư đến cùng như mục <span className="fw-medium">Thư rác</span> và <span className="fw-medium">Khuyến mãi</span> của bạn để xem mã OTP.
+                                    </p>
+                                    <div className="mb-3">
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            placeholder="Nhập OTP"
+                                        />
+                                    </div>
+                                    <div className="d-flex justify-content-end gap-3">
+                                        <button className="btn btn-light text-dark border">Trước</button>
+                                        <button className="btn btn-success text-white">Tiếp theo</button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <span className="ml-2 text-gray-500">Thông tin cá nhân</span>
-                    </div>
-                    <div className="flex items-center">
-                        <div className="flex items-center justify-center w-8 h-8 bg-gray-300 text-gray-500 rounded-full">
-                            2
-                        </div>
-                        <span className="ml-2 text-gray-500">Xác minh email</span>
-                    </div>
-                </div>
-                <div className="bg-gray-100 p-6 rounded-lg">
-                    <h2 className="text-2xl font-bold text-gray-800 mb-4">Nhập mã OTP</h2>
-                    <p className="text-gray-600 mb-4">
-                        Vui lòng kiểm tra hộp thư đến cùng như mục <span className="font-medium">Thư rác</span> và <span className="font-medium">Khuyến mãi</span> của bạn để xem mã OTP.
-                    </p>
-                    <div className="flex items-center space-x-4 mb-4">
-                        <input
-                            type="text"
-                            className="w-full p-3 border border-gray-300 rounded-lg"
-                            placeholder="Nhập OTP"
-                        />
-                    </div>
-                    <div className="flex justify-end space-x-4">
-                        <button className="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg">Trước</button>
-                        <button className="bg-green-500 text-white px-4 py-2 rounded-lg">Tiếp theo</button>
                     </div>
                 </div>
             </div>
         </div>
     );
 }
+
