@@ -102,7 +102,7 @@ const DriverDirections = () => {
 
         {/* Pop-up thông tin khách hàng */}
         {showPopup && (
-          <div style={{
+        <div style={{
             position: "fixed",
             top: 0,
             left: 0,
@@ -113,28 +113,53 @@ const DriverDirections = () => {
             alignItems: "center",
             justifyContent: "center",
             zIndex: 1001,
-          }}>
+        }}>
             <div style={{
-              backgroundColor: "white",
-              padding: "30px", // Tăng padding để nội dung có thêm khoảng trống
-              borderRadius: "8px",
-              width: "500px", // Tăng width để pop-up rộng hơn
-              textAlign: "center",
-              fontSize: "16px" // Tăng font-size để nội dung dễ đọc hơn
+            backgroundColor: "white",
+            padding: "30px",
+            borderRadius: "8px",
+            width: "500px",
+            textAlign: "center",
+            fontSize: "16px"
             }}>
-              <h2 style={{ fontSize: "24px", marginBottom: "15px" }}>Thông tin khách hàng</h2>
-              <p><strong>Tên:</strong> {fakeCustomerData.name}</p>
-              <p><strong>Số điện thoại:</strong> {fakeCustomerData.phone}</p>
-              <p><strong>Điểm bắt đầu:</strong> {fakeCustomerData.startPoint}</p>
-              <p><strong>Điểm kết thúc:</strong> {fakeCustomerData.endPoint}</p>
-              <p><strong>Giá tiền:</strong> {fakeCustomerData.price}</p>
-              <div style={{ display: "flex", justifyContent: "center", gap: "10px", marginTop: "20px" }}>
-                <button onClick={handleClosePopup} style={{ padding: "10px 15px", backgroundColor: "#4CAF50", color: "white", fontSize: "16px" }}>Chấp nhận</button>
-                <button onClick={handleClosePopup} style={{ padding: "10px 15px", backgroundColor: "#f44336", color: "white", fontSize: "16px" }}>Từ chối</button>
-              </div>
+            <h2 style={{ fontSize: "24px", marginBottom: "15px" }}>Thông tin khách hàng</h2>
+            <p><strong>Tên:</strong> {fakeCustomerData.name}</p>
+            <p><strong>Số điện thoại:</strong> {fakeCustomerData.phone}</p>
+            <p><strong>Điểm bắt đầu:</strong> {fakeCustomerData.startPoint}</p>
+            <p><strong>Điểm kết thúc:</strong> {fakeCustomerData.endPoint}</p>
+            <p><strong>Giá tiền:</strong> {fakeCustomerData.price}</p>
+            <div style={{ display: "flex", justifyContent: "center", gap: "10px", marginTop: "20px" }}>
+                <button
+                onClick={handleClosePopup}
+                style={{
+                    padding: "10px 20px",
+                    backgroundColor: "#4CAF50",
+                    color: "white",
+                    fontSize: "16px",
+                    borderRadius: "8px", // Bo góc
+                    width: "120px", // Kích cỡ cố định cho cả hai nút
+                }}
+                >
+                Chấp nhận
+                </button>
+                <button
+                onClick={handleClosePopup}
+                style={{
+                    padding: "10px 20px",
+                    backgroundColor: "#f44336",
+                    color: "white",
+                    fontSize: "16px",
+                    borderRadius: "8px", // Bo góc
+                    width: "120px", // Kích cỡ cố định cho cả hai nút
+                }}
+                >
+                Từ chối
+                </button>
             </div>
-          </div>
+            </div>
+        </div>
         )}
+
       </div>
     </LoadScript>
   );

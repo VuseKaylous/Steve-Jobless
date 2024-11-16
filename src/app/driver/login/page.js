@@ -40,7 +40,6 @@ const LoginPage = () => {
             <div className="mb-5">
               <h2 className="fw-semibold mb-4">Đăng nhập </h2>
               <form onSubmit={handleSubmit}>
-                {/* Email field */}
                 <div className="mb-4">
                   <label className="form-label text-secondary">
                     Nhập email tài khoản đăng ký
@@ -54,7 +53,6 @@ const LoginPage = () => {
                   />
                 </div>
 
-                {/* Password field */}
                 <div className="mb-4">
                   <div className="d-flex justify-content-between">
                     <label className="form-label text-secondary">
@@ -83,7 +81,6 @@ const LoginPage = () => {
                   </div>
                 </div>
 
-                {/* Login button */}
                 <button
                   type="submit"
                   className="btn btn-success w-100 py-2 mb-4"
@@ -93,7 +90,6 @@ const LoginPage = () => {
               </form>
             </div>
 
-            {/* Footer */}
             <div className="pt-4 border-top">
               <div className="d-flex justify-content-between text-secondary small">
                 <a href="#" className="text-secondary text-decoration-none me-3">Điều khoản & Điều kiện</a>
