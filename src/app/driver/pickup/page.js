@@ -1,7 +1,12 @@
 'use client';
 
+
 import { useState } from 'react';
 import { GoogleMap, LoadScript, Marker, DirectionsService, DirectionsRenderer } from '@react-google-maps/api';
+
+import dynamic from 'next/dynamic';
+
+const Map = dynamic(() => import('../../../components/Map'), { ssr: false });
 
 const containerStyle = {
   width: '100%',
@@ -43,34 +48,36 @@ const DriverPickup = () => {
         <button className="m-1"> Xác nhận đón khách </button>
         <hr/>
       </div>
-      <LoadScript googleMapsApiKey={process.env.API_GG}>
-        <GoogleMap
-          mapContainerStyle={containerStyle}
-          center={origin}
-          zoom={10}
-        >
-          <Marker position={origin} />
-          <Marker position={destination} />
-          <DirectionsService
-            options={{
-              destination: destination,
-              origin: origin,
-              travelMode: 'DRIVING'
-            }}
-            callback={directionsCallback}
-          />
-          {directions && (
-            <DirectionsRenderer
-              options={{
-                directions: directions
-              }}
-            />
-          )}
-        </GoogleMap>
-        {travelTime && <p>Estimated travel time: {travelTime}</p>}
-      </LoadScript>
+        <Map />
     </div>
   );
 };
 
 export default DriverPickup;
+
+// <LoadScript googleMapsApiKey={process.env.API_GG}>
+      //   <GoogleMap
+      //     mapContainerStyle={containerStyle}
+      //     center={origin}
+      //     zoom={10}
+      //   >
+      //     <Marker position={origin} />
+      //     <Marker position={destination} />
+      //     <DirectionsService
+      //       options={{
+      //         destination: destination,
+      //         origin: origin,
+      //         travelMode: 'DRIVING'
+      //       }}
+      //       callback={directionsCallback}
+      //     />
+      //     {directions && (
+      //       <DirectionsRenderer
+      //         options={{
+      //           directions: directions
+      //         }}
+      //       />
+      //     )}
+      //   </GoogleMap>
+      //   {travelTime && <p>Estimated travel time: {travelTime}</p>}
+      // </LoadScript>
