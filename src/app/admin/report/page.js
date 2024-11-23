@@ -1,19 +1,15 @@
 import React from "react";
 import styles from "../transaction/Transaction.module.css";
 
-const FailedTransaction = [
-    { id: "t_5", cus_id: "cus_1", reportType: "Payment Failure", customerFeedback: "Payment not processed.", state: "failed" },
-    { id: "t_7", cus_id: "cus_9", reportType: "Service Issue", customerFeedback: "Driver was late.", state: "failed" },
-    { id: "t_9", cus_id: "cus_3", reportType: "Cancellation", customerFeedback: "Order cancelled by user.", state: "failed" },
-    { id: "t_11", cus_id: "cus_10", reportType: "Refund Request", customerFeedback: "Requesting refund for the trip.", state: "failed" },
+const PendingTransaction = [
+    { id: "1", cus_id: "cus_1", reportType: "Bad attitude", customerFeedback: "", state: "pending" },
+    { id: "5", cus_id: "cus_9", reportType: "Vehicle problem", customerFeedback: "", state: "pending" },
 ];
 
-const SuccessfulTransaction = [
-    { id: "t_1", cus_id: "cus_2", reportType: "Completed", customerFeedback: "Great service!", state: "finished" },
-    { id: "t_2", cus_id: "cus_4", reportType: "Completed", customerFeedback: "Everything was perfect.", state: "finished" },
-    { id: "t_3", cus_id: "cus_3", reportType: "Completed", customerFeedback: "Driver was very helpful.", state: "finished" },
-    { id: "t_6", cus_id: "cus_5", reportType: "Completed", customerFeedback: "On time and safe!", state: "finished" },
-    { id: "t_8", cus_id: "cus_12", reportType: "Completed", customerFeedback: "Will use again.", state: "finished" },
+const ResolvedTransaction = [
+    { id: "2", cus_id: "cus_2", reportType: "Other", customerFeedback: "The driver is ex-lover", state: "Resolved" },
+    { id: "3", cus_id: "cus_4", reportType: "Reckless driving", customerFeedback: "", state: "Resolved" },
+    { id: "4", cus_id: "cus_3", reportType: "High fee", customerFeedback: "", state: "Resolved" },
 ];
 
 const AdminTransaction = () => (
@@ -27,10 +23,10 @@ const AdminTransaction = () => (
                 {/* User Controls */}
                 <div className="d-flex">
                     <span style={{ color: '#00b14f' }} className="me-2">
-                        WELCOME, <strong>ADMIN</strong>.
+                        CHÀO MỪNG, <strong>QUẢN TRỊ VIÊN</strong>.
                     </span>
                     <div style={{ cursor: "pointer", marginLeft: "20px", marginRight: "20px", display: "inline", color: "#00b14f" }}>
-                        LOG OUT
+                        ĐĂNG XUẤT
                     </div>
                 </div>
             </div>
@@ -41,16 +37,44 @@ const AdminTransaction = () => (
                 {/* Sidebar */}
                 <div className={styles.sidebar}>
                     <div className={styles.section} style={{ marginTop: "200px" }}>
-                        <div className={styles.section_title}>ACCOUNT</div>
+                        <div className={styles.section_title}>TÀI KHOẢN</div>
                     </div>
                     <div className={styles.section} style={{ marginTop: "10px" }}>
-                        <div className={styles.section_title} style={{ backgroundColor: "#00b14f", color: "white" }}>TRANSACTION</div>
+                        <div className={styles.section_title} style={{ backgroundColor: "#00b14f", color: "white" }}>GIAO DỊCH</div>
                     </div>
                 </div>
 
                 <div style={{ display: "inline-block", backgroundColor: "#fff", width: "85%" }}>
                     <div className="container bg-white" style={{ width: "80%", padding: "15px" }}>
-                        <div className="input-group mb-3" style={{ paddingTop: "50px" }}>
+                        {/* Driver Info Section */}
+                        <div className="card mb-4 mt-4" style={{ border: "1px solid #00b14f", borderRadius: "10px" }}>
+                            <div className="card-body">
+                                <div className="row">
+                                    <div className="col-md-6">
+                                        <div className="mb-3" style={{ borderLeft: "4px solid #00b14f", paddingLeft: "15px" }}>
+                                            <div className="text-muted mb-1">Name</div>
+                                            <div className="h5 mb-0">Nguyễn Văn B</div>
+                                        </div>
+                                        <div className="mb-3" style={{ borderLeft: "4px solid #00b14f", paddingLeft: "15px" }}>
+                                            <div className="text-muted mb-1">Username</div>
+                                            <div className="h5 mb-0">B_plus</div>
+                                        </div>
+                                    </div>
+                                    <div className="col-md-6">
+                                        <div className="mb-3" style={{ borderLeft: "4px solid #00b14f", paddingLeft: "15px" }}>
+                                            <div className="text-muted mb-1">Driver_ID</div>
+                                            <div className="h5 mb-0">driver_1</div>
+                                        </div>
+                                        <div className="mb-3" style={{ borderLeft: "4px solid #00b14f", paddingLeft: "15px" }}>
+                                            <div className="text-muted mb-1">Report List</div>
+                                            <div className="h5 mb-0">Active Reports</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="input-group mb-3">
                             <input type="text" className="form-control" placeholder="Search" aria-label="Search"></input>
                             <button className="btn btn-outline-secondary" type="button">Search</button>
                         </div>
@@ -60,14 +84,14 @@ const AdminTransaction = () => (
                                 <thead>
                                     <tr>
                                         <th className={`text-center ${styles.sticky_header}`} scope="col" style={{ color: "white", backgroundColor: "#00b14f" }}>ID</th>
-                                        <th className={`text-center ${styles.sticky_header}`} scope="col" style={{ color: "white", backgroundColor: "#00b14f" }}>CUS_ID</th>
-                                        <th className={`text-center ${styles.sticky_header}`} scope="col" style={{ color: "white", backgroundColor: "#00b14f" }}>ReportType</th>
-                                        <th className={`text-center ${styles.sticky_header}`} scope="col" style={{ color: "white", backgroundColor: "#00b14f" }}>CustomerFeedback</th>
-                                        <th className={`text-center ${styles.sticky_header}`} scope="col" style={{ color: "white", backgroundColor: "#00b14f" }}>STATE</th>
+                                        <th className={`text-center ${styles.sticky_header}`} scope="col" style={{ color: "white", backgroundColor: "#00b14f" }}>Cus_ID</th>
+                                        <th className={`text-center ${styles.sticky_header}`} scope="col" style={{ color: "white", backgroundColor: "#00b14f" }}>Report Type</th>
+                                        <th className={`text-center ${styles.sticky_header}`} scope="col" style={{ color: "white", backgroundColor: "#00b14f" }}>Customer Feedback</th>
+                                        <th className={`text-center ${styles.sticky_header}`} scope="col" style={{ color: "white", backgroundColor: "#00b14f" }}>State</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {FailedTransaction.map((item) => (
+                                    {PendingTransaction.map((item) => (
                                         <tr key={item.id}>
                                             <td className="text-center">{item.id}</td>
                                             <td className="text-center">{item.cus_id}</td>
@@ -80,21 +104,21 @@ const AdminTransaction = () => (
                             </table>
                         </div>
 
-                        <div style={{ height: "20px", backgroundColor: "white" }}></div> {/* White line to separate */}
+                        <div style={{ height: "20px", backgroundColor: "white" }}></div>
 
                         <div style={{ maxHeight: "180px", overflowY: "scroll" }}>
                             <table className="table table-bordered table-light table-striped" style={{ tableLayout: "fixed", width: "100%" }}>
                                 <thead>
                                     <tr>
                                         <th className={`text-center ${styles.sticky_header}`} scope="col" style={{ color: "white", backgroundColor: "#00b14f" }}>ID</th>
-                                        <th className={`text-center ${styles.sticky_header}`} scope="col" style={{ color: "white", backgroundColor: "#00b14f" }}>CUS_ID</th>
-                                        <th className={`text-center ${styles.sticky_header}`} scope="col" style={{ color: "white", backgroundColor: "#00b14f" }}>ReportType</th>
-                                        <th className={`text-center ${styles.sticky_header}`} scope="col" style={{ color: "white", backgroundColor: "#00b14f" }}>CustomerFeedback</th>
-                                        <th className={`text-center ${styles.sticky_header}`} scope="col" style={{ color: "white", backgroundColor: "#00b14f" }}>STATE</th>
+                                        <th className={`text-center ${styles.sticky_header}`} scope="col" style={{ color: "white", backgroundColor: "#00b14f" }}>Cus_ID</th>
+                                        <th className={`text-center ${styles.sticky_header}`} scope="col" style={{ color: "white", backgroundColor: "#00b14f" }}>Report Type</th>
+                                        <th className={`text-center ${styles.sticky_header}`} scope="col" style={{ color: "white", backgroundColor: "#00b14f" }}>Customer Feedback</th>
+                                        <th className={`text-center ${styles.sticky_header}`} scope="col" style={{ color: "white", backgroundColor: "#00b14f" }}>State</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {SuccessfulTransaction.map((item) => (
+                                    {ResolvedTransaction.map((item) => (
                                         <tr key={item.id}>
                                             <td className="text-center">{item.id}</td>
                                             <td className="text-center">{item.cus_id}</td>

@@ -28,7 +28,11 @@ export default function BusinessRegistration() {
                                         <span className="ms-2 text-muted">Thông tin cá nhân</span>
                                     </div>
                                     <div className="d-flex align-items-center">
-                                        <div className="badge bg-success rounded-circle p-3 text-white">2</div>
+                                        <div className="badge bg-secondary rounded-circle p-3 text-white">2</div>
+                                        <span className="ms-2 text-muted">Tải lên giấy tờ</span>
+                                    </div>
+                                    <div className="d-flex align-items-center">
+                                        <div className="badge bg-success rounded-circle p-3 text-white">3</div>
                                         <span className="ms-2 text-success fw-medium">Xác minh email</span>
                                     </div>
                                 </div>
@@ -57,4 +61,3 @@ export default function BusinessRegistration() {
         </div>
     );
 }
-
