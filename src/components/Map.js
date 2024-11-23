@@ -1,8 +1,10 @@
 import { useEffect } from 'react';
 import L from 'leaflet';
 import 'leaflet-routing-machine';
-// import "leaflet/dist/leaflet.css";
-import "../../node_modules/leaflet/dist/leaflet.css";
+import "leaflet-control-geocoder";
+import "leaflet/dist/leaflet.css";
+import "leaflet-routing-machine/dist/leaflet-routing-machine.css";
+import "leaflet-control-geocoder/dist/Control.Geocoder.css";
 
 const Map = () => {
   useEffect(() => {
@@ -30,12 +32,6 @@ const Map = () => {
     });
 
     // Add routing functionality
-
-    const customIcon = L.icon({
-      iconUrl: 'https://cdn-icons-png.flaticon.com/512/252/252025.png', // Replace with your icon URL
-      iconSize: [32, 32], // Size of the icon
-      iconAnchor: [16, 32], // Anchor point of the icon
-    });
     
     const routingControl = L.Routing.control({
       waypoints: [
@@ -43,7 +39,21 @@ const Map = () => {
         L.latLng(51.515, -0.1),  // Ending point
       ],
       routeWhileDragging: true,
+      geocoder: L.Control.Geocoder.nominatim(),
+      suggest: L.Control.Geocoder.nominatim(),
+      showAlternatives: false,
+      altLineOptions: {
+        styles: [{ color: "blue", opacity: 0.5, weight: 2 }],
+      },
       createMarker: function(i, waypoint, n) {
+        const customIcon = L.icon({
+          iconUrl:
+            i === 0
+              ? "https://cdn-icons-png.flaticon.com/512/684/684908.png" // Start icon
+              : "https://cdn-icons-png.flaticon.com/512/684/684908.png", // End icon
+          iconSize: [32, 32],
+          iconAnchor: [16, 32],
+        });   
         return L.marker(waypoint.latLng, {
           icon: customIcon,
         });
