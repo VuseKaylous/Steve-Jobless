@@ -1,6 +1,5 @@
 'use client';
 import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
 
 const CrabLogo = () => (
   <div className="d-flex align-items-center gap-4">
@@ -12,55 +11,27 @@ const CrabLogo = () => (
         <path d="M95 9.5h-8v22h8c3.9 0 7-1.1 7-5 0-2.4-1.3-4.1-3-4.8 1.7-.7 3-2.4 3-4.2 0-3.9-3.1-8-7-8zm-2 9v-4h2c1.7 0 3 .3 3 2s-1.3 2-3 2h-2zm0 8v-4h2c1.7 0 3 .3 3 2s-1.3 2-3 2h-2z" transform="translate(90) scale(1.5)"/>
       </g>
     </svg>
-    <span className="display-6">For Driver</span>
+    <span className="display-6">For Customer</span>
   </div>
 );
 
-const LoginPage = () => {
-  const router = useRouter();
+const Login = (user) => {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    setError('');
-    setIsLoading(true);
-
-    try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Đã xảy ra lỗi khi đăng nhập');
-      }
-
-      // Store user data in localStorage or state management solution
-      localStorage.setItem('driver', JSON.stringify(data));
-      
-      // Redirect to dashboard or home page
-      router.push('/dashboard');
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setIsLoading(false);
-    }
+    console.log('Login attempted with:', { email, password });
   };
 
   return (
     <div className="min-vh-100 bg-white p-4">
       <div className="container">
+        {/* Logo */}
         <div className="row justify-content-center mb-5">
           <div className="col-md-6">
+            
             <CrabLogo />
           </div>
         </div>
@@ -68,16 +39,12 @@ const LoginPage = () => {
         <div className="row justify-content-center">
           <div className="col-md-6">
             <div className="mb-5">
-              <h2 className="fw-semibold mb-4">Đăng nhập</h2>
-              {error && (
-                <div className="alert alert-danger" role="alert">
-                  {error}
-                </div>
-              )}
+              <h2 className="fw-semibold mb-4">Secure Login</h2>
               <form onSubmit={handleSubmit}>
+                {/* Email field */}
                 <div className="mb-4">
                   <label className="form-label text-secondary">
-                    Nhập email tài khoản đăng ký
+                    Enter your work email
                   </label>
                   <input
                     type="email"
@@ -85,17 +52,17 @@ const LoginPage = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="form-control"
-                    required
                   />
                 </div>
 
+                {/* Password field */}
                 <div className="mb-4">
                   <div className="d-flex justify-content-between">
                     <label className="form-label text-secondary">
-                      Mật khẩu
+                      Password
                     </label>
-                    <a href="/forgot-password" className="text-success text-decoration-none">
-                      Quên mật khẩu?
+                    <a href="#" className="text-success text-decoration-none">
+                      Forgot password?
                     </a>
                   </div>
                   <div className="position-relative">
@@ -105,7 +72,6 @@ const LoginPage = () => {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       className="form-control pe-5"
-                      required
                     />
                     <button
                       type="button"
@@ -113,32 +79,37 @@ const LoginPage = () => {
                       className="btn btn-link position-absolute end-0 top-50 translate-middle-y text-secondary"
                       style={{ textDecoration: 'none' }}
                     >
-                      {showPassword ? "Ẩn" : "Hiện"}
+                      {showPassword ? "Hide" : "Show"}
                     </button>
                   </div>
                 </div>
 
+                {/* Login button */}
                 <button
                   type="submit"
                   className="btn btn-success w-100 py-2 mb-4"
-                  disabled={isLoading}
                 >
-                  {isLoading ? 'Đang đăng nhập...' : 'Đăng nhập'}
+                  Log In
                 </button>
               </form>
             </div>
 
+            {/* Footer */}
             <div className="pt-4 border-top">
               <div className="d-flex justify-content-between text-secondary small">
-                <a href="/terms" className="text-secondary text-decoration-none me-3">
-                  Điều khoản & Điều kiện
-                </a>
+                <div className="gap-3">
+                  <a href="#" className="text-secondary text-decoration-none me-3">Privacy Policy</a>
+                  <a href="#" className="text-secondary text-decoration-none">Terms & Conditions</a>
+                </div>
               </div>
-
+              
               <div className="mt-3 d-flex justify-content-between align-items-center text-secondary small">
+                <span>
+                  If you need support, <a href="#" className="text-success text-decoration-none">Help Centre</a>
+                </span>
                 <div>
-                  <span>Mới sử dụng CrabForAdmin? </span>
-                  <a href="signup" className="text-success text-decoration-none">Đăng ký</a>
+                  <span>New to CrabForCustomer? </span>
+                  <a href="#" className="text-success text-decoration-none">Sign Up</a>
                 </div>
               </div>
             </div>
@@ -149,4 +120,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default Login;
