@@ -12,7 +12,7 @@ const ResolvedTransaction = [
     { id: "4", cus_id: "cus_3", reportType: "High fee", customerFeedback: "", state: "Resolved" },
 ];
 
-const AdminTransaction = () => (
+const AdminReport = () => (
     <div>
         {/* Admin Navbar */}
         <nav className="navbar bg-light">
@@ -137,4 +137,4 @@ const AdminTransaction = () => (
     </div>
 );
 
-export default AdminTransaction;
+export default AdminReport;
