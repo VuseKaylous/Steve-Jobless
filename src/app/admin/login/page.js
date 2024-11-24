@@ -8,7 +8,7 @@ const LoginPage = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Login attempted with:', { email, password });
+    console.log('Đăng nhập với:', { email, password });
   };
 
   return (

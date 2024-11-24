@@ -22,7 +22,7 @@ const LoginPage = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Login attempted with:', { email, password });
+    console.log('Đăng nhập với:', { email, password });
   };
 
   return (
@@ -38,12 +38,12 @@ const LoginPage = () => {
         <div className="row justify-content-center">
           <div className="col-md-6">
             <div className="mb-5">
-              <h2 className="fw-semibold mb-4">Secure Login</h2>
+              <h2 className="fw-semibold mb-4">Đăng nhập </h2>
               <form onSubmit={handleSubmit}>
                 {/* Email field */}
                 <div className="mb-4">
                   <label className="form-label text-secondary">
-                    Enter your work email
+                    Nhập email tài khoản đăng ký
                   </label>
                   <input
                     type="email"
@@ -58,10 +58,10 @@ const LoginPage = () => {
                 <div className="mb-4">
                   <div className="d-flex justify-content-between">
                     <label className="form-label text-secondary">
-                      Password
+                      Mật khẩu
                     </label>
                     <a href="#" className="text-success text-decoration-none">
-                      Forgot password?
+                      Quên mật khẩu?
                     </a>
                   </div>
                   <div className="position-relative">
@@ -78,7 +78,7 @@ const LoginPage = () => {
                       className="btn btn-link position-absolute end-0 top-50 translate-middle-y text-secondary"
                       style={{ textDecoration: 'none' }}
                     >
-                      {showPassword ? "Hide" : "Show"}
+                      {showPassword ? "Ẩn" : "Hiện"}
                     </button>
                   </div>
                 </div>
@@ -88,7 +88,7 @@ const LoginPage = () => {
                   type="submit"
                   className="btn btn-success w-100 py-2 mb-4"
                 >
-                  Log In
+                  Đăng nhập
                 </button>
               </form>
             </div>
@@ -96,19 +96,13 @@ const LoginPage = () => {
             {/* Footer */}
             <div className="pt-4 border-top">
               <div className="d-flex justify-content-between text-secondary small">
-                <div className="gap-3">
-                  <a href="#" className="text-secondary text-decoration-none me-3">Privacy Policy</a>
-                  <a href="#" className="text-secondary text-decoration-none">Terms & Conditions</a>
-                </div>
+                <a href="#" className="text-secondary text-decoration-none me-3">Điều khoản & Điều kiện</a>
               </div>
-              
+
               <div className="mt-3 d-flex justify-content-between align-items-center text-secondary small">
-                <span>
-                  If you need support, <a href="#" className="text-success text-decoration-none">Help Centre</a>
-                </span>
                 <div>
-                  <span>New to CrabForCustomer? </span>
-                  <a href="#" className="text-success text-decoration-none">Sign Up</a>
+                  <span>Mới sử dụng CrabForAdmin? </span>
+                  <a href="#" className="text-success text-decoration-none">Đăng ký</a>
                 </div>
               </div>
             </div>
