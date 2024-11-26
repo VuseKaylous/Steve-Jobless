@@ -44,3 +44,12 @@
     background-color: #00b14f;
     color: white;
 }
+
+.Report {
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    margin-left: "40px";
+    margin-right: "40px";
+    display: "inline";
+}
