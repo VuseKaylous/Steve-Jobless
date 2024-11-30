@@ -6,10 +6,10 @@ import "leaflet/dist/leaflet.css";
 import "leaflet-routing-machine/dist/leaflet-routing-machine.css";
 import "leaflet-control-geocoder/dist/Control.Geocoder.css";
 
-const Map = () => {
+const Map = (props) => {
   useEffect(() => {
     // Initialize the map
-    const map = L.map('map').setView([51.505, -0.09], 13);
+    const map = L.map('map').setView([21.034229119985238, 105.78198599412406], 10);
 
     // Add a tile layer (OpenStreetMap)
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -35,8 +35,8 @@ const Map = () => {
     
     const routingControl = L.Routing.control({
       waypoints: [
-        L.latLng(51.505, -0.09), // Starting point
-        L.latLng(51.515, -0.1),  // Ending point
+        L.latLng(props.origin.lat, props.origin.lng), // Starting point
+        L.latLng(props.destination.lat, props.destination.lng),  // Ending point
       ],
       routeWhileDragging: true,
       geocoder: L.Control.Geocoder.nominatim(),

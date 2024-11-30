@@ -14,13 +14,13 @@ const containerStyle = {
 };
 
 const origin = {
-  lat: 37.437041393899676,
-  lng: -4.191635586788259
+  lat: 21.029268524281907,
+  lng: 105.77800700979684
 };
 
 const destination = {
-  lat: 37.440575591901045,
-  lng: -4.231433159434073
+  lat: 21.037961377894163,
+  lng: 105.7834146294285
 }
 
 const DriverPickup = () => {
@@ -48,7 +48,7 @@ const DriverPickup = () => {
         <button className="m-1"> Xác nhận đón khách </button>
         <hr/>
       </div>
-        <Map />
+        <Map origin={origin} destination={destination}/>
     </div>
   );
 };
