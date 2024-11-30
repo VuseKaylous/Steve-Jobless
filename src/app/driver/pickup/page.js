@@ -1,9 +1,6 @@
 'use client';
 
-
 import { useState } from 'react';
-import { GoogleMap, LoadScript, Marker, DirectionsService, DirectionsRenderer } from '@react-google-maps/api';
-
 import dynamic from 'next/dynamic';
 
 const Map = dynamic(() => import('../../../components/Map'), { ssr: false });
@@ -27,7 +24,7 @@ const DriverPickup = () => {
   const [directions, setDirections] = useState(null);
   const [travelTime, setTravelTime] = useState(null);
 
-  const address = "144 Xuan Thuy, Cau Giay, Ha Noi, Viet Nam"
+  const address = "144 Xuan Thuy, Cau Giay, Ha Noi, Viet Nam";
 
   const directionsCallback = (response) => {
     if (response !== null) {
@@ -42,11 +39,18 @@ const DriverPickup = () => {
   };
 
   return (
-    <div className="">
-      <div id="sidebar" className="p-3 bg-light w-100" >
-        <p className="h5 m-1"> Địa chỉ đón khách: {address} </p>
-        <button className="m-1"> Xác nhận đón khách </button>
-        <hr/>
+    <div className="d-flex flex-column">
+      <div id="sidebar" className="p-3 bg-light w-100">
+        <p className="h5 m-1">Địa chỉ đón khách: {address}</p>
+        <button className="btn btn-primary m-1">Xác nhận đón khách</button>
+        <hr />
+      </div>
+      <div className="flex-grow-1">
+        {typeof window !== 'undefined' ? (
+          <Map />
+        ) : (
+          <p>Đang tải bản đồ...</p>
+        )}
       </div>
         <Map origin={origin} destination={destination}/>
     </div>
@@ -54,30 +58,3 @@ const DriverPickup = () => {
 };
 
 export default DriverPickup;
-
-// <LoadScript googleMapsApiKey={process.env.API_GG}>
-      //   <GoogleMap
-      //     mapContainerStyle={containerStyle}
-      //     center={origin}
-      //     zoom={10}
-      //   >
-      //     <Marker position={origin} />
-      //     <Marker position={destination} />
-      //     <DirectionsService
-      //       options={{
-      //         destination: destination,
-      //         origin: origin,
-      //         travelMode: 'DRIVING'
-      //       }}
-      //       callback={directionsCallback}
-      //     />
-      //     {directions && (
-      //       <DirectionsRenderer
-      //         options={{
-      //           directions: directions
-      //         }}
-      //       />
-      //     )}
-      //   </GoogleMap>
-      //   {travelTime && <p>Estimated travel time: {travelTime}</p>}
-      // </LoadScript>
