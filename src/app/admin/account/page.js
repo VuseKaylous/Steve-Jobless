@@ -5,6 +5,16 @@ import { useRouter } from 'next/navigation';
 import styles from "./Account.module.css";
 
 const AdminAccount = () => {
+    const navigation = useRouter();
+    useEffect(() => {
+        if (typeof window !== 'undefined') { // Ensure this code runs only on the client side
+        const isAuthenticated = !!localStorage.getItem('token'); // Replace with your authentication logic
+
+        if (!isAuthenticated) {
+            navigation.push('./login'); // Redirect to the login page
+        }
+        }
+    }, [navigation]);
 
     const [customers, setCustomers] = useState([]);
     const [drivers, setDrivers] = useState([]);
@@ -54,6 +64,7 @@ const AdminAccount = () => {
     };
 
     const handleLogout = () => {
+        localStorage.removeItem('token'); // Remove the token from localStorage
         router.push('./login/');
     };
 

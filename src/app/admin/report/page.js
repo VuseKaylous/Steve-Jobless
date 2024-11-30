@@ -6,6 +6,17 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import styles from "../transaction/Transaction.module.css";
 
 const AdminReports = () => {
+    const navigation = useRouter();
+    useEffect(() => {
+        if (typeof window !== 'undefined') { // Ensure this code runs only on the client side
+        const isAuthenticated = !!localStorage.getItem('token'); // Replace with your authentication logic
+
+        if (!isAuthenticated) {
+            navigation.push('./login'); // Redirect to the login page
+        }
+        }
+    }, [navigation]);
+
     const router = useRouter();
     const searchParams = useSearchParams();
     const id = searchParams.get('id');
@@ -39,6 +50,7 @@ const AdminReports = () => {
     };
 
     const handleLogout = () => {
+        localStorage.removeItem('token'); // Remove the token from localStorage
         router.push('./login/');
     };
 

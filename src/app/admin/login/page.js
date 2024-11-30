@@ -1,14 +1,39 @@
 'use client';
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import styles from "./Login.module.css";
+
 
 const LoginPage = () => {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [alertMessage, setAlertMessage] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Đăng nhập với:', { email, password });
+
+    try {
+      const response = await fetch(`/api/admin/login?username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`);
+      const data = await response.json();
+
+      if (response.ok) {
+        localStorage.setItem('token', data.token); 
+        router.push('./account/');
+        // Redirect to the admin dashboard or another page
+      } else {
+        setAlertMessage('Sai mật khẩu. Vui lòng đăng nhập lại!');
+        setTimeout(() => {
+          setAlertMessage('');
+        }, 1000); // Clear the alert message after 5 seconds
+
+        setError(data.message);
+      }
+    } catch (error) {
+      setError('An error occurred. Please try again.');
+    }
   };
 
   return (
@@ -16,26 +41,34 @@ const LoginPage = () => {
       <nav className="navbar bg-light">
         <div className="container-fluid">
             {/* Title */}
-            <span className="navbar-brand mb-0 h1" style={{ color: '#00b14f' }}>CrabForAdministration</span>
+            <span 
+              className="navbar-brand mb-0 h1" 
+              style={{ color: '#00b14f' }}
+            >
+              CrabForAdministration
+            </span>
         </div>
       </nav>
       <div className="container mt-5">
         <div className="row justify-content-center">
           <div className="col-md-6">
             <div className="mb-5">
-              <h2 className="fw-semibold mb-4 mt-5">Đăng nhập cho quản trị viên</h2>
+              <h2 className="fw-semibold mb-4 mt-5">
+                Đăng nhập cho quản trị viên
+              </h2>
               <form onSubmit={handleSubmit}>
-                {/* Email field */}
+                {/* username field */}
                 <div className="mb-4">
                   <label className="form-label text-secondary">
-                    Nhập email của bạn
+                    Nhập tên đăng nhập của bạn
                   </label>
                   <input
-                    type="email"
-                    placeholder="example@example.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    type="text"
+                    placeholder="Tên đăng nhập của Quản trị viên"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
                     className="form-control"
+                    required
                   />
                 </div>
 
@@ -49,10 +82,11 @@ const LoginPage = () => {
                   <div className="position-relative">
                     <input
                       type={showPassword ? "text" : "password"}
-                      placeholder="••••••"
+                      placeholder="••••••••••••"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       className="form-control pe-5"
+                      required
                     />
                     <button
                       type="button"
@@ -74,6 +108,7 @@ const LoginPage = () => {
                   <strong>Đăng nhập</strong>
                 </button>
               </form>
+              {alertMessage && <div className={styles.alert}>{alertMessage}</div>}
             </div>
           </div>
         </div>
