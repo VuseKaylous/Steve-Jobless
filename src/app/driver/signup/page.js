@@ -3,7 +3,6 @@ import { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 export default function BusinessRegistration() {
-  // ... giữ nguyên các state khác ...
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -16,7 +15,7 @@ export default function BusinessRegistration() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // ... giữ nguyên các handlers khác ...
+  // Handler for input changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -25,6 +24,7 @@ export default function BusinessRegistration() {
     }));
   };
 
+  // Handler for phone country code change
   const handlePhoneCodeChange = (e) => {
     setFormData(prev => ({
       ...prev,
@@ -32,20 +32,23 @@ export default function BusinessRegistration() {
     }));
   };
 
+  // Validate form data
   const validateForm = () => {
     if (!formData.name || !formData.email || !formData.phone_number || 
         !formData.birthdate || !formData.password) {
       setError('Vui lòng điền đầy đủ thông tin');
       return false;
     }
-    
+
+    // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email)) {
       setError('Email không hợp lệ');
       return false;
     }
 
-    const dateRegex = /^(\d{2})\/(\d{2})\/(\d{2,4})$/;
+    // Validate birthdate format (dd/mm/yyyy)
+    const dateRegex = /^(\d{2})\/(\d{2})\/(\d{4})$/;
     if (!dateRegex.test(formData.birthdate)) {
       setError('Ngày sinh không đúng định dạng (dd/mm/yyyy)');
       return false;
@@ -54,7 +57,7 @@ export default function BusinessRegistration() {
     return true;
   };
 
-  // Cập nhật hàm handleSubmit với xử lý lỗi chi tiết hơn
+  // Submit form data
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -66,10 +69,12 @@ export default function BusinessRegistration() {
     try {
       setLoading(true);
 
+      // Format phone number with country code
       const fullPhoneNumber = `${formData.countryCode}${formData.phone_number.replace(/^0+/, '')}`;
       
+      // Convert birthdate from dd/mm/yyyy to yyyy-mm-dd
       const [day, month, year] = formData.birthdate.split('/');
-      const formattedDate = `20${year}-${month}-${day}`;
+      const formattedDate = `${year}-${month}-${day}`;
 
       const requestData = {
         name: formData.name,
@@ -79,7 +84,7 @@ export default function BusinessRegistration() {
         phone_number: fullPhoneNumber
       };
 
-      console.log('Sending data:', requestData); // Log request data
+      console.log('Sending data:', requestData);
 
       const response = await fetch('/api/auth/signup', {
         method: 'POST',
@@ -89,14 +94,7 @@ export default function BusinessRegistration() {
         body: JSON.stringify(requestData),
       });
 
-      // Log raw response for debugging
-      console.log('Response status:', response.status);
-      console.log('Response headers:', response.headers);
-
-      // Check if response is empty
       const responseText = await response.text();
-      console.log('Response text:', responseText);
-
       let data;
       try {
         data = responseText ? JSON.parse(responseText) : null;
@@ -113,10 +111,10 @@ export default function BusinessRegistration() {
         throw new Error('Empty response from server');
       }
 
-      // Success case
       console.log('Registration successful:', data);
-      // Add your navigation logic here
-      
+
+      // Navigation or success handling can be done here
+
     } catch (err) {
       console.error('Registration error:', err);
       setError(err.message || 'Đã xảy ra lỗi khi đăng ký. Vui lòng thử lại sau.');
@@ -125,7 +123,6 @@ export default function BusinessRegistration() {
     }
   };
 
-  // ... giữ nguyên phần return ...
   return (
     <div className="bg-light min-vh-100 p-4">
       <div className="container">
@@ -233,7 +230,7 @@ export default function BusinessRegistration() {
                         <input 
                           type="text" 
                           className="form-control" 
-                          placeholder="dd/mm/yy"
+                          placeholder="dd/mm/yyyy"
                           name="birthdate"
                           value={formData.birthdate}
                           onChange={handleInputChange}
