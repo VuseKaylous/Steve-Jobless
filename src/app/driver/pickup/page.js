@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 
 const Map = dynamic(() => import('../../../components/Map'), { ssr: false });
@@ -21,8 +21,13 @@ const destination = {
 }
 
 const DriverPickup = () => {
+  const [isClient, setIsClient] = useState(false)
   const [directions, setDirections] = useState(null);
   const [travelTime, setTravelTime] = useState(null);
+
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
 
   const address = "144 Xuan Thuy, Cau Giay, Ha Noi, Viet Nam";
 
@@ -46,13 +51,12 @@ const DriverPickup = () => {
         <hr />
       </div>
       <div className="flex-grow-1">
-        {typeof window !== 'undefined' ? (
-          <Map />
+        {isClient && typeof window !== 'undefined' ? (
+          <Map origin={origin} destination={destination} />
         ) : (
           <p>Đang tải bản đồ...</p>
         )}
       </div>
-        <Map origin={origin} destination={destination}/>
     </div>
   );
 };

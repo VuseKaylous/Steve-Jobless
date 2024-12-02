@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import L from 'leaflet';
+import { useMap } from 'react-leaflet';
 import 'leaflet-routing-machine';
 import "leaflet-control-geocoder";
 import "leaflet/dist/leaflet.css";
@@ -32,9 +33,9 @@ const Map = ({origin = null, destination = null}) => {
       //   L.latLng(props.origin.lat, props.origin.lng), // Starting point
       //   L.latLng(props.destination.lat, props.destination.lng),  // Ending point
       // ],
-      waypoints: [] if (origin == null || destination == null) else [
-        L.latLng(props.origin.lat, props.origin.lng), // Starting point
-        L.latLng(props.destination.lat, props.destination.lng),  // Ending point
+      waypoints: (origin == null || destination == null) ? [] : [
+        L.latLng(origin.lat, origin.lng), // Starting point
+        L.latLng(destination.lat, destination.lng),  // Ending point
       ], // Empty by default
       routeWhileDragging: true,
       geocoder: L.Control.Geocoder.nominatim(),
@@ -94,6 +95,7 @@ const Map = ({origin = null, destination = null}) => {
 
     return () => {
       map.remove(); // Clean up on unmount
+      map.removeControl(routingControl);
     };
   }, []);
 
