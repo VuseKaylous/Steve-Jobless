@@ -1,113 +1,249 @@
-import React from "react";
+"use client";
+
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import styles from "./Account.module.css";
 
-const Customer = [
-    {name: "Nguyễn Văn A", username: "A_pro", user_id: "cus_1", role: "khách hàng", report: ""},
-    {name: "Lê Văn C", username: "C_vjp", user_id: "cus_2", role: "khách hàng", report: ""},
-    {name: "Vũ Văn E", username: "E_123", user_id: "cus_3", role: "khách hàng", report: ""},
-    {name: "Trần Văn F", username: "F_456", user_id: "cus_4", role: "khách hàng", report: ""},
-]
+const AdminAccount = () => {
+    const navigation = useRouter();
+    useEffect(() => {
+        if (typeof window !== 'undefined') { // Ensure this code runs only on the client side
+        const isAuthenticated = !!localStorage.getItem('token'); // Replace with your authentication logic
 
-const Driver = [
-    {name: "Nguyễn Văn B", username: "B_plus", user_id: "driver_1", role: "tài xế", report: "+2"},
-    {name: "Đoàn Văn D", username: "D_cool", user_id: "driver_2", role: "tài xế", report: ""},
-    {name: "Hà Văn O", username: "Osad", user_id: "driver_3", role: "tài xế", report: "+3"},
-    {name: "Trần Văn G", username: "G_234", user_id: "driver_4", role: "tài xế", report: ""},
-    {name: "Lê Văn H", username: "huhu", user_id: "driver_5", role: "tài xế", report: "+1"},
-]
+        if (!isAuthenticated) {
+            navigation.push('./login'); // Redirect to the login page
+        }
+        }
+    }, [navigation]);
+
+    const [customers, setCustomers] = useState([]);
+    const [drivers, setDrivers] = useState([]);
+    const [numReports, setNumReports] = useState([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await fetch(`/api/admin/accounts`);
+                const data = await response.json();
+                setCustomers(data.customersData);
+                setDrivers(data.driversData);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        fetchData();
+    }, []);
+
+    useEffect(() => {
+        if (drivers.length > 0) {
+            drivers.forEach((driver, index) => {
+                fetchNum(driver.id, index);
+            });
+        }
+    }, [drivers]);
+    
+    const fetchNum = async (id, index) => {
+        try {
+            const response = await fetch(`/api/admin/reports?id=${id}`);
+            const data = await response.json();
+            setNumReports(prevNumReports => {
+                const newNumReports = [...prevNumReports];
+                newNumReports[index] = data.reportData.length;
+                return newNumReports;
+            });
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    };
+
+    const router = useRouter();
+
+    const handleTransaction = () => {
+        router.push('./transaction/');
+    };
+
+    const handleLogout = () => {
+        localStorage.removeItem('token'); // Remove the token from localStorage
+        router.push('./login/');
+    };
+
+    const handleReport = (id) => {
+        router.push(`./report?id=${id}`);
+    };
+
+    const [searchQuery, setSearchQuery] = useState('');
+    const [filteredCustomers, setFilteredCustomers] = useState(customers);
+    const [filteredDrivers, setFilteredDrivers] = useState(drivers);
+
+    useEffect(() => {
+        setFilteredCustomers(customers.filter((customer) => customer.email.toLowerCase().includes(searchQuery.toLowerCase())));
+        setFilteredDrivers(drivers.filter((driver) => driver.email.toLowerCase().includes(searchQuery.toLowerCase())));
+    }, [searchQuery, customers, drivers]);
 
 
-const AdminAccount = () => (
-    <div>
-        {/* Admin Navbar */}
-        <nav className="navbar bg-light">
-            <div className="container-fluid">
-                {/* Title */}
-                <span className="navbar-brand mb-0 h1" style={{ color: '#00b14f' }}>CrabForAdministration</span>
-
-                {/* User Controls */}
-                <div className="d-flex">
-                    <span style={{color: '#00b14f'}} className="me-2">
-                        CHÀO MỪNG, <strong>QUẢN TRỊ VIÊN</strong>.
+    return (
+        <div>
+            {/* Admin Navbar */}
+            <nav className="navbar bg-light">
+                <div className="container-fluid">
+                    {/* Title */}
+                    <span 
+                        className="navbar-brand mb-0 h1" 
+                        style={{ color: '#00b14f' }}
+                    >
+                        CrabForAdministration
                     </span>
-                    <div style={{cursor: "pointer", marginLeft: "20px", marginRight: "20px", display: "inline", color: "#00b14f"}}>
-                        ĐĂNG XUẤT
+
+                    {/* User Controls */}
+                    <div className="d-flex">
+                        <span style={{color: '#00b14f'}} className="me-2">
+                            CHÀO MỪNG, <strong>QUẢN TRỊ VIÊN</strong>.
+                        </span>
+                        <button onClick={handleLogout} className={styles.logOut}>
+                            ĐĂNG XUẤT
+                        </button>
                     </div>
                 </div>
-            </div>
-        </nav>
+            </nav>
 
-        <div className="container-fluid">
-            <div className="row">
-                {/* Sidebar */}
-                <div className={styles.sidebar}>        
-                    <div className={styles.section} style={{marginTop: "200px"}}>
-                        <div className={styles.section_title} style={{backgroundColor: "#00b14f", color: "white"}}>TÀI KHOẢN</div>
+            <div className="container-fluid">
+                <div className="row">
+                    {/* Sidebar */}
+                    <div className={styles.sidebar}>        
+                        <button className={styles.section} style={{marginTop: "200px"}}>
+                            <div 
+                                className={styles.section_title} 
+                                style={{backgroundColor: "#00b14f", color: "white"}}
+                            >
+                                TÀI KHOẢN
+                            </div>
+                        </button>
+                        <button 
+                            onClick = {handleTransaction} 
+                            className={styles.section} 
+                            style={{marginTop: "10px"}}
+                        >
+                            <div className={styles.section_title}>GIAO DỊCH</div>
+                        </button>
                     </div>
-                    <div className={styles.section} style={{marginTop: "10px"}}>
-                        <div className={styles.section_title}>GIAO DỊCH</div>
-                    </div>
-                </div>
 
-                <div style={{display: "inline-block", backgroundColor: "#fff", width: "85%"}}>
-                    <div className="container bg-white " style={{width: "80%", padding: "15px"}}>
-                        <div className="input-group mb-3" style={{paddingTop: "50px"}}>
-                            <input type="text" className="form-control" placeholder="Nhập tên đăng nhập..." aria-label="Search"></input>
-                            <button className="btn btn-outline-secondary" type="button">Tìm kiếm</button>
-                        </div>
-                        
-                        <div style={{maxHeight: "200px", overflowY: "scroll"}}>
-                            <table className="table table-bordered table-light table-striped" style={{tableLayout: "fixed", width: "100%"}}>
-                                <thead>
-                                    <tr>
-                                        <th className={`text-center ${styles.sticky_header}`} scope="col" style={{color: "white", backgroundColor: "#00b14f"}}>TÊN</th>
-                                        <th className={`text-center ${styles.sticky_header}`} scope="col" style={{color: "white", backgroundColor: "#00b14f"}}>TÊN ĐĂNG NHẬP</th>
-                                        <th className={`text-center ${styles.sticky_header}`} scope="col" style={{color: "white", backgroundColor: "#00b14f"}}>MÃ TÀI KHOẢN</th>
-                                        <th className={`text-center ${styles.sticky_header}`} scope="col" style={{color: "white", backgroundColor: "#00b14f"}}>VAI TRÒ</th>
-                                        <th className={`text-center ${styles.sticky_header}`} scope="col" style={{color: "white", backgroundColor: "#00b14f"}}>BÁO CÁO</th>
-                                        <th className={`text-center ${styles.sticky_header}`} scope="col" style={{color: "white", backgroundColor: "#00b14f"}}>XÓA</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {Customer.map((item) => (
-                                        <tr key={item.user_id}>
-                                            <td className="text-center">{item.name}</td>
-                                            <td className="text-center">{item.username}</td>
-                                            <td className="text-center">{item.user_id}</td>
-                                            <td className="text-center">{item.role}</td>
-                                            <td className="text-center">{item.report}</td>
-                                            <td className="text-center"><input className="form-check-input" type="checkbox" /></td>
+                    <div 
+                        style={{display: "inline-block", backgroundColor: "#fff", width: "85%"}}
+                    >
+                        <div 
+                            className="container bg-white " 
+                            style={{width: "80%", padding: "15px"}}
+                        >
+                            <div 
+                                className="input-group mb-3" 
+                                style={{paddingTop: "50px"}}
+                            >
+                                <input 
+                                    type="text" 
+                                    className="form-control" 
+                                    placeholder="Nhập địa chỉ email..." 
+                                    aria-label="Search"
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                />
+                                <button className="btn btn-outline-secondary" type="button">Tìm kiếm</button>
+                            </div>
+                            
+                            <div style={{maxHeight: "200px", overflowY: "scroll"}}>
+                                <table 
+                                    className="table table-bordered table-light table-striped" 
+                                    style={{tableLayout: "fixed", width: "100%"}}
+                                >
+                                    <thead>
+                                        <tr>
+                                            <th 
+                                                className={`text-center ${styles.sticky_header}`} 
+                                                scope="col" 
+                                                style={{color: "white", backgroundColor: "#00b14f"}}
+                                            >
+                                                HỌ VÀ TÊN
+                                            </th>
+                                            <th 
+                                                className={`text-center ${styles.sticky_header}`} 
+                                                scope="col" 
+                                                style={{color: "white", backgroundColor: "#00b14f"}}
+                                            >
+                                                ID
+                                            </th>
+                                            <th 
+                                                className={`text-center ${styles.sticky_header}`} 
+                                                scope="col" 
+                                                style={{color: "white", backgroundColor: "#00b14f"}}
+                                            >
+                                                EMAIL
+                                            </th>
+                                            <th 
+                                                className={`text-center ${styles.sticky_header}`} 
+                                                scope="col" 
+                                                style={{color: "white", backgroundColor: "#00b14f"}}
+                                            >
+                                                SỐ ĐIỆN THOẠI
+                                            </th>
+                                            <th 
+                                                className={`text-center ${styles.sticky_header}`} 
+                                                scope="col" 
+                                                style={{color: "white", backgroundColor: "#00b14f"}}
+                                            >
+                                                BÁO CÁO
+                                            </th>
                                         </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
+                                    </thead>
+                                    <tbody>
+                                        {filteredCustomers.map((customer) => (
+                                            <tr key={customer.user_id}>
+                                                <td className="text-center">{customer.name}</td>
+                                                <td className="text-center">{customer.id}</td>
+                                                <td className="text-center">{customer.email}</td>
+                                                <td className="text-center">{customer.phone_number}</td>
+                                                <td className="text-center">{customer.report}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            {/* Dòng trắng để tách biệt */}
+                            <div style={{ height: "20px", backgroundColor: "white" }}></div> 
 
-                        <div style={{ height: "20px", backgroundColor: "white" }}></div> {/* Dòng trắng để tách biệt */}
-
-                        <div style={{ maxHeight: "180px", overflowY: "scroll" }}>
-                            <table className="table table-bordered table-light table-striped" style={{tableLayout: "fixed", width: "100%"}}>
-                                <thead>
-                                </thead>
-                                <tbody>
-                                    {Driver.map((item) => (
-                                        <tr key={item.user_id}>
-                                            <td className="text-center">{item.name}</td>
-                                            <td className="text-center">{item.username}</td>
-                                            <td className="text-center">{item.user_id}</td>
-                                            <td className="text-center">{item.role}</td>
-                                            <td className="text-center">{item.report}</td>
-                                            <td className="text-center"><input className="form-check-input" type="checkbox" /></td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                            <div style={{ maxHeight: "180px", overflowY: "scroll" }}>
+                                <table 
+                                    className="table table-bordered table-light table-striped" 
+                                    style={{tableLayout: "fixed", width: "100%"}}
+                                >
+                                    <thead>
+                                    </thead>
+                                    <tbody>
+                                        {filteredDrivers.map((driver) => (
+                                            <tr key={driver.id}>
+                                                <td className="text-center">
+                                                    <button 
+                                                        onClick={() => handleReport(driver.id)} 
+                                                        className={styles.Report}
+                                                    >
+                                                        {driver.name}
+                                                    </button>
+                                                </td>
+                                                <td className="text-center">{driver.id}</td>
+                                                <td className="text-center">{driver.email}</td>
+                                                <td className="text-center">{driver.phone_number}</td>
+                                                <td className="text-center">+{numReports[driver.id-1]}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-);
+    )
+};
 
 export default AdminAccount;

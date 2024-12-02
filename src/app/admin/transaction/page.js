@@ -1,110 +1,222 @@
-import React from "react";
+"use client";
+
+import React, { useState, useEffect } from "react";
+import { useRouter } from 'next/navigation';
 import styles from "./Transaction.module.css";
 
-const FailedTransaction = [
-    {trans_id: "t_5", cus_id: "cus_1", driver_id: "driver_2", information: "thời gian, địa điểm,..", state: "lỗi"},
-    {trans_id: "t_7", cus_id: "cus_9", driver_id: "driver_5", information: "", state: "lỗi"},
-    {trans_id: "t_9", cus_id: "cus_3", driver_id: "driver_4", information: "", state: "lỗi"},
-    {trans_id: "t_11", cus_id: "cus_10", driver_id: "driver_7", information: "", state: "lỗi"},
-]
-
-const SuccessfulTransaction = [
-    {trans_id: "t_1", cus_id: "cus_2", driver_id: "driver_1", information: "", state: "hoàn thành"},
-    {trans_id: "t_2", cus_id: "cus_4", driver_id: "driver_7", information: "", state: "hoàn thành"},
-    {trans_id: "t_3", cus_id: "cus_3", driver_id: "driver_3", information: "", state: "hoàn thành"},
-    {trans_id: "t_6", cus_id: "cus_5", driver_id: "driver_4", information: "", state: "hoàn thành"},
-    {trans_id: "t_8", cus_id: "cus_12", driver_id: "driver_6", information: "", state: "hoàn thành"},
-]
 
 
-const AdminTransaction = () => (
-    <div>
-        {/* Admin Navbar */}
-        <nav className="navbar bg-light">
-            <div className="container-fluid">
-                {/* Title */}
-                <span className="navbar-brand mb-0 h1" style={{ color: '#00b14f' }}>CrabForAdministration</span>
+const AdminTransaction = () => {
+    const navigation = useRouter();
+    useEffect(() => {
+        if (typeof window !== 'undefined') { // Ensure this code runs only on the client side
+        const isAuthenticated = !!localStorage.getItem('token'); // Replace with your authentication logic
 
-                {/* User Controls */}
-                <div className="d-flex">
-                    <span style={{color: '#00b14f'}} className="me-2">
-                        CHÀO MỪNG, <strong>QUẢN TRỊ VIÊN</strong>.
+        if (!isAuthenticated) {
+            navigation.push('./login'); // Redirect to the login page
+        }
+        }
+    }, [navigation]);
+
+    const [SuccessfulTransaction, setSuccessfulTransactions] = useState([]);
+    const [FailedTransaction, setFailedTransactions] = useState([]);
+
+    const router = useRouter();
+    const [searchQuery, setSearchQuery] = useState('');
+    const [filteredFailedTransactions, setFilteredFailedTransactions] = useState(FailedTransaction);
+    const [filteredSuccessfulTransactions, setFilteredSuccessfulTransactions] = useState(SuccessfulTransaction);
+
+    const handleAccount = () => {
+        router.push('./account/');
+    };
+
+    const handleLogout = () => {
+        localStorage.removeItem('token'); // Remove the token from localStorage
+        router.push('./login/');
+    };
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await fetch(`/api/admin/transactions`);
+                const data = await response.json();
+                setSuccessfulTransactions(data.SuccessfulTransaction);
+                setFailedTransactions(data.FailedTransaction);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+        fetchData();
+    }, []);
+
+    useEffect(() => {
+        if (!searchQuery) { // This will check for null, undefined, and empty string
+            setFilteredFailedTransactions(FailedTransaction);
+            setFilteredSuccessfulTransactions(SuccessfulTransaction);
+        } else {
+            const searchQueryNumber = Number(searchQuery);
+            setFilteredFailedTransactions(FailedTransaction.filter((transaction) => 
+                transaction.id === searchQueryNumber));
+            setFilteredSuccessfulTransactions(SuccessfulTransaction.filter((transaction) => 
+                transaction.id === searchQueryNumber));
+        }
+    }, [searchQuery, FailedTransaction, SuccessfulTransaction]);
+
+    return (
+        <div>
+            {/* Admin Navbar */}
+            <nav className="navbar bg-light">
+                <div className="container-fluid">
+                    {/* Title */}
+                    <span 
+                        className="navbar-brand mb-0 h1" 
+                        style={{ color: '#00b14f' }}
+                    >
+                        CrabForAdministration
                     </span>
-                    <div style={{cursor: "pointer", marginLeft: "20px", marginRight: "20px", display: "inline", color: "#00b14f"}}>
-                        ĐĂNG XUẤT
+
+                    {/* User Controls */}
+                    <div className="d-flex">
+                        <span style={{color: '#00b14f'}} className="me-2">
+                            CHÀO MỪNG, <strong>QUẢN TRỊ VIÊN</strong>.
+                        </span>
+                        <button onClick={handleLogout} className={styles.logOut}>
+                            ĐĂNG XUẤT
+                        </button>
                     </div>
                 </div>
-            </div>
-        </nav>
+            </nav>
 
-        <div className="container-fluid">
-            <div className="row">
-                {/* Sidebar */}
-                <div className={styles.sidebar}>        
-                    <div className={styles.section} style={{marginTop: "200px"}}>
-                        <div className={styles.section_title}>TÀI KHOẢN</div>
+            <div className="container-fluid">
+                <div className="row">
+                    {/* Sidebar */}
+                    <div className={styles.sidebar}>        
+                        <button 
+                            onClick = {handleAccount} 
+                            className={styles.section} 
+                            style={{marginTop: "200px"}}
+                        >
+                            <div className={styles.section_title}>TÀI KHOẢN</div>
+                        </button>
+                        <button className={styles.section} style={{marginTop: "10px"}}>
+                            <div 
+                                className={styles.section_title} 
+                                style={{backgroundColor: "#00b14f", color: "white"}}
+                            >
+                                GIAO DỊCH
+                            </div>
+                        </button>
                     </div>
-                    <div className={styles.section} style={{marginTop: "10px"}}>
-                        <div className={styles.section_title} style={{backgroundColor: "#00b14f", color: "white"}}>GIAO DỊCH</div>
-                    </div>
-                </div>
 
-                <div style={{display: "inline-block", backgroundColor: "#fff", width: "85%"}}>
-                    <div className="container bg-white " style={{width: "80%", padding: "15px"}}>
-                        <div className="input-group mb-3" style={{paddingTop: "50px"}}>
-                            <input type="text" className="form-control" placeholder="Nhập mã giao dịch..." aria-label="Search"></input>
-                            <button className="btn btn-outline-secondary" type="button">Tìm kiếm</button>
-                        </div>
-                        
-                        <div style={{maxHeight: "200px", overflowY: "scroll"}}>
-                            <table className="table table-bordered table-light table-striped" style={{tableLayout: "fixed", width: "100%"}}>
-                                <thead>
-                                <tr>
-                                    <th className={`text-center ${styles.sticky_header}`} scope="col" style={{color: "white", backgroundColor: "#00b14f"}}>MÃ GIAO DỊCH</th>
-                                    <th className={`text-center ${styles.sticky_header}`} scope="col" style={{color: "white", backgroundColor: "#00b14f"}}>MÃ KHÁCH HÀNG</th>
-                                    <th className={`text-center ${styles.sticky_header}`} scope="col" style={{color: "white", backgroundColor: "#00b14f"}}>MÃ TÀI XẾ</th>
-                                    <th className={`text-center ${styles.sticky_header}`} scope="col" style={{color: "white", backgroundColor: "#00b14f"}}>THÔNG TIN</th>
-                                    <th className={`text-center ${styles.sticky_header}`} scope="col" style={{color: "white", backgroundColor: "#00b14f"}}>TRẠNG THÁI</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                    {FailedTransaction.map((item) => (
-                                        <tr key={item.trans_id}>
-                                            <td className="text-center">{item.trans_id}</td>
-                                            <td className="text-center">{item.cus_id}</td>
-                                            <td className="text-center">{item.driver_id}</td>
-                                            <td className="text-center">{item.information}</td>
-                                            <td className="text-center">{item.state}</td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
+                    <div style={{display: "inline-block", backgroundColor: "#fff", width: "85%"}}>
+                        <div 
+                            className="container bg-white " 
+                            style={{width: "80%", padding: "15px"}}
+                        >
+                            <div className="input-group mb-3" style={{paddingTop: "50px"}}>
+                                <input 
+                                    type="text" 
+                                    className="form-control" 
+                                    placeholder="Nhập mã giao dịch..." 
+                                    aria-label="Search"
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e ? e.target.value : '')}
+                                />
+                                <button 
+                                    className="btn btn-outline-secondary" 
+                                    type="button"
+                                >
+                                    Tìm kiếm
+                                </button>
+                            </div>
+                            
+                            <div style={{maxHeight: "200px", overflowY: "scroll"}}>
+                                <table 
+                                    className="table table-bordered table-light table-striped" 
+                                    style={{tableLayout: "fixed", width: "100%"}}
+                                >
+                                    <thead>
+                                    <tr>
+                                        <th 
+                                            className={`text-center ${styles.sticky_header}`} 
+                                            scope="col" 
+                                            style={{color: "white", backgroundColor: "#00b14f"}}
+                                        >
+                                            MÃ GIAO DỊCH
+                                        </th>
+                                        <th 
+                                            className={`text-center ${styles.sticky_header}`} 
+                                            scope="col" 
+                                            style={{color: "white", backgroundColor: "#00b14f"}}
+                                        >
+                                            MÃ KHÁCH HÀNG
+                                        </th>
+                                        <th 
+                                            className={`text-center ${styles.sticky_header}`} 
+                                            scope="col" 
+                                            style={{color: "white", backgroundColor: "#00b14f"}}
+                                        >
+                                            MÃ TÀI XẾ
+                                        </th>
+                                        <th 
+                                            className={`text-center ${styles.sticky_header}`} 
+                                            scope="col" 
+                                            style={{color: "white", backgroundColor: "#00b14f"}}
+                                        >
+                                            GIÁ TIỀN
+                                        </th>
+                                        <th 
+                                            className={`text-center ${styles.sticky_header}`} 
+                                            scope="col" 
+                                            style={{color: "white", backgroundColor: "#00b14f"}}
+                                        >
+                                            TRẠNG THÁI
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                        {filteredFailedTransactions.map((item) => (
+                                            <tr key={item.id}>
+                                                <td className="text-center">{item.id}</td>
+                                                <td className="text-center">{item.cus_id}</td>
+                                                <td className="text-center">{item.driver_id}</td>
+                                                <td className="text-center">{item.amount}</td>
+                                                <td className="text-center">{item.status}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            {/* Dòng trắng để tách biệt */}
+                            <div style={{ height: "20px", backgroundColor: "white" }}></div>
 
-                        <div style={{ height: "20px", backgroundColor: "white" }}></div> {/* Dòng trắng để tách biệt */}
-
-                        <div style={{ maxHeight: "180px", overflowY: "scroll" }}>
-                            <table className="table table-bordered table-light table-striped" style={{tableLayout: "fixed", width: "100%"}}>
-                                <thead>
-                                </thead>
-                                <tbody>
-                                    {SuccessfulTransaction.map((item) => (
-                                        <tr key={item.trans_id}>
-                                            <td className="text-center">{item.trans_id}</td>
-                                            <td className="text-center">{item.cus_id}</td>
-                                            <td className="text-center">{item.driver_id}</td>
-                                            <td className="text-center">{item.information}</td>
-                                            <td className="text-center">{item.state}</td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                            <div style={{ maxHeight: "180px", overflowY: "scroll" }}>
+                                <table 
+                                    className="table table-bordered table-light table-striped" 
+                                    style={{tableLayout: "fixed", width: "100%"}}
+                                >
+                                    <thead>
+                                    </thead>
+                                    <tbody>
+                                        {filteredSuccessfulTransactions.map((item) => (
+                                            <tr key={item.id}>
+                                                <td className="text-center">{item.id}</td>
+                                                <td className="text-center">{item.cus_id}</td>
+                                                <td className="text-center">{item.driver_id}</td>
+                                                <td className="text-center">{item.amount}</td>
+                                                <td className="text-center">{item.status}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-);
+    )
+};
 
 export default AdminTransaction;
