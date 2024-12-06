@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import L from 'leaflet';
+import { useMap } from 'react-leaflet';
 import 'leaflet-routing-machine';
 import "leaflet-control-geocoder";
 import "leaflet/dist/leaflet.css";
@@ -15,10 +16,10 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
 });
 
-const Map = () => {
+const Map = ({origin = null, destination = null}) => {
   useEffect(() => {
     // Initialize the map
-    const map = L.map('map').setView([51.505, -0.09], 13);
+    const map = L.map('map').setView([21.034229119985238, 105.78198599412406], 10);
 
     // Add a tile layer (OpenStreetMap)
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -28,7 +29,14 @@ const Map = () => {
 
     // Initialize routing control
     const routingControl = L.Routing.control({
-      waypoints: [], // Empty by default
+      // waypoints: [
+      //   L.latLng(props.origin.lat, props.origin.lng), // Starting point
+      //   L.latLng(props.destination.lat, props.destination.lng),  // Ending point
+      // ],
+      waypoints: (origin == null || destination == null) ? [] : [
+        L.latLng(origin.lat, origin.lng), // Starting point
+        L.latLng(destination.lat, destination.lng),  // Ending point
+      ], // Empty by default
       routeWhileDragging: true,
       geocoder: L.Control.Geocoder.nominatim(),
       suggest: L.Control.Geocoder.nominatim(),
@@ -87,6 +95,7 @@ const Map = () => {
 
     return () => {
       map.remove(); // Clean up on unmount
+      map.removeControl(routingControl);
     };
   }, []);
 
