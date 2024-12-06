@@ -1,5 +1,6 @@
 'use client';
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 const CrabLogo = () => (
   <div className="d-flex align-items-center gap-4">
@@ -16,19 +17,48 @@ const CrabLogo = () => (
 );
 
 const LoginPage = () => {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Đăng nhập với:', { email, password });
+    setError('');
+    setIsLoading(true);
+
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Đã xảy ra lỗi khi đăng nhập');
+      }
+
+      // Store user data in localStorage or state management solution
+      localStorage.setItem('driver', JSON.stringify(data));
+      
+      // Redirect to dashboard or home page
+      router.push('/dashboard');
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <div className="min-vh-100 bg-white p-4">
       <div className="container">
-        {/* Logo */}
         <div className="row justify-content-center mb-5">
           <div className="col-md-6">
             <CrabLogo />
@@ -38,9 +68,13 @@ const LoginPage = () => {
         <div className="row justify-content-center">
           <div className="col-md-6">
             <div className="mb-5">
-              <h2 className="fw-semibold mb-4">Đăng nhập </h2>
+              <h2 className="fw-semibold mb-4">Đăng nhập</h2>
+              {error && (
+                <div className="alert alert-danger" role="alert">
+                  {error}
+                </div>
+              )}
               <form onSubmit={handleSubmit}>
-                {/* Email field */}
                 <div className="mb-4">
                   <label className="form-label text-secondary">
                     Nhập email tài khoản đăng ký
@@ -51,16 +85,16 @@ const LoginPage = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="form-control"
+                    required
                   />
                 </div>
 
-                {/* Password field */}
                 <div className="mb-4">
                   <div className="d-flex justify-content-between">
                     <label className="form-label text-secondary">
                       Mật khẩu
                     </label>
-                    <a href="#" className="text-success text-decoration-none">
+                    <a href="/forgot-password" className="text-success text-decoration-none">
                       Quên mật khẩu?
                     </a>
                   </div>
@@ -71,6 +105,7 @@ const LoginPage = () => {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       className="form-control pe-5"
+                      required
                     />
                     <button
                       type="button"
@@ -83,26 +118,27 @@ const LoginPage = () => {
                   </div>
                 </div>
 
-                {/* Login button */}
                 <button
                   type="submit"
                   className="btn btn-success w-100 py-2 mb-4"
+                  disabled={isLoading}
                 >
-                  Đăng nhập
+                  {isLoading ? 'Đang đăng nhập...' : 'Đăng nhập'}
                 </button>
               </form>
             </div>
 
-            {/* Footer */}
             <div className="pt-4 border-top">
               <div className="d-flex justify-content-between text-secondary small">
-                <a href="#" className="text-secondary text-decoration-none me-3">Điều khoản & Điều kiện</a>
+                <a href="/terms" className="text-secondary text-decoration-none me-3">
+                  Điều khoản & Điều kiện
+                </a>
               </div>
 
               <div className="mt-3 d-flex justify-content-between align-items-center text-secondary small">
                 <div>
                   <span>Mới sử dụng CrabForAdmin? </span>
-                  <a href="#" className="text-success text-decoration-none">Đăng ký</a>
+                  <a href="signup" className="text-success text-decoration-none">Đăng ký</a>
                 </div>
               </div>
             </div>
