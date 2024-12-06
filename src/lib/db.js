@@ -17,7 +17,7 @@ let connectionPool = null;
 // Hàm tạo connection pool
 function createConnectionPool() {
   if (!connectionPool) {
-    connectionPool = mysql.createPool(dbConfig);
+    connectionPool = dbConfig;
   }
   return connectionPool;
 }
