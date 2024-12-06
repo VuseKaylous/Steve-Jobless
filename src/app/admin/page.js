@@ -21,7 +21,7 @@ const LoginPage = () => {
 
       if (response.ok) {
         localStorage.setItem('token', data.token); 
-        router.push('./account/');
+        router.push('/admin/account/');
         // Redirect to the admin dashboard or another page
       } else {
         setAlertMessage('Sai mật khẩu. Vui lòng đăng nhập lại!');

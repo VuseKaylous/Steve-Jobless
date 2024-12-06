@@ -13,7 +13,7 @@ const AdminTransaction = () => {
         const isAuthenticated = !!localStorage.getItem('token'); // Replace with your authentication logic
 
         if (!isAuthenticated) {
-            navigation.push('./login'); // Redirect to the login page
+            navigation.push('./'); // Redirect to the login page
         }
         }
     }, [navigation]);
@@ -32,7 +32,7 @@ const AdminTransaction = () => {
 
     const handleLogout = () => {
         localStorage.removeItem('token'); // Remove the token from localStorage
-        router.push('./login/');
+        router.push('./');
     };
 
     useEffect(() => {
@@ -149,20 +149,6 @@ const AdminTransaction = () => {
                                             scope="col" 
                                             style={{color: "white", backgroundColor: "#00b14f"}}
                                         >
-                                            MÃ KHÁCH HÀNG
-                                        </th>
-                                        <th 
-                                            className={`text-center ${styles.sticky_header}`} 
-                                            scope="col" 
-                                            style={{color: "white", backgroundColor: "#00b14f"}}
-                                        >
-                                            MÃ TÀI XẾ
-                                        </th>
-                                        <th 
-                                            className={`text-center ${styles.sticky_header}`} 
-                                            scope="col" 
-                                            style={{color: "white", backgroundColor: "#00b14f"}}
-                                        >
                                             GIÁ TIỀN
                                         </th>
                                         <th 
@@ -178,8 +164,6 @@ const AdminTransaction = () => {
                                         {filteredFailedTransactions.map((item) => (
                                             <tr key={item.id}>
                                                 <td className="text-center">{item.id}</td>
-                                                <td className="text-center">{item.cus_id}</td>
-                                                <td className="text-center">{item.driver_id}</td>
                                                 <td className="text-center">{item.amount}</td>
                                                 <td className="text-center">{item.status}</td>
                                             </tr>
@@ -202,8 +186,6 @@ const AdminTransaction = () => {
                                         {filteredSuccessfulTransactions.map((item) => (
                                             <tr key={item.id}>
                                                 <td className="text-center">{item.id}</td>
-                                                <td className="text-center">{item.cus_id}</td>
-                                                <td className="text-center">{item.driver_id}</td>
                                                 <td className="text-center">{item.amount}</td>
                                                 <td className="text-center">{item.status}</td>
                                             </tr>

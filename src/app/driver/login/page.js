@@ -30,12 +30,18 @@ const LoginPage = () => {
     setIsLoading(true);
 
     try {
-      const response = await fetch('/api/auth/login', {
+      const requestData = {
+        email: email,
+        password: password,
+        
+      };
+
+      const response = await fetch('/api/driver/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify(requestData),
       });
 
       const data = await response.json();
@@ -48,7 +54,7 @@ const LoginPage = () => {
       localStorage.setItem('driver', JSON.stringify(data));
       
       // Redirect to dashboard or home page
-      router.push('/dashboard');
+      router.push('./mainPage');
     } catch (err) {
       setError(err.message);
     } finally {
@@ -126,21 +132,6 @@ const LoginPage = () => {
                   {isLoading ? 'Đang đăng nhập...' : 'Đăng nhập'}
                 </button>
               </form>
-            </div>
-
-            <div className="pt-4 border-top">
-              <div className="d-flex justify-content-between text-secondary small">
-                <a href="/terms" className="text-secondary text-decoration-none me-3">
-                  Điều khoản & Điều kiện
-                </a>
-              </div>
-
-              <div className="mt-3 d-flex justify-content-between align-items-center text-secondary small">
-                <div>
-                  <span>Mới sử dụng CrabForAdmin? </span>
-                  <a href="signup" className="text-success text-decoration-none">Đăng ký</a>
-                </div>
-              </div>
             </div>
           </div>
         </div>

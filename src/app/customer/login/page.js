@@ -12,7 +12,7 @@ const CrabLogo = () => (
         <path d="M95 9.5h-8v22h8c3.9 0 7-1.1 7-5 0-2.4-1.3-4.1-3-4.8 1.7-.7 3-2.4 3-4.2 0-3.9-3.1-8-7-8zm-2 9v-4h2c1.7 0 3 .3 3 2s-1.3 2-3 2h-2zm0 8v-4h2c1.7 0 3 .3 3 2s-1.3 2-3 2h-2z" transform="translate(90) scale(1.5)" />
       </g>
     </svg>
-    <span className="display-6">For Driver</span>
+    <span className="display-6">For Customer</span>
   </div>
 );
 
@@ -30,12 +30,18 @@ const LoginPage = () => {
     setIsLoading(true);
 
     try {
-      const response = await fetch('/api(customer)/login', {
+      const requestData = {
+        email: email,
+        password: password,
+        
+      };
+
+      const response = await fetch('/api/customer/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify(requestData),
       });
 
       const data = await response.json();
@@ -48,7 +54,7 @@ const LoginPage = () => {
       localStorage.setItem('customer', JSON.stringify(data));
 
       // Redirect to dashboard or home page
-      router.push('/customer/booking');
+      router.push('./booking');
     } catch (err) {
       setError(err.message);
     } finally {
@@ -94,7 +100,7 @@ const LoginPage = () => {
                     <label className="form-label text-secondary">
                       Mật khẩu
                     </label>
-                    <a href="/forgot-password" className="text-success text-decoration-none">
+                    <a href="./forgot-password" className="text-success text-decoration-none">
                       Quên mật khẩu?
                     </a>
                   </div>
@@ -126,21 +132,6 @@ const LoginPage = () => {
                   {isLoading ? 'Đang đăng nhập...' : 'Đăng nhập'}
                 </button>
               </form>
-            </div>
-
-            <div className="pt-4 border-top">
-              <div className="d-flex justify-content-between text-secondary small">
-                <a href="/terms" className="text-secondary text-decoration-none me-3">
-                  Điều khoản & Điều kiện
-                </a>
-              </div>
-
-              <div className="mt-3 d-flex justify-content-between align-items-center text-secondary small">
-                <div>
-                  <span>Mới sử dụng CrabForAdmin? </span>
-                  <a href="signup" className="text-success text-decoration-none">Đăng ký</a>
-                </div>
-              </div>
             </div>
           </div>
         </div>

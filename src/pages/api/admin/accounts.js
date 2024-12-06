@@ -1,22 +1,11 @@
-import mysql from 'mysql2/promise';
+import { executeQuery } from '@/lib/db';
 
 export default async function handler(req, res) {
-  const dbConfig = {
-    host: 'localhost',
-    user: 'fall2024c56g8',
-    password: 'unemployment',
-    database: 'fall2024c56g8_crab',
-    connectTimeout: 100000, // Thời gian chờ kết nối (10 giây)
-  };
-
   try {
-    // Tạo kết nối với MySQL
-    const connection = await mysql.createConnection(dbConfig);
-
-
     // Thực hiện một câu truy vấn đơn giản
-    const [customers] = await connection.execute('SELECT * FROM customers');
-    const [drivers] = await connection.execute('SELECT * FROM drivers');
+    const customers = await executeQuery('SELECT * FROM customers');
+    const drivers = await executeQuery('SELECT * FROM drivers');
+    
     // Trả kết quả về client (JSON)
     res.status(200).json({ customersData: customers, driversData: drivers });
 

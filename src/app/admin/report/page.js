@@ -12,7 +12,7 @@ const AdminReports = () => {
         const isAuthenticated = !!localStorage.getItem('token'); // Replace with your authentication logic
 
         if (!isAuthenticated) {
-            navigation.push('./login'); // Redirect to the login page
+            navigation.push('./'); // Redirect to the login page
         }
         }
     }, [navigation]);
@@ -51,7 +51,7 @@ const AdminReports = () => {
 
     const handleLogout = () => {
         localStorage.removeItem('token'); // Remove the token from localStorage
-        router.push('./login/');
+        router.push('./');
     };
 
     return (

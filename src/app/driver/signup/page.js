@@ -86,7 +86,7 @@ export default function BusinessRegistration() {
 
       console.log('Sending data:', requestData);
 
-      const response = await fetch('/api/auth/signup', {
+      const response = await fetch('/api/driver/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

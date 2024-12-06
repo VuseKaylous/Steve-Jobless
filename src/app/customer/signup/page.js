@@ -3,8 +3,6 @@ import { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useRouter } from 'next/navigation';
 
-
-
 export default function BusinessRegistration() {
   const router = useRouter();
   // ... giữ nguyên các state khác ...
@@ -85,37 +83,24 @@ export default function BusinessRegistration() {
 
       console.log('Sending data:', requestData); // Log request data
 
-      const response = await fetch('/api(customer)/signup', {
+      const response = await fetch('/api/customer/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(requestData),
       });
-
-      // Log raw response for debugging
-      console.log('Response status:', response.status);
-      console.log('Response headers:', response.headers);
-
-      // Check if response is empty
-      const responseText = await response.text();
-      console.log('Response text:', responseText);
-
-      let data;
-      try {
-        data = responseText ? JSON.parse(responseText) : null;
-      } catch (parseError) {
-        console.error('JSON parse error:', parseError);
-        throw new Error('Invalid response format from server');
-      }
+      
+      console.log("Response", response);
 
       if (!response.ok) {
-        throw new Error(data?.error || `Error: ${response.status} ${response.statusText}`);
-      }
-
-      if (!data) {
-        throw new Error('Empty response from server');
-      }
+        const errorData = await response.json();
+        console.error('Error response:', errorData);
+        throw new Error(errorData.error || `Error: ${response.status} ${response.statusText}`);
+    }
+    
+    const data = await response.json();
+    console.log('Response data:', data);
 
       // Success case
       console.log('Registration successful:', data);
