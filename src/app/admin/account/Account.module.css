@@ -22,7 +22,34 @@
     z-index: 1; /* Đảm bảo tiêu đề nổi lên trên các hàng dữ liệu */
 }
 
+.section {
+    border: None;
+    padding: 0px;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+}
+
+.logOut {
+    border: none;
+    background-color: transparent;
+    color: #00b14f;
+    cursor: pointer;
+    margin-left: "40px";
+    margin-right: "40px";
+    display: "inline";
+}
+
 .section:focus {
     background-color: #00b14f;
     color: white;
+}
+
+.Report {
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    margin-left: "40px";
+    margin-right: "40px";
+    display: "inline";
 }
