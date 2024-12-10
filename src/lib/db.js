@@ -1,7 +1,7 @@
 import mysql from 'mysql2/promise';
 
 // Cấu hình kết nối database
-const dbConfig = mysql.createPool({
+const dbConfig = {
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
@@ -9,7 +9,7 @@ const dbConfig = mysql.createPool({
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
-});
+};
 
 // Biến lưu trữ connection pool
 let connectionPool = null;
