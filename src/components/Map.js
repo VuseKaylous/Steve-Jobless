@@ -66,21 +66,16 @@ const Map = ({origin = null, destination = null}) => {
       alert('Location access denied or unavailable.');
     });
 
-    // Add button for manual geolocation
-    const locateButton = L.control({ position: 'topleft' });
-    locateButton.onAdd = function () {
-      const button = L.DomUtil.create('button', 'locate-button');
-      button.innerText = 'Tự định vị';
-      button.style.padding = '8px';
-      button.style.backgroundColor = 'white';
-      button.style.border = '1px solid #ccc';
-      button.style.cursor = 'pointer';
-      button.addEventListener('click', () => {
-        map.locate({ setView: true, maxZoom: 16 });
-      });
-      return button;
-    };
-    locateButton.addTo(map);
+    // Automatically locate the user
+    map.locate({ setView: true, maxZoom: 16 });
+
+    // Add event listener for location found
+    map.on('locationfound', function (e) {
+      const radius = e.accuracy / 2;
+      L.marker(e.latlng).addTo(map)
+        .bindPopup(`You are within ${radius} meters from this point`).openPopup();
+      L.circle(e.latlng, radius).addTo(map);
+    });
 
     return () => {
       map.remove(); // Clean up on unmount
@@ -88,7 +83,7 @@ const Map = ({origin = null, destination = null}) => {
     };
   }, [origin, destination]);
 
-  return <div id="map" style={{ height: '80vh', width: '100%' }} />; // Set height to 80% of the viewport height
+  return <div id="map" style={{ height: '85vh', width: '100%' }} />; // Set height to 80% of the viewport height
 };
 
 export default Map;

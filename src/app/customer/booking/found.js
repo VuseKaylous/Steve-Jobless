@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
+import { useRouter } from 'next/navigation';
 import styles from "./page.module.css"
 
-const Found = ({ driverId }) => {
+const Found = ({ driverId, origin, destination }) => {
   const [driverInfo, setDriverInfo] = useState({});
+  const router = useRouter();
 
   useEffect(() => {
     const fetchDriverInfo = async () => {
@@ -29,16 +31,26 @@ const Found = ({ driverId }) => {
     }
   }, [driverId]);
 
-  console.log(driverInfo);
-
+  useEffect(() => {
+    if (Object.keys(driverInfo).length > 0) {
+      router.push(`./location?dlat=${destination.lat}&dlng=${destination.lng}&olat=${origin.lat}&olng=${origin.lng}`);
+    }
+  }, [driverInfo, router]);
+  
   return (
     <div className={styles.modalContent}>
       <div>
         <p className="mx-auto h5 fw-bold m-0">Đã tìm thấy tài xế!</p>
         <br></br>
-        <p className="mx-auto h5 ms-5" style={{textAlign: "left"}}>SĐT: {driverInfo.phone_number}</p>
-        <p className="mx-auto h5 ms-5" style={{textAlign: "left"}}>Tài xế: {driverInfo.name}</p>
-        <p className="mx-auto h5 ms-5" style={{textAlign: "left"}}>Biển số xe: {driverInfo.vehicle_registration}</p>
+        <p className="mx-auto h5 ms-5" style={{textAlign: "left"}}>
+          SĐT: {driverInfo.phone_number}
+        </p>
+        <p className="mx-auto h5 ms-5" style={{textAlign: "left"}}>
+          Tài xế: {driverInfo.name}
+        </p>
+        <p className="mx-auto h5 ms-5" style={{textAlign: "left"}}>
+          Biển số xe: {driverInfo.vehicle_registration}
+        </p>
       </div>
     </div>
   )

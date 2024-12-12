@@ -48,7 +48,6 @@ const Booking = () => {
         origin: StartingPoint,
         destination: DestinationPoint,
       });
-      console.log(requestData);
       try {
         const response = await fetch('/api/customer/booking', {
           method: 'POST',
@@ -269,7 +268,7 @@ const Booking = () => {
 
       {driverFounded && (
         <div className={styles.modal}>
-          <Found driverId={driverId}/>
+          <Found driverId={driverId} origin={origin} destination={destination}/>
         </div>
       )}
     </div>
