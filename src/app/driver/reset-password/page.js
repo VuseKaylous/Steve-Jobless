@@ -16,7 +16,7 @@ export default function ResetDriverPassword() {
     }
 
     try {
-      const response = await fetch('/api/reset-driver-password', {
+      const response = await fetch('/api/driver/reset-driver-password', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

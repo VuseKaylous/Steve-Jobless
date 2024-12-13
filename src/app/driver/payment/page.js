@@ -6,7 +6,7 @@ const Payment = () => {
 
   const handleConfirmPayment = async () => {
     try {
-      const response = await fetch('/api/payment', {
+      const response = await fetch('/api/driver/payment', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
