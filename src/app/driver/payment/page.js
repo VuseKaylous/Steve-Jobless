@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 
 const Payment = () => {
-  const [paymentId, setPaymentId] = useState(123); // Giả sử paymentId sẽ được lấy từ một nơi khác
+  const [paymentId, setPaymentId] = useState(123);
 
   const handleConfirmPayment = async () => {
     try {
@@ -11,7 +11,7 @@ const Payment = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ paymentId }), // Truyền paymentId vào body
+        body: JSON.stringify({ paymentId }),
       });
 
       if (response.ok) {

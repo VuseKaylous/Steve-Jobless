@@ -1,6 +1,6 @@
-import { connectToDatabase } from '../../utils/db'; 
+import { executeQuery } from '@/lib/db';
 
-export default async function handler(req, res) {
+export default function handler(req, res) {
   if (req.method === 'POST') {
     const { paymentId } = req.body;
 
@@ -8,24 +8,25 @@ export default async function handler(req, res) {
       return res.status(400).json({ message: 'Thiếu paymentId' });
     }
 
-    try {
-      const { db } = await connectToDatabase();
-      const result = await db.collection('payments').updateOne(
-        { _id: paymentId },
-        { $set: { state: 'complete' } }
-      );
+    // Cập nhật trạng thái payment trong DB
+    db.query(
+      'UPDATE payments SET state = "complete" WHERE id = ?',
+      [paymentId], // Sử dụng placeholder "?" để tránh SQL injection
+      (err, results) => {
+        if (err) {
+          console.error('Lỗi khi cập nhật trạng thái payment:', err);
+          return res.status(500).json({ message: 'Lỗi hệ thống' });
+        }
 
-      if (result.modifiedCount === 1) {
-        return res.status(200).json({ message: 'Xác nhận thành công' });
-      } else {
-        return res.status(400).json({ message: 'Không tìm thấy payment' });
+        if (results.affectedRows > 0) {
+          return res.status(200).json({ message: 'Xác nhận thanh toán thành công' });
+        } else {
+          return res.status(404).json({ message: 'Không tìm thấy payment để cập nhật' });
+        }
       }
-    } catch (error) {
-      console.error('Database error:', error);
-      return res.status(500).json({ message: 'Lỗi hệ thống' });
-    }
+    );
   } else {
     res.setHeader('Allow', ['POST']);
-    return res.status(405).json({ message: `Method ${req.method} không được hỗ trợ` });
+    return res.status(405).json({ message: `Method ${req.method} không được hỗ trợ.` });
   }
 }
