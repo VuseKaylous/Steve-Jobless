@@ -52,9 +52,11 @@ const LoginPage = () => {
 
       // Store user data in localStorage or state management solution
       localStorage.setItem('driver', JSON.stringify(data));
+      localStorage.setItem('userId', data['id']);
+      // console.log(data)
       
       // Redirect to dashboard or home page
-      router.push('./mainPage');
+      router.push('.');
     } catch (err) {
       setError(err.message);
     } finally {
