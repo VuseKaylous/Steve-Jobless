@@ -10,7 +10,6 @@ const dbConfig = {
   connectionLimit: 10,
   queueLimit: 0,
 };
-};
 
 // Biến lưu trữ connection pool
 let connectionPool = null;
@@ -18,7 +17,7 @@ let connectionPool = null;
 // Hàm tạo connection pool
 function createConnectionPool() {
   if (!connectionPool) {
-    connectionPool = dbConfig;
+    connectionPool = mysql.createPool(dbConfig);
   }
   return connectionPool;
 }
