@@ -9,6 +9,8 @@ export default function BusinessRegistration() {
     phone_number: '',
     birthdate: '',
     password: '',
+    driver_license_id: '',
+    vehicle_registration: '',
     country: 'Việt Nam',
     countryCode: '+84'
   });
@@ -35,7 +37,8 @@ export default function BusinessRegistration() {
   // Validate form data
   const validateForm = () => {
     if (!formData.name || !formData.email || !formData.phone_number || 
-        !formData.birthdate || !formData.password) {
+        !formData.birthdate || !formData.password ||
+        !formData.driver_license_id || !formData.vehicle_registration) {
       setError('Vui lòng điền đầy đủ thông tin');
       return false;
     }
@@ -81,7 +84,9 @@ export default function BusinessRegistration() {
         email: formData.email,
         password: formData.password,
         birthdate: formattedDate,
-        phone_number: fullPhoneNumber
+        phone_number: fullPhoneNumber,
+        driver_license_id: formData.driver_license_id,
+        vehicle_registration: formData.vehicle_registration
       };
 
       console.log('Sending data:', requestData);
@@ -139,20 +144,6 @@ export default function BusinessRegistration() {
                 <p className="text-muted mb-4">
                   Quản lý nhu cầu di chuyển, đồ ăn và giao hàng của bạn
                 </p>
-                <div className="d-flex justify-content-between align-items-center mb-4">
-                  <div className="d-flex align-items-center">
-                    <div className="badge bg-success rounded-circle p-3 text-white">1</div>
-                    <span className="ms-2 text-success fw-medium">Thông tin cá nhân</span>
-                  </div>
-                  <div className="d-flex align-items-center">
-                    <div className="badge bg-secondary rounded-circle p-3 text-white">2</div>
-                    <span className="ms-2 text-muted">Tải lên giấy tờ</span>
-                  </div>
-                  <div className="d-flex align-items-center">
-                    <div className="badge bg-secondary rounded-circle p-3 text-white">3</div>
-                    <span className="ms-2 text-muted">Xác minh email</span>
-                  </div>
-                </div>
                 <div className="bg-light p-4 rounded">
                   <h2 className="h4 fw-bold text-dark mb-3">Thông tin cá nhân</h2>
                   <p className="text-muted mb-4">
@@ -244,6 +235,28 @@ export default function BusinessRegistration() {
                           name="password"
                           value={formData.password}
                           onChange={handleInputChange}
+                        />
+                      </div>
+                      <div className="col-md-6 mb-3">
+                        <label className="form-label">Số giấy phép lái xe</label>
+                        <input 
+                          type="text" 
+                          className="form-control"
+                          name="driver_license_id"
+                          value={formData.driver_license_id}
+                          onChange={handleInputChange}
+                          placeholder="Nhập số giấy phép lái xe"
+                        />
+                      </div>
+                      <div className="col-md-6 mb-3">
+                        <label className="form-label">Số đăng ký xe</label>
+                        <input 
+                          type="text" 
+                          className="form-control"
+                          name="vehicle_registration"
+                          value={formData.vehicle_registration}
+                          onChange={handleInputChange}
+                          placeholder="Nhập số đăng ký xe"
                         />
                       </div>
                     </div>
