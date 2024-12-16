@@ -1,32 +1,38 @@
 import { executeQuery } from '@/lib/db';
 
-export default function handler(req, res) {
-  if (req.method === 'POST') {
-    const { paymentId } = req.body;
-
-    if (!paymentId) {
-      return res.status(400).json({ message: 'Thiếu paymentId' });
+export default async function handler(req, res) {
+    // Chỉ cho phép phương thức POST
+    if (req.method !== 'POST') {
+        return res.status(405).json({ error: 'Phương thức không được phép' });
     }
 
-    // Cập nhật trạng thái payment trong DB
-    db.query(
-      'UPDATE payments SET state = "complete" WHERE id = ?',
-      [paymentId], // Sử dụng placeholder "?" để tránh SQL injection
-      (err, results) => {
-        if (err) {
-          console.error('Lỗi khi cập nhật trạng thái payment:', err);
-          return res.status(500).json({ message: 'Lỗi hệ thống' });
-        }
+    // Lấy dữ liệu từ request body
+    const { order_id, amount, status } = req.body;
 
-        if (results.affectedRows > 0) {
-          return res.status(200).json({ message: 'Xác nhận thanh toán thành công' });
-        } else {
-          return res.status(404).json({ message: 'Không tìm thấy payment để cập nhật' });
-        }
-      }
-    );
-  } else {
-    res.setHeader('Allow', ['POST']);
-    return res.status(405).json({ message: `Method ${req.method} không được hỗ trợ.` });
-  }
+    // Kiểm tra xem dữ liệu có đầy đủ không
+    if (!order_id || !amount || !status) {
+        return res.status(400).json({ error: 'Thiếu tham số yêu cầu' });
+    }
+
+    try {
+
+        // Chèn bản ghi thanh toán mới vào bảng payment
+        const result = await executeQuery(
+            `INSERT INTO payments (order_id, amount, status, created_at) 
+             VALUES (?, ?, ?, NOW())`,
+            [order_id, amount, status]
+        );
+
+        // Trả về phản hồi thành công với dữ liệu bản ghi vừa thêm
+        return res.status(200).json({
+            id: result.insertId, // ID tự động tăng
+            order_id: order_id,
+            amount: amount,
+            status: status,
+            created_at: new Date().toISOString()
+        });
+    } catch (error) {
+        console.error('Payment insertion error:', error);
+        return res.status(500).json({ error: 'Đã xảy ra lỗi khi thêm thanh toán' });
+    }
 }
