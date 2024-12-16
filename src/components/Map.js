@@ -6,7 +6,7 @@ import "leaflet-control-geocoder";
 import "leaflet/dist/leaflet.css";
 import "leaflet-routing-machine/dist/leaflet-routing-machine.css";
 import "leaflet-control-geocoder/dist/Control.Geocoder.css";
-
+import "./custom-leaflet.css";
 // Fix for missing marker images in Leaflet
 delete L.Icon.Default.prototype._getIconUrl;
 
@@ -29,10 +29,6 @@ const Map = ({origin = null, destination = null}) => {
 
     // Initialize routing control
     const routingControl = L.Routing.control({
-      // waypoints: [
-      //   L.latLng(props.origin.lat, props.origin.lng), // Starting point
-      //   L.latLng(props.destination.lat, props.destination.lng),  // Ending point
-      // ],
       waypoints: (origin == null || destination == null) ? [] : [
         L.latLng(origin.lat, origin.lng), // Starting point
         L.latLng(destination.lat, destination.lng),  // Ending point
@@ -57,49 +53,37 @@ const Map = ({origin = null, destination = null}) => {
       },
     }).addTo(map);
 
-    // Locate user and update routing start point
-    map.locate({ setView: true, maxZoom: 16 });
-    map.on('locationfound', function (e) {
-      const radius = e.accuracy / 2; // Accuracy in meters
-
-      // Add a marker at the user's location
-      L.marker(e.latlng).addTo(map).bindPopup(`You are within ${radius} meters of this point.`).openPopup();
-
-      // Add a circle to show accuracy
-      L.circle(e.latlng, radius).addTo(map);
-
-      // Update routing start point
-      routingControl.getPlan().setWaypoints([L.latLng(e.latlng)]);
-    });
+    // Update waypoints when origin or destination changes
+    if (origin && destination) {
+      routingControl.setWaypoints([
+        L.latLng(origin.lat, origin.lng),
+        L.latLng(destination.lat, destination.lng),
+      ]);
+    }
 
     // Handle location errors
     map.on('locationerror', function (e) {
       alert('Location access denied or unavailable.');
     });
 
-    // Add button for manual geolocation
-    const locateButton = L.control({ position: 'topleft' });
-    locateButton.onAdd = function () {
-      const button = L.DomUtil.create('button', 'locate-button');
-      button.innerText = 'Tự định vị';
-      button.style.padding = '8px';
-      button.style.backgroundColor = 'white';
-      button.style.border = '1px solid #ccc';
-      button.style.cursor = 'pointer';
-      button.addEventListener('click', () => {
-        map.locate({ setView: true, maxZoom: 16 });
-      });
-      return button;
-    };
-    locateButton.addTo(map);
+    // Automatically locate the user
+    map.locate({ setView: true, maxZoom: 16 });
+
+    // Add event listener for location found
+    map.on('locationfound', function (e) {
+      const radius = e.accuracy / 2;
+      L.marker(e.latlng).addTo(map)
+        .bindPopup(`You are within ${radius} meters from this point`).openPopup();
+      L.circle(e.latlng, radius).addTo(map);
+    });
 
     return () => {
       map.remove(); // Clean up on unmount
       map.removeControl(routingControl);
     };
-  }, []);
+  }, [origin, destination]);
 
-  return <div id="map" style={{ height: '80vh', width: '100%' }} />; // Set height to 80% of the viewport height
+  return <div id="map" style={{ height: '85vh', width: '100%' }} />; // Set height to 80% of the viewport height
 };
 
 export default Map;
