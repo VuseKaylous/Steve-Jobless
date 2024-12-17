@@ -1,18 +1,20 @@
 "use client";
 
 import React, { useState, useCallback } from "react";
+import { useRouter } from 'next/navigation';
 import { GoogleMap, LoadScript, Marker, Autocomplete, DirectionsRenderer } from "@react-google-maps/api";
 
 const mapContainerStyle = { width: "100vw", height: "100vh" };
 const center = { lat: 21.0285, lng: 105.8542 }; // Trung tâm bản đồ (Hà Nội)
 
 const DriverDirections = () => {
+  const router = useRouter(); // Thêm router
   const [map, setMap] = useState(null);
   const [currentLocation, setCurrentLocation] = useState(null);
   const [directions, setDirections] = useState(null);
   const [startPlace, setStartPlace] = useState(null);
   const [endPlace, setEndPlace] = useState(null);
-  const [showPopup, setShowPopup] = useState(false); // Trạng thái hiển thị pop-up
+  const [showPopup, setShowPopup] = useState(false);
 
   // Dữ liệu giả khách hàng
   const fakeCustomerData = {
@@ -23,7 +25,24 @@ const DriverDirections = () => {
     price: "100,000 VNĐ"
   };
 
-  // Xử lý sự kiện lấy chỉ đường
+  // Xử lý sự kiện đăng xuất
+  const handleSignOut = () => {
+    try {
+        // Xóa token khỏi localStorage
+        localStorage.removeItem('token');
+        
+        // Chuyển hướng về màn hình đăng nhập của tài xế
+        router.push('/driver/login');
+
+        // Hiển thị thông báo đăng xuất thành công
+        alert('Đăng xuất thành công!');
+    } catch (error) {
+        console.error('Lỗi khi đăng xuất:', error);
+        alert('Có lỗi xảy ra khi đăng xuất. Vui lòng thử lại.');
+    }
+};
+
+  // Các phương thức khác giữ nguyên như ban đầu...
   const handleGetDirections = useCallback(() => {
     if (!startPlace || !endPlace) return;
 
@@ -44,7 +63,6 @@ const DriverDirections = () => {
     );
   }, [startPlace, endPlace]);
 
-  // Định vị vị trí hiện tại của người dùng
   const locateCurrentPosition = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -54,7 +72,7 @@ const DriverDirections = () => {
             lng: position.coords.longitude,
           };
           setCurrentLocation(location);
-          map.panTo(location); // Đặt vị trí bản đồ tại vị trí hiện tại
+          map.panTo(location);
         },
         (error) => {
           console.error("Lỗi khi lấy vị trí hiện tại:", error);
@@ -65,21 +83,12 @@ const DriverDirections = () => {
     }
   };
 
-  // Hiển thị pop-up "Có Khách"
   const handleShowPopup = () => {
     setShowPopup(true);
   };
 
-  // Đóng pop-up
   const handleClosePopup = () => {
     setShowPopup(false);
-  };
-
-  // Xử lý sự kiện sign out
-  const handleSignOut = () => {
-    console.log("Signing out...");
-    // Logic để sign out
-    alert("Bạn đã đăng xuất!");
   };
 
   return (
@@ -126,7 +135,7 @@ const DriverDirections = () => {
           Sign Out
         </button>
 
-        {/* Pop-up thông tin khách hàng */}
+        {/* Phần popup giữ nguyên như ban đầu */}
         {showPopup && (
           <div style={{
             position: "fixed",
@@ -185,7 +194,6 @@ const DriverDirections = () => {
             </div>
           </div>
         )}
-
       </div>
     </LoadScript>
   );
