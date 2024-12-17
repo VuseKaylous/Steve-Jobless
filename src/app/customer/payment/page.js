@@ -1,50 +1,64 @@
 'use client';
-import React, { useState } from 'react';
+
+import React, { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 const Payment = () => {
-    // Khởi tạo các state để lưu thông tin về hành trình và thanh toán
-    const [start, setStart] = useState('Loading...');
-    const [end, setEnd] = useState('Loading...');
-    const [total, setTotal] = useState('Loading...');
-    const [error, setError] = useState(null);
+    const searchParams = useSearchParams();
+    const state = searchParams.get('state');
+    const order_id = searchParams.get('orderID');
+    const olat = searchParams.get('olat');
+    const olng = searchParams.get('olng'); 
+    const dlat = searchParams.get('dlat');
+    const dlng = searchParams.get('dlng');
+    const driverID = searchParams.get('driverID');
+    const [start, setPickupLocation] = useState('');
+    const [end, setDropoffLocation] = useState('');
+    const [distance, setDistance] = useState(0);
 
-    // Hàm gọi API khi tài xế bấm "Đã đến nơi"
-    const handleInfo = async () => {
-        try {
-            const response = await fetch(`/api/customer/payment?order_id=1`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
-
-            if (!response.ok) {
-                throw new Error('Không thể cập nhật trạng thái chuyến đi');
+    useEffect(() => {
+        const fetchOrderInfo = async () => {
+            try {
+                const response = await fetch(`/api/customer/order-info?order_id=${order_id}`);
+                const data = await response.json();
+                setPickupLocation(data.pickup_location);
+                setDropoffLocation(data.dropoff_location);
+            } catch (error) {
+                console.error('Error fetching order information:', error);
             }
-
-            const data = await response.json();
-
-            // Cập nhật các giá trị từ API
-            setStart(data.order.pickup_location);
-            setEnd(data.order.dropoff_location);
-            setTotal(data.payment.amount);
-        } catch (error) {
-            setError(error.message);
+        };
+    
+        if (order_id) {
+          fetchOrderInfo();
         }
+    }, [order_id]);
+
+    const calculateDistance = (lat1, lon1, lat2, lon2) => {
+        const R = 6371; // Radius of the Earth in kilometers
+        const dLat = (lat2 - lat1) * Math.PI / 180;
+        const dLon = (lon2 - lon1) * Math.PI / 180;
+        const a = 
+          0.5 - Math.cos(dLat)/2 + 
+          Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+          (1 - Math.cos(dLon))/2;
+    
+        return R * 2 * Math.asin(Math.sqrt(a));
     };
+    
+    useEffect(() => {
+    setDistance(calculateDistance(olat, olng, dlat, dlng));
+    }, [olat, olng, dlat, dlng]);
 
     return (
         <div className='container-fluid bg-light vh-100'>
             <div className='position-relative container bg-white border border-light border-2' style={{ top: "20px", padding: "3%", width: "40%" }}>
                 <h1 className='text-center'>Thanh toán hóa đơn</h1>
 
-                <div className='text-white border border-2 rounded-2' style={{ padding: "5px", backgroundColor: "#00b14f" }}>
+                {/* <div className='text-white border border-2 rounded-2 text-center' style={{ padding: "5px", backgroundColor: "#00b14f" }}>
                     <strong>Tóm tắt hành trình</strong>
-                </div>
+                </div> */}
 
-                {error && <div className="alert alert-danger">{error}</div>} {/* Hiển thị lỗi nếu có */}
-
-                <div style={{ lineHeight: "40px" }}>
+                <div style={{ lineHeight: "30px" }}>
                     <div>
                         <span><strong>Điểm xuất phát: </strong></span>
                         <span id='start'>{start}</span>
@@ -54,21 +68,20 @@ const Payment = () => {
                         <span id='end'>{end}</span>
                     </div>
                     <div>
-                        <span><strong>Tổng tiền: </strong></span>
-                        <span id="total">{total}</span>
+                        <span><strong>Khoảng cách: </strong></span>
+                        <span id='length'>{distance.toFixed(2)} km</span>
+                    </div>
+                    <div>
+                        <span><strong>Giá tiền: </strong></span>
+                        <span id="fee">{(distance ? (12000 * Math.min(2, distance) + Math.max(distance-2, 0) * 3400).toFixed(0) : 0) / (state === "cancelled" ? 2 : 1)} VND</span>
                     </div>
                 </div>
 
-                {/* Nút tài xế bấm "Đã đến nơi" */}
-                <div className="container text-center py-2 mt-4 d-flex justify-content-center">
-                    <button
-                        className="border border-2 px-5 rounded-2 text-white me-3"
-                        style={{ padding: "5px", backgroundColor: "#00b14f" }}
-                        onClick={handleInfo}
-                    >
-                        <strong>Lấy thông tin thanh toán</strong>
-                    </button>
+                {/* Notification Box */}
+                <div className="alert alert-warning text-center" role="alert">
+                    Vui lòng trả phí cho tài xế
                 </div>
+
             </div>
         </div>
     );

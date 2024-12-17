@@ -48,6 +48,10 @@ const ReportForm = () => {
         }
     };
 
+    const handleCancel = () => {
+        router.push(`./location?olat=${olat}&olng=${olng}&dlat=${dlat}&dlng=${dlng}&orderID=${orderID}&driverID=${driverID}`);
+    };
+
     const handleCheckboxChange = (event) => {
         setShowTextbox(event.target.checked);
         setReportType(event.target.id);
@@ -153,15 +157,24 @@ const ReportForm = () => {
                             </div>
                         )}
                     </div>
-
-                    <button
-                        type="button"
-                        className="btn btn-success w-100"
-                        onClick={handleContinue}
-                        style={{color: 'white', backgroundColor: '#00b14f'}}
-                    >
-                        Tiếp tục
-                    </button>
+                    <div className="d-flex justify-content-between">
+                        <button
+                            type="button"
+                            className="btn btn-outline-secondary"
+                            style={{width: '45%'}}
+                            onClick={handleCancel}
+                        >
+                            Quay lại
+                        </button>
+                        <button
+                            type="button"
+                            className="btn btn-success"
+                            onClick={handleContinue}
+                            style={{width: '45%', color: 'white', backgroundColor: '#00b14f'}}
+                        >
+                            Tiếp tục
+                        </button>
+                    </div>
                 </form>
             </div>
         </div>

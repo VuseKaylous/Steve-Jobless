@@ -25,16 +25,13 @@ const Location = () => {
         }
     }, [router]);
 
-    const handleLogout = () => {
-        localStorage.removeItem('customer'); // Remove the token from localStorage
-        router.push('./login');
-    };
-
     const handleReport = () => {
         router.push(`./report?olat=${olat}&olng=${olng}&dlat=${dlat}&dlng=${dlng}&orderID=${order_id}&driverID=${driverID}`);
     };
 
-    const customerName = customer ? customer.name : null;
+    const handleCancel = () => {
+        router.push(`./cancel?olat=${olat}&olng=${olng}&dlat=${dlat}&dlng=${dlng}&driverID=${driverID}&orderID=${order_id}`);
+    };
 
     return (
         <div>
@@ -44,7 +41,12 @@ const Location = () => {
 
             {/* Buttons at the bottom right */}
             <div className={styles.bottomRightButtons}>
-                <button className="btn btn-danger me-2">Hủy chuyến</button>
+                <button 
+                    className="btn btn-danger me-2"
+                    onClick={handleCancel}
+                >
+                    Hủy chuyến
+                </button>
                 <button 
                     className="btn btn-warning"
                     onClick={handleReport}
