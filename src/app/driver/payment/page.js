@@ -4,9 +4,9 @@ const Payment = () => {
   return (
     <div className='container-fluid bg-light vh-100'>
         <div className='position-relative container bg-white border border-light border-2' style={{top: "20px", padding: "3%", width: "40%"}}>
-            
+
             <h1 className='text-center'>Xác nhận thanh toán</h1>
-            
+
             <div style={{lineHeight: "40px"}}>
                 <div>
                     <span><strong>Khách hàng: </strong></span>
@@ -39,7 +39,7 @@ const Payment = () => {
                 </div>
 
             </div>
-            
+
             <div className="container text-center py-2 mt-2">
                 <button className="border border-2 px-5 rounded-2 text-white" style={{padding: "5px", backgroundColor: "#00b14f"}}>
                     <strong>Đã thanh toán</strong>

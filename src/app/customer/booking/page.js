@@ -87,9 +87,9 @@ const Booking = () => {
     const R = 6371; // Radius of the Earth in kilometers
     const dLat = (lat2 - lat1) * Math.PI / 180;
     const dLon = (lon2 - lon1) * Math.PI / 180;
-    const a = 
-      0.5 - Math.cos(dLat)/2 + 
-      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+    const a =
+      0.5 - Math.cos(dLat)/2 +
+      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
       (1 - Math.cos(dLon))/2;
 
     return R * 2 * Math.asin(Math.sqrt(a));
@@ -178,8 +178,8 @@ const Booking = () => {
       <nav className="navbar bg-light mb-4">
         <div className="container-fluid">
             {/* Title */}
-            <span 
-                className="navbar-brand mb-0 h1" 
+            <span
+                className="navbar-brand mb-0 h1"
                 style={{ color: '#00b14f' }}
             >
                 CrabForCustomer
@@ -197,16 +197,16 @@ const Booking = () => {
         </div>
       </nav>
       <div className="d-flex">
-        <div 
-          id="sidebar" 
-          className="d-flex flex-column flex-shrink-0 px-3" 
-          style={{width: "55%"}}
+        <div
+          id="sidebar"
+          className="d-flex flex-column flex-shrink-0 px-3"
+          style={{width: "33%"}}
         >
           <div className="flex-column w-100">
-            <input 
-              type="text" 
+            <input
+              type="text"
               className="leaflet-routing-geocoder-start form-control m-1"
-              value={originalStartingPoint} 
+              value={originalStartingPoint}
               onChange={handleStartingPointChange}
               onKeyDown={handleStartingPointKeyDown}
             />
@@ -217,8 +217,8 @@ const Booking = () => {
                 </li>
               ))}
             </ul>
-            <input 
-              type="text" 
+            <input
+              type="text"
               className="leaflet-routing-geocoder-dest form-control m-1"
               value={originalDestinationPoint}
               onChange={handleDestinationPointChange}
@@ -246,7 +246,7 @@ const Booking = () => {
             {/* Add more information as needed */}
           </div>
         )}
-        <button 
+        <button
           className={styles.find_driver_button}
           onClick={handleFindDriverClick}
         >
