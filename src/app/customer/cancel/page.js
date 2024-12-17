@@ -29,14 +29,11 @@ const Cancellation = () => {
       });
 
       if (response.ok) {
-        alert('Chuyến đi đã được hủy thành công.');
         router.push(`./payment?olat=${olat}&olng=${olng}&dlat=${dlat}&dlng=${dlng}&driverID=${driverID}&orderID=${order_id}&state=cancelled`);
       } else {
-        alert('Có lỗi xảy ra khi hủy chuyến đi.');
       }
     } catch (error) {
       console.error('Error cancelling order:', error);
-      alert('Có lỗi xảy ra khi hủy chuyến đi.');
     }
   };
 

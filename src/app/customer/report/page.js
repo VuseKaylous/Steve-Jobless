@@ -29,7 +29,6 @@ const ReportForm = () => {
                 reportType: reportType,
                 comment: comment || '',
             });
-            console.log(requestData);
             const response = await fetch('/api/customer/report', {
                 method: 'POST',
                 headers: {
