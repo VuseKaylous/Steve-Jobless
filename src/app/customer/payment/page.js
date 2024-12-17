@@ -1,9 +1,10 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 const Payment = () => {
+    const router = useRouter();
     const searchParams = useSearchParams();
     const state = searchParams.get('state');
     const order_id = searchParams.get('orderID');
@@ -73,6 +74,23 @@ const Payment = () => {
             hasExecuted.current = true;
         }
     }, [order_id, fee]);
+
+    useEffect(() => {
+        const handleFinish = async () => {
+            try {
+                const response = await fetch(`/api/customer/finish?orderID=${order_id}`);
+                const data = await response.json();
+                if (data.message === 'Payment completed') {
+                    router.push('./booking');
+                }
+            } catch (error) {
+                console.error('Error fetching order information:', error);
+            }
+        };
+        if (order_id) {
+            handleFinish();
+        }
+    }, [order_id]);
 
     return (
         <div className='container-fluid bg-light vh-100'>
