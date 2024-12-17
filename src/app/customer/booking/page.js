@@ -25,6 +25,7 @@ const Booking = () => {
   const [isFindingDriver, setIsFindingDriver] = useState(false);
   const [driverFounded, setdriverFounded] = useState(false);
   const [driverId, setDriverId] = useState(null);
+  const [orderID, setOrderID] = useState(null);
 
   useEffect(() => {
     if (!customer) {
@@ -61,6 +62,7 @@ const Booking = () => {
         }
         const data = await response.json();
         setDriverId(data.driver_id); // Set the driver ID
+        setOrderID(data.order_id);
         setdriverFounded(true);
         setIsFindingDriver(false);
       } catch (error) {
@@ -268,7 +270,7 @@ const Booking = () => {
 
       {driverFounded && (
         <div className={styles.modal}>
-          <Found driverId={driverId} origin={origin} destination={destination}/>
+          <Found driverId={driverId} origin={origin} destination={destination} orderID = {orderID}/>
         </div>
       )}
     </div>
