@@ -7,6 +7,7 @@ import styles from "./page.module.css"
 import Map from "../../../components/Map.js";
 import Found from './found';
 import React, { useState, useEffect } from 'react';
+import { FindCost, calculateDistance } from '@/components/Utils';
 
 const Booking = () => {
   const router = useRouter();
@@ -85,17 +86,6 @@ const Booking = () => {
     }
   }, [StartingPoint, DestinationPoint, origin, destination]);
 
-  const calculateDistance = (lat1, lon1, lat2, lon2) => {
-    const R = 6371; // Radius of the Earth in kilometers
-    const dLat = (lat2 - lat1) * Math.PI / 180;
-    const dLon = (lon2 - lon1) * Math.PI / 180;
-    const a =
-      0.5 - Math.cos(dLat)/2 +
-      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-      (1 - Math.cos(dLon))/2;
-
-    return R * 2 * Math.asin(Math.sqrt(a));
-  };
 
   useEffect(() => {
     const startInput = document.querySelector('.leaflet-routing-geocoder-start');
@@ -243,7 +233,7 @@ const Booking = () => {
               <strong>Khoảng Cách:</strong> {distance.toFixed(2)} km
             </p>}
             <p style={{marginBottom: "5px"}}>
-              <strong>Giá:</strong> {distance ? (12000 * Math.min(2, distance) + Math.max(distance-2, 0) * 3400).toFixed(0) : 0} VND
+              <strong>Giá:</strong> {distance ? FindCost(distance) : 0} VND
             </p>
             {/* Add more information as needed */}
           </div>

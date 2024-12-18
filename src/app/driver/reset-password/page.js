@@ -85,7 +85,7 @@ export default function ResetDriverPassword() {
             Gửi yêu cầu
           </button>
           {message && <p className="text-center text-info mt-3">{message}</p>}
-          <button className="btn btn-outline-secondary w-100 py-2" onClick={() => window.location.href = '/login'}>
+          <button className="btn btn-outline-secondary w-100 py-2" onClick={() => window.location.href = './login'}>
             Quay lại Đăng nhập
           </button>
         </div>

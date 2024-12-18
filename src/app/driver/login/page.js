@@ -55,7 +55,7 @@ const LoginPage = () => {
       // console.log(data)
       
       // Redirect to dashboard or home page
-      router.push('.');
+      router.push('./pickup');
     } catch (err) {
       setError(err.message);
     } finally {
@@ -105,7 +105,7 @@ const LoginPage = () => {
                     <label className="form-label text-secondary">
                       Mật khẩu
                     </label>
-                    <a href="/forgot-password" className="text-success text-decoration-none">
+                    <a href="reset-password" className="text-success text-decoration-none">
                       Quên mật khẩu?
                     </a>
                   </div>
