@@ -2,10 +2,10 @@ import mysql from 'mysql2/promise';
 
 // Cấu hình kết nối database
 const dbConfig = {
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
+  host: 'localhost',
+  user: 'root',
+  password: '',
+  database: 'fall2024c56g8_crab',
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
@@ -56,8 +56,8 @@ export async function executeQuery(query, values = []) {
 // Hàm đóng connection pool (sử dụng khi cần)
 export async function closeConnectionPool() {
   if (connectionPool) {
-    await connectionPool.end();
-    connectionPool = null;
+    await connectionPool.end(); // Đóng kết nối pool
+    connectionPool = null; // Reset lại connection pool
     console.log('Database connection pool closed');
   }
 }

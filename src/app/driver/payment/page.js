@@ -86,6 +86,9 @@ const Payment = () => {
                     </div>
                 )}
             </div>
+
+            {/* <div className="container text-center py-2 mt-2">
+            </div> */}
         </div>
     );
 };

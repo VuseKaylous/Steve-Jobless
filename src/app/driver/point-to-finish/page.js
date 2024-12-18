@@ -4,108 +4,125 @@ import Map from "../../../components/Map";
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./page.module.css";
-import L from "leaflet";  // Add Leaflet for geocoding
+import L from "leaflet";
 
-const DriverPickup = () => {
+const PointToFinish = () => {
   const router = useRouter();
   const [order, setOrder] = useState(null);
   const [origin, setOrigin] = useState(null);
   const [destination, setDestination] = useState(null);
-  const driver = JSON.parse(localStorage.getItem("driver"));
   const [acceptingOrder, setAcceptingOrder] = useState(false);
-  const geocoder = L.Control.Geocoder.nominatim(); // Instantiate geocoder
+
+  const [driver, setDriver] = useState(() => {
+    const storedDriver = localStorage.getItem("driver");
+    return storedDriver ? JSON.parse(storedDriver) : null;
+  });
+
+  const geocoder = L.Control.Geocoder.nominatim();
 
   useEffect(() => {
     if (!driver) {
       router.push("./login");
     }
-  }, [router]);
+  }, [driver]);
 
   const handleLogout = () => {
     localStorage.removeItem("driver");
+    setDriver(null);
     router.push("./login");
   };
 
-  // Function to fetch the current order
   const fetchOrder = async () => {
     try {
-      const response = await fetch(
-        `/api/driver/pickup-current?driverId=${driver.id}`
-      );
+      const response = await fetch(`/api/driver/finish-current?driverId=${driver.id}`);
       if (!response.ok) throw new Error("Failed to fetch order");
+
       const data = await response.json();
       if (data.order) {
         setOrder(data.order);
-        // Geocode the origin and destination
-        geocodeAddress(data.order.origin, (originCoords) => {
-          setOrigin(originCoords);
-        });
-        geocodeAddress(data.order.destination, (destCoords) => {
-          setDestination(destCoords);
-        });
+        console.log("Fetched order:", data.order);
+
+        // Kiểm tra nếu địa chỉ đã thay đổi trước khi geocode lại
+        if (data.order.destination !== order?.destination) {
+          geocodeAddress(data.order.destination, (destinationCoords) => {
+            setDestination(destinationCoords); // Set destination only if origin changes
+            console.log("Geocoded origin:", destinationCoords); // Log the origin coords
+          });
+        }
       } else {
-        setOrder(null);
+        setOrder(null); // Không có đơn hàng thì xóa thông tin order
       }
     } catch (error) {
       console.error("Error fetching order:", error);
     }
   };
 
-  // Set up polling to fetch order every 10 seconds
   useEffect(() => {
-    const interval = setInterval(() => {
-      fetchOrder();
-    }, 10000); // 10 seconds interval
+    if (driver) {
+      fetchOrder(); // Fetch order when driver is available
+    }
+  }, [driver]); // Only depend on driver
 
-    // Cleanup interval on component unmount
-    return () => clearInterval(interval);
+  const fetchCurrentLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          setOrigin({ lat: latitude, lng: longitude });
+          console.log("Current location:", { lat: latitude, lng: longitude }); // Log current location
+        },
+        (error) => {
+          console.error("Error fetching current location:", error);
+        }
+      );
+    }
+  };
+
+  useEffect(() => {
+    if (driver) {
+      fetchCurrentLocation();
+      const locationInterval = setInterval(fetchCurrentLocation, 10000);
+
+      return () => clearInterval(locationInterval);
+    }
   }, [driver]);
 
-  const handleAcceptOrder = async () => {
+  const confirmFinish = async () => {
     setAcceptingOrder(true);
     try {
-      const response = await fetch("/api/driver/pickup-accept", {
+      const response = await fetch("/api/driver/finish-confirm", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ orderId: order.id, driverId: driver.id }),
       });
       if (!response.ok) throw new Error("Failed to accept order");
-      alert("Bạn đã chấp nhận đơn hàng!");
-      setOrder(null); // Clear order to avoid showing again
+      alert("Bạn đã hoàn thành chuyến đi!");
+      setOrder(null);
       setAcceptingOrder(false);
-      router.push('/driver/point-to-customer');
+      router.push("/driver/payment");
     } catch (error) {
       console.error("Error accepting order:", error);
       setAcceptingOrder(false);
     }
   };
 
-  const handleDeclineOrder = async () => {
-    try {
-      const response = await fetch("/api/driver/pickup-decline", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ orderId: order.id, driverId: driver.id }),
-      });
-      if (!response.ok) throw new Error("Failed to decline order");
-      alert("Bạn đã từ chối đơn hàng!");
-      setOrder(null); // Clear order to avoid showing again
-    } catch (error) {
-      console.error("Error declining order:", error);
-    }
-  };
-
-  // Function to geocode address to coordinates
   const geocodeAddress = (address, callback) => {
     geocoder.geocode(address, (results) => {
       if (results && results.length > 0) {
         const { lat, lng } = results[0].center;
         callback({ lat, lng });
+        console.log("Geocoded address:", address, { lat, lng }); // Log geocoded address
       } else {
         console.error("Geocoding failed for address:", address);
       }
     });
   };
+
+  useEffect(() => {
+    // Log origin and destination values
+    console.log("Origin:", origin);
+    console.log("Destination:", destination);
+  }, [origin, destination]);
 
   return (
     <div>
@@ -136,12 +153,6 @@ const DriverPickup = () => {
           ) : (
             <div>
               <p>
-                <strong>Tên khách hàng:</strong> {order.customer_name}
-              </p>
-              <p>
-                <strong>Số điện thoại:</strong> {order.customer_phone}
-              </p>
-              <p>
                 <strong>Từ:</strong> {order.origin}
               </p>
               <p>
@@ -150,16 +161,10 @@ const DriverPickup = () => {
               <div className="d-flex">
                 <button
                   className={`${styles.actionButton} me-2`}
-                  onClick={handleAcceptOrder}
+                  onClick={confirmFinish}
                   disabled={acceptingOrder}
                 >
-                  Chấp nhận
-                </button>
-                <button
-                  className={`${styles.actionButton} ${styles.declineButton}`}
-                  onClick={handleDeclineOrder}
-                >
-                  Từ chối
+                  Đã hoàn thành
                 </button>
               </div>
             </div>
@@ -173,4 +178,4 @@ const DriverPickup = () => {
   );
 };
 
-export default DriverPickup;
+export default PointToFinish;
