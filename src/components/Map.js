@@ -21,9 +21,8 @@ const Map = ({ origin = null, destination = null }) => {
   const locateButtonRef = useRef(null); // Sử dụng ref để tham chiếu đến nút
 
   useEffect(() => {
-    // Kiểm tra môi trường client-side trước khi khởi tạo bản đồ
     if (typeof window === 'undefined') {
-      return; // Nếu không phải môi trường client, không chạy mã dưới đây
+      return; // Kiểm tra môi trường client-side
     }
 
     console.log("Initializing map...");
@@ -107,11 +106,10 @@ const Map = ({ origin = null, destination = null }) => {
       alert('Location access denied or unavailable.');
     });
 
-    // Sau 3 giây, tự động gọi hàm locateUser để tìm vị trí
+    // Automatically trigger user location after 3 seconds
     setTimeout(() => {
       if (locateButtonRef.current) {
-        // Mô phỏng hành động bấm nút "Locate Me"
-        locateButtonRef.current.click(); // Thực hiện click trực tiếp
+        locateButtonRef.current.click(); // Simulate button click
       }
     }, 3000);
 
@@ -139,11 +137,11 @@ const Map = ({ origin = null, destination = null }) => {
 
       // If origin and destination are null, set them to the current location
       if (!origin && !destination) {
-        setUserLocation(e.latlng); // Lưu vị trí người dùng vào state
+        setUserLocation(e.latlng); // Save user location in state
       }
     });
 
-    // Add a safeguard to ensure `_leaflet_pos` is defined
+    // Add safeguard for moveend event
     map.on('moveend', function () {
       try {
         const center = map.getCenter();
@@ -158,7 +156,7 @@ const Map = ({ origin = null, destination = null }) => {
       map.remove(); // Clean up on unmount
       map.removeControl(routingControl);
     };
-  }, [origin, destination]);
+  }, [origin, destination]); // Ensure effect runs when origin or destination changes
 
   return <div id="map" style={{ height: '85vh', width: '100%' }} />;
 };
