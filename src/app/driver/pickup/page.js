@@ -96,12 +96,24 @@ const DriverPickup = () => {
       });
       if (!response.ok) throw new Error("Failed to decline order");
       alert("Bạn đã từ chối đơn hàng!");
-      setOrder(null); // Clear order to avoid showing again
+
+      // Xóa thông tin đơn hàng và địa điểm
+      setOrder(null); // Clear the order to avoid showing again
+      setOrigin(null); // Clear origin location
+      setDestination(null); // Clear destination location
       setIsOrderProcessed(true); // Mark order as processed
+
+      // Tạo khoảng thời gian nghỉ 5 giây trước khi tiếp tục quét đơn
+      setTimeout(() => {
+        // Quay lại quét đơn sau khi nghỉ 5 giây
+        fetchOrder(); // Force re-fetch the order after declining
+      }, 10000); // 10 giây nghỉ
     } catch (error) {
       console.error("Error declining order:", error);
     }
   };
+
+
 
   // Function to geocode address to coordinates
   const geocodeAddress = (address, callback) => {
