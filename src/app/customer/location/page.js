@@ -29,7 +29,7 @@ const Location = () => {
                 const response = await fetch(`/api/customer/status?order_id=${order_id}`);
                 const data = await response.json();
 
-                if (data.status === 'hoàn thành') {
+                if (data.status === 'đã hoàn thành') {
                     router.push(`./payment?olat=${olat}&olng=${olng}&dlat=${dlat}&dlng=${dlng}&orderID=${order_id}&state=completed`);
                 }
             } catch (error) {

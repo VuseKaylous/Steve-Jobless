@@ -10,11 +10,11 @@ export default function Home() {
     if (role === 'customer') {
       alert('Bạn đã chọn vai trò: Khách hàng');
       // Thêm logic xử lý dành cho khách hàng ở đây
-      router.push('/customer/signup');
+      router.push('/customer/login');
     } else if (role === 'driver') {
       alert('Bạn đã chọn vai trò: Tài xế');
       // Thêm logic xử lý dành cho tài xế ở đây
-      router.push('/driver/signup');
+      router.push('/driver/login');
     }
   };
 

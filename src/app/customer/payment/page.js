@@ -63,7 +63,28 @@ const Payment = () => {
     useEffect(() => {
         const handlePayment = async () => {
             try {
-                const response = await fetch(`/api/customer/payment?orderID=${order_id}&fee=${fee}`);
+                // const response = await fetch(`/api/customer/payment?orderID=${order_id}&fee=${fee}`);
+                const response = await fetch('/api/customer/payment', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        orderID: order_id,
+                        fee: fee,
+                    }),
+                });
+                // console.log(response.json());
+                // if (response.ok) {
+                //     const result = await response.json();
+                //     console.log("Payment create:");
+                //     console.log(result);
+                //     localStorage.setItem('payment_info', JSON.stringify(result));
+                //     console.log("Payment info save: " + localStorage.getItem('payment_info'));
+                //     console.log('Đang chờ khách thanh toán', result);
+                // } else {
+                //     console.error('Lỗi tao thanh toan', response.statusText);
+                // }
             } catch (error) {
                 console.error('Error fetching order information:', error);
             }
