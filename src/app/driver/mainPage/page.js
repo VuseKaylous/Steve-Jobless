@@ -1,18 +1,20 @@
 "use client";
 
 import React, { useState, useCallback } from "react";
+import { useRouter } from 'next/navigation';
 import { GoogleMap, LoadScript, Marker, Autocomplete, DirectionsRenderer } from "@react-google-maps/api";
 
 const mapContainerStyle = { width: "100vw", height: "100vh" };
 const center = { lat: 21.0285, lng: 105.8542 }; // Trung tâm bản đồ (Hà Nội)
 
 const DriverDirections = () => {
+  const router = useRouter(); // Thêm router
   const [map, setMap] = useState(null);
   const [currentLocation, setCurrentLocation] = useState(null);
   const [directions, setDirections] = useState(null);
   const [startPlace, setStartPlace] = useState(null);
   const [endPlace, setEndPlace] = useState(null);
-  const [showPopup, setShowPopup] = useState(false); // Trạng thái hiển thị pop-up
+  const [showPopup, setShowPopup] = useState(false);
 
   // Dữ liệu giả khách hàng
   const fakeCustomerData = {
@@ -23,7 +25,24 @@ const DriverDirections = () => {
     price: "100,000 VNĐ"
   };
 
-  // Xử lý sự kiện lấy chỉ đường
+  // Xử lý sự kiện đăng xuất
+  const handleSignOut = () => {
+    try {
+        // Xóa token khỏi localStorage
+        localStorage.removeItem('token');
+        
+        // Chuyển hướng về màn hình đăng nhập của tài xế
+        router.push('/driver/login');
+
+        // Hiển thị thông báo đăng xuất thành công
+        alert('Đăng xuất thành công!');
+    } catch (error) {
+        console.error('Lỗi khi đăng xuất:', error);
+        alert('Có lỗi xảy ra khi đăng xuất. Vui lòng thử lại.');
+    }
+};
+
+  // Các phương thức khác giữ nguyên như ban đầu...
   const handleGetDirections = useCallback(() => {
     if (!startPlace || !endPlace) return;
 
@@ -44,7 +63,6 @@ const DriverDirections = () => {
     );
   }, [startPlace, endPlace]);
 
-  // Định vị vị trí hiện tại của người dùng
   const locateCurrentPosition = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -54,7 +72,7 @@ const DriverDirections = () => {
             lng: position.coords.longitude,
           };
           setCurrentLocation(location);
-          map.panTo(location); // Đặt vị trí bản đồ tại vị trí hiện tại
+          map.panTo(location);
         },
         (error) => {
           console.error("Lỗi khi lấy vị trí hiện tại:", error);
@@ -65,12 +83,10 @@ const DriverDirections = () => {
     }
   };
 
-  // Hiển thị pop-up "Có Khách"
   const handleShowPopup = () => {
     setShowPopup(true);
   };
 
-  // Đóng pop-up
   const handleClosePopup = () => {
     setShowPopup(false);
   };
@@ -100,9 +116,28 @@ const DriverDirections = () => {
           <button onClick={handleShowPopup} style={{ padding: "8px 12px", backgroundColor: "#4CAF50", color: "white" }}>Có Khách</button>
         </div>
 
-        {/* Pop-up thông tin khách hàng */}
+        {/* Nút Sign Out */}
+        <button
+          onClick={handleSignOut}
+          style={{
+            position: "absolute",
+            top: "10px",
+            right: "10px",
+            padding: "8px 16px",
+            backgroundColor: "#f44336",
+            color: "white",
+            border: "none",
+            borderRadius: "4px",
+            cursor: "pointer",
+            zIndex: 1000,
+          }}
+        >
+          Sign Out
+        </button>
+
+        {/* Phần popup giữ nguyên như ban đầu */}
         {showPopup && (
-        <div style={{
+          <div style={{
             position: "fixed",
             top: 0,
             left: 0,
@@ -113,53 +148,52 @@ const DriverDirections = () => {
             alignItems: "center",
             justifyContent: "center",
             zIndex: 1001,
-        }}>
+          }}>
             <div style={{
-            backgroundColor: "white",
-            padding: "30px",
-            borderRadius: "8px",
-            width: "500px",
-            textAlign: "center",
-            fontSize: "16px"
+              backgroundColor: "white",
+              padding: "30px",
+              borderRadius: "8px",
+              width: "500px",
+              textAlign: "center",
+              fontSize: "16px"
             }}>
-            <h2 style={{ fontSize: "24px", marginBottom: "15px" }}>Thông tin khách hàng</h2>
-            <p><strong>Tên:</strong> {fakeCustomerData.name}</p>
-            <p><strong>Số điện thoại:</strong> {fakeCustomerData.phone}</p>
-            <p><strong>Điểm bắt đầu:</strong> {fakeCustomerData.startPoint}</p>
-            <p><strong>Điểm kết thúc:</strong> {fakeCustomerData.endPoint}</p>
-            <p><strong>Giá tiền:</strong> {fakeCustomerData.price}</p>
-            <div style={{ display: "flex", justifyContent: "center", gap: "10px", marginTop: "20px" }}>
+              <h2 style={{ fontSize: "24px", marginBottom: "15px" }}>Thông tin khách hàng</h2>
+              <p><strong>Tên:</strong> {fakeCustomerData.name}</p>
+              <p><strong>Số điện thoại:</strong> {fakeCustomerData.phone}</p>
+              <p><strong>Điểm bắt đầu:</strong> {fakeCustomerData.startPoint}</p>
+              <p><strong>Điểm kết thúc:</strong> {fakeCustomerData.endPoint}</p>
+              <p><strong>Giá tiền:</strong> {fakeCustomerData.price}</p>
+              <div style={{ display: "flex", justifyContent: "center", gap: "10px", marginTop: "20px" }}>
                 <button
-                onClick={handleClosePopup}
-                style={{
+                  onClick={handleClosePopup}
+                  style={{
                     padding: "10px 20px",
                     backgroundColor: "#4CAF50",
                     color: "white",
                     fontSize: "16px",
-                    borderRadius: "8px", // Bo góc
-                    width: "120px", // Kích cỡ cố định cho cả hai nút
-                }}
+                    borderRadius: "8px",
+                    width: "120px",
+                  }}
                 >
-                Chấp nhận
+                  Chấp nhận
                 </button>
                 <button
-                onClick={handleClosePopup}
-                style={{
+                  onClick={handleClosePopup}
+                  style={{
                     padding: "10px 20px",
                     backgroundColor: "#f44336",
                     color: "white",
                     fontSize: "16px",
-                    borderRadius: "8px", // Bo góc
-                    width: "120px", // Kích cỡ cố định cho cả hai nút
-                }}
+                    borderRadius: "8px",
+                    width: "120px",
+                  }}
                 >
-                Từ chối
+                  Từ chối
                 </button>
+              </div>
             </div>
-            </div>
-        </div>
+          </div>
         )}
-
       </div>
     </LoadScript>
   );
