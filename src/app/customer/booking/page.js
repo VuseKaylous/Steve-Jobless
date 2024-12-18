@@ -249,6 +249,7 @@ const Booking = () => {
         <button
           className={styles.find_driver_button}
           onClick={handleFindDriverClick}
+          style={{width: "120px"}}
         >
           Tìm tài xế
         </button>
