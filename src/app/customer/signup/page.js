@@ -90,21 +90,21 @@ export default function BusinessRegistration() {
         },
         body: JSON.stringify(requestData),
       });
-      
+
       console.log("Response", response);
 
       if (!response.ok) {
         const errorData = await response.json();
         console.error('Error response:', errorData);
         throw new Error(errorData.error || `Error: ${response.status} ${response.statusText}`);
-    }
-    
-    const data = await response.json();
-    console.log('Response data:', data);
+      }
+
+      const data = await response.json();
+      console.log('Response data:', data);
 
       // Success case
       console.log('Registration successful:', data);
-      router.push('/customer/emailverify')
+      router.push('/customer/login');
 
     } catch (err) {
       console.error('Registration error:', err);
@@ -132,16 +132,6 @@ export default function BusinessRegistration() {
                 <p className="text-muted mb-4">
                   Quản lý nhu cầu di chuyển, đồ ăn và giao hàng của bạn
                 </p>
-                <div className="d-flex justify-content-between align-items-center mb-4">
-                  <div className="d-flex align-items-center">
-                    <div className="badge bg-success rounded-circle p-3 text-white">1</div>
-                    <span className="ms-2 text-success fw-medium">Thông tin cá nhân</span>
-                  </div>
-                  <div className="d-flex align-items-center">
-                    <div className="badge bg-secondary rounded-circle p-3 text-white">3</div>
-                    <span className="ms-2 text-muted">Xác minh email</span>
-                  </div>
-                </div>
                 <div className="bg-light p-4 rounded">
                   <h2 className="h4 fw-bold text-dark mb-3">Thông tin cá nhân</h2>
                   <p className="text-muted mb-4">

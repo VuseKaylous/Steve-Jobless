@@ -3,8 +3,6 @@ import { executeQuery } from '@/lib/db';
 export default async function handler(req, res) {
     try {
         const { email, password } = req.body;
-        console.log('email:', email);
-
         const query = 'SELECT id, password, name FROM customers WHERE email = ?';
         const customers = await executeQuery(query, [email]);
 
