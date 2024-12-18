@@ -33,7 +33,6 @@ const LoginPage = () => {
       const requestData = {
         email: email,
         password: password,
-        
       };
 
       const response = await fetch('/api/customer/login', {
@@ -60,6 +59,11 @@ const LoginPage = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  // Function to handle redirect to Sign-Up page
+  const handleSignUpRedirect = () => {
+    router.push('./signup');  // Redirect to the sign-up page
   };
 
   return (
@@ -132,6 +136,15 @@ const LoginPage = () => {
                   {isLoading ? 'Đang đăng nhập...' : 'Đăng nhập'}
                 </button>
               </form>
+
+              {/* Add a button to navigate back to the sign-up page */}
+              <button
+                type="button"
+                onClick={handleSignUpRedirect}
+                className="btn btn-link text-success w-100"
+              >
+                Chưa có tài khoản? Đăng ký ngay
+              </button>
             </div>
           </div>
         </div>

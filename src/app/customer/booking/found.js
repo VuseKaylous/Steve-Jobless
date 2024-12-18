@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from 'next/navigation';
 import styles from "./page.module.css"
 
-const Found = ({ driverId, origin, destination }) => {
+const Found = ({ driverId, origin, destination , orderID}) => {
   const [driverInfo, setDriverInfo] = useState({});
   const router = useRouter();
 
@@ -33,7 +33,7 @@ const Found = ({ driverId, origin, destination }) => {
 
   useEffect(() => {
     if (Object.keys(driverInfo).length > 0) {
-      router.push(`./location?dlat=${destination.lat}&dlng=${destination.lng}&olat=${origin.lat}&olng=${origin.lng}`);
+      router.push(`./location?dlat=${destination.lat}&dlng=${destination.lng}&olat=${origin.lat}&olng=${origin.lng}&orderID=${orderID}&driverID=${driverId}`);
     }
   }, [driverInfo, router]);
   

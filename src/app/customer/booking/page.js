@@ -7,6 +7,7 @@ import styles from "./page.module.css"
 import Map from "../../../components/Map.js";
 import Found from './found';
 import React, { useState, useEffect } from 'react';
+import { FindCost, calculateDistance } from '@/components/Utils';
 
 const Booking = () => {
   const router = useRouter();
@@ -25,6 +26,7 @@ const Booking = () => {
   const [isFindingDriver, setIsFindingDriver] = useState(false);
   const [driverFounded, setdriverFounded] = useState(false);
   const [driverId, setDriverId] = useState(null);
+  const [orderID, setOrderID] = useState(null);
 
   useEffect(() => {
     if (!customer) {
@@ -61,6 +63,7 @@ const Booking = () => {
         }
         const data = await response.json();
         setDriverId(data.driver_id); // Set the driver ID
+        setOrderID(data.order_id);
         setdriverFounded(true);
         setIsFindingDriver(false);
       } catch (error) {
@@ -83,17 +86,6 @@ const Booking = () => {
     }
   }, [StartingPoint, DestinationPoint, origin, destination]);
 
-  const calculateDistance = (lat1, lon1, lat2, lon2) => {
-    const R = 6371; // Radius of the Earth in kilometers
-    const dLat = (lat2 - lat1) * Math.PI / 180;
-    const dLon = (lon2 - lon1) * Math.PI / 180;
-    const a = 
-      0.5 - Math.cos(dLat)/2 + 
-      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
-      (1 - Math.cos(dLon))/2;
-
-    return R * 2 * Math.asin(Math.sqrt(a));
-  };
 
   useEffect(() => {
     const startInput = document.querySelector('.leaflet-routing-geocoder-start');
@@ -178,8 +170,8 @@ const Booking = () => {
       <nav className="navbar bg-light mb-4">
         <div className="container-fluid">
             {/* Title */}
-            <span 
-                className="navbar-brand mb-0 h1" 
+            <span
+                className="navbar-brand mb-0 h1"
                 style={{ color: '#00b14f' }}
             >
                 CrabForCustomer
@@ -197,16 +189,16 @@ const Booking = () => {
         </div>
       </nav>
       <div className="d-flex">
-        <div 
-          id="sidebar" 
-          className="d-flex flex-column flex-shrink-0 px-3" 
-          style={{width: "55%"}}
+        <div
+          id="sidebar"
+          className="d-flex flex-column flex-shrink-0 px-3"
+          style={{width: "33%"}}
         >
           <div className="flex-column w-100">
-            <input 
-              type="text" 
+            <input
+              type="text"
               className="leaflet-routing-geocoder-start form-control m-1"
-              value={originalStartingPoint} 
+              value={originalStartingPoint}
               onChange={handleStartingPointChange}
               onKeyDown={handleStartingPointKeyDown}
             />
@@ -217,8 +209,8 @@ const Booking = () => {
                 </li>
               ))}
             </ul>
-            <input 
-              type="text" 
+            <input
+              type="text"
               className="leaflet-routing-geocoder-dest form-control m-1"
               value={originalDestinationPoint}
               onChange={handleDestinationPointChange}
@@ -241,14 +233,15 @@ const Booking = () => {
               <strong>Khoảng Cách:</strong> {distance.toFixed(2)} km
             </p>}
             <p style={{marginBottom: "5px"}}>
-              <strong>Giá:</strong> {distance ? (12000 * Math.min(2, distance) + Math.max(distance-2, 0) * 3400).toFixed(0) : 0} VND
+              <strong>Giá:</strong> {distance ? FindCost(distance) : 0} VND
             </p>
             {/* Add more information as needed */}
           </div>
         )}
-        <button 
+        <button
           className={styles.find_driver_button}
           onClick={handleFindDriverClick}
+          style={{width: "120px"}}
         >
           Tìm tài xế
         </button>
@@ -268,7 +261,7 @@ const Booking = () => {
 
       {driverFounded && (
         <div className={styles.modal}>
-          <Found driverId={driverId} origin={origin} destination={destination}/>
+          <Found driverId={driverId} origin={origin} destination={destination} orderID = {orderID}/>
         </div>
       )}
     </div>

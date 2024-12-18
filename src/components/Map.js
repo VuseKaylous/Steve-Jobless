@@ -83,7 +83,7 @@ const Map = ({origin = null, destination = null}) => {
     };
   }, [origin, destination]);
 
-  return <div id="map" style={{ height: '85vh', width: '100%' }} />; // Set height to 80% of the viewport height
+  return <div id="map" style={{ height: '100vh', width: '100%' }} />; // Set height to 80% of the viewport height
 };
 
 export default Map;

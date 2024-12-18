@@ -23,5 +23,5 @@ export default async function handler(req, res) {
         }
     };
     const driverId = await waitForStatusChange();
-    res.status(200).json({ message: 'Order status changed to "đợi tài xế"', driver_id: driverId });
+    res.status(200).json({ message: 'Order status changed to "đợi tài xế"', driver_id: driverId, order_id: insertedOrderId });
 }
