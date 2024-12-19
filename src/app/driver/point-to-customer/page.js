@@ -41,6 +41,7 @@ const PointToCustomer = () => {
       if (data.order) {
         setOrder(data.order);
         console.log("Fetched order:", data.order);
+        localStorage.setItem('order_info', JSON.stringify(data.order));
 
         // Kiểm tra nếu địa chỉ đã thay đổi trước khi geocode lại
         if (data.order.origin !== order?.origin) {
