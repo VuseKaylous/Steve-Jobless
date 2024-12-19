@@ -11,13 +11,17 @@ const DriverPickup = () => {
   const [order, setOrder] = useState(null);
   const [origin, setOrigin] = useState(null);
   const [destination, setDestination] = useState(null);
-  const driver = JSON.parse(localStorage.getItem("driver"));
   const [acceptingOrder, setAcceptingOrder] = useState(false);
   const [isOrderProcessed, setIsOrderProcessed] = useState(false); // Track if the order has been processed
   const geocoder = L.Control.Geocoder.nominatim(); // Instantiate geocoder
 
+  const [driver, setDriver] = useState(() => {
+      const storedDriver = localStorage.getItem('driver');
+      return storedDriver ? JSON.parse(storedDriver) : {name: "", id: ""};
+    });
+
   useEffect(() => {
-    if (!driver) {
+    if (driver.id === "") {
       router.push("./login");
     }
   }, [router]);
@@ -76,7 +80,6 @@ const DriverPickup = () => {
         body: JSON.stringify({ orderId: order.id, driverId: driver.id }),
       });
       if (!response.ok) throw new Error("Failed to accept order");
-      alert("Bạn đã chấp nhận đơn hàng!");
       setOrder(null); // Clear order to avoid showing again
       setIsOrderProcessed(true); // Mark order as processed
       setAcceptingOrder(false);
@@ -135,8 +138,8 @@ const DriverPickup = () => {
             CrabForDriver
           </span>
           <div className="d-flex">
-            <span style={{ color: "#00b14f" }} className="me-2">
-              CHÀO MỪNG, <strong>{driver?.name.toUpperCase()}</strong>.
+            <span style={{ color: "#00b14f" }} className="mt-2 me-1">
+              CHÀO MỪNG, <strong>{driver.name.toUpperCase()}</strong>.
             </span>
             <button onClick={handleLogout} className={styles.logOut}>
               ĐĂNG XUẤT

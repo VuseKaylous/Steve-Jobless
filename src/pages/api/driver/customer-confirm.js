@@ -2,11 +2,7 @@ import { executeQuery } from '@/lib/db';
 
 export default async function handler(req, res) {
     try {
-        if (req.method !== 'POST') {
-            return res.status(405).json({ error: 'Method not allowed' });
-        }
-
-        const { orderId, driverId } = req.body;
+        const { orderId, driverId } = req.query;
 
         if (!orderId || !driverId) {
             return res.status(400).json({ error: 'Missing orderId or driverId' });
@@ -20,10 +16,6 @@ export default async function handler(req, res) {
         `;
         const result = await executeQuery(query, [driverId, orderId]);
 
-        if (result.affectedRows === 0) {
-            return res.status(404).json({ error: 'Order not found or already processed' });
-        }
-
         // Cập nhật trạng thái tài xế
         const driverStatusQuery = `
             UPDATE drivers
@@ -31,10 +23,6 @@ export default async function handler(req, res) {
             WHERE id = ?;
         `;
         const driverResult = await executeQuery(driverStatusQuery, [driverId]);
-
-        if (driverResult.affectedRows === 0) {
-            return res.status(404).json({ error: 'Driver not found' });
-        }
 
         // Lấy thông tin đơn hàng sau khi chấp nhận
         const orderQuery = `
@@ -44,10 +32,6 @@ export default async function handler(req, res) {
         `;
         const order = await executeQuery(orderQuery, [orderId]);
 
-        if (order.length === 0) {
-            return res.status(404).json({ error: 'Order not found' });
-        }
-
         // Trả về thông tin đơn hàng sau khi chấp nhận
         return res.status(200).json({
             message: 'Order accepted successfully',
@@ -55,6 +39,6 @@ export default async function handler(req, res) {
         });
     } catch (error) {
         console.error('Error accepting order:', error);
-        return res.status(500).json({ error: 'Internal Server Error' });
+        return res.status(500).json({ error: error.message });
     }
 }

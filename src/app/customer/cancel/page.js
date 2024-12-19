@@ -18,6 +18,17 @@ const Cancellation = () => {
   const [dropoffLocation, setDropoffLocation] = useState('');
   const [distance, setDistance] = useState(0);
 
+  const [customer, setCustomer] = useState(() => {
+      const storedCustomer = localStorage.getItem('customer');
+      return storedCustomer ? JSON.parse(storedCustomer) : {name: "", id: ""};
+    });
+  
+    useEffect(() => {
+      if (customer.id === "") {
+        router.push('./login');
+      }
+    }, [customer]);
+
   const handleCancelOrder = async () => {
     try {
       const response = await fetch('/api/customer/cancel', {

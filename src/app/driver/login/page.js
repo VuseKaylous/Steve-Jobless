@@ -12,7 +12,7 @@ const CrabLogo = () => (
         <path d="M95 9.5h-8v22h8c3.9 0 7-1.1 7-5 0-2.4-1.3-4.1-3-4.8 1.7-.7 3-2.4 3-4.2 0-3.9-3.1-8-7-8zm-2 9v-4h2c1.7 0 3 .3 3 2s-1.3 2-3 2h-2zm0 8v-4h2c1.7 0 3 .3 3 2s-1.3 2-3 2h-2z" transform="translate(90) scale(1.5)" />
       </g>
     </svg>
-    <span className="display-6">For Driver</span>
+    <span className="display-6 mt-3">For Driver</span>
   </div>
 );
 
@@ -105,7 +105,7 @@ const LoginPage = () => {
                     <label className="form-label text-secondary">
                       Mật khẩu
                     </label>
-                    <a href="reset-password" className="text-success text-decoration-none">
+                    <a href="reset-password" className="text-success text-decoration-none" style={{color: '#00B14F'}}>
                       Quên mật khẩu?
                     </a>
                   </div>
@@ -132,6 +132,7 @@ const LoginPage = () => {
                 <button
                   type="submit"
                   className="btn btn-success w-100 py-2 mb-4"
+                  style={{ backgroundColor: '#00B14F' }}
                   disabled={isLoading}
                 >
                   {isLoading ? 'Đang đăng nhập...' : 'Đăng nhập'}
@@ -142,6 +143,7 @@ const LoginPage = () => {
               <button
                 type="button"
                 onClick={handleSignUpRedirect}
+                style={{ color: '#00B14F' }}
                 className="btn btn-link text-success w-100"
               >
                 Chưa có tài khoản? Đăng ký ngay

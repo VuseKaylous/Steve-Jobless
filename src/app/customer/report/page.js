@@ -2,19 +2,31 @@
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useRouter, useSearchParams } from 'next/navigation';
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const ReportForm = () => {
     const router = useRouter();
     const searchParams = useSearchParams();
-    const olat = searchParams.get('olat');
-    const olng = searchParams.get('olng'); 
-    const dlat = searchParams.get('dlat');
-    const dlng = searchParams.get('dlng');
-    const customer = JSON.parse(localStorage.getItem('customer'));
+    const olat = searchParams.get('olat') || 0.0;
+    const olng = searchParams.get('olng') || 0.0; 
+    const dlat = searchParams.get('dlat') || 0.0;
+    const dlng = searchParams.get('dlng') || 0.0;
+    const orderID = searchParams.get('orderID') || null;
+    const driverID = searchParams.get('driverID') || null;
+
+    const [customer, setCustomer] = useState(() => {
+        const storedCustomer = localStorage.getItem('customer');
+        return storedCustomer ? JSON.parse(storedCustomer) : {name: "", id: ""};
+    });
+
+    useEffect(() => {
+        if (customer.id === "") {
+            router.push('./login');
+        }
+    }, [customer]);
+
     const customerID = customer ? customer.id : null;
-    const orderID = searchParams.get('orderID');
-    const driverID = searchParams.get('driverID');
+
 
     const [showTextbox, setShowTextbox] = useState(false);
     const [reportType, setReportType] = useState('');

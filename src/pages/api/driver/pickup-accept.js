@@ -12,16 +12,17 @@ export default async function handler(req, res) {
             return res.status(400).json({ error: 'Missing orderId or driverId' });
         }
 
-        // Cập nhật trạng thái đơn hàng
+        // Cập nhật trạng thái đơn hàng nếu driver_id là NULL
         const query = `
             UPDATE orders
             SET status = 'đợi tài xế', driver_id = ?
-            WHERE id = ? AND status = 'tìm tài xế';
+            WHERE id = ? AND status = 'tìm tài xế' AND driver_id IS NULL;
         `;
         const result = await executeQuery(query, [driverId, orderId]);
 
+        // Nếu không có dòng nào được cập nhật, nghĩa là điều kiện không thỏa mãn
         if (result.affectedRows === 0) {
-            return res.status(404).json({ error: 'Order not found or already processed' });
+            return res.status(409).json({ error: 'Order already accepted by another driver' });
         }
 
         // Lấy thông tin đơn hàng sau khi chấp nhận

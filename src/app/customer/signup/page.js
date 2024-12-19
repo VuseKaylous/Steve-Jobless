@@ -130,13 +130,10 @@ export default function BusinessRegistration() {
               <div className="card-body">
                 <h1 className="card-title h1 fw-bold text-dark mb-3">Crab</h1>
                 <p className="text-muted mb-4">
-                  Quản lý nhu cầu di chuyển, đồ ăn và giao hàng của bạn
+                  Quản lý nhu cầu di chuyển của bạn
                 </p>
                 <div className="bg-light p-4 rounded">
                   <h2 className="h4 fw-bold text-dark mb-3">Thông tin cá nhân</h2>
-                  <p className="text-muted mb-4">
-                    Chúng tôi sẽ cần các giấy tờ đăng ký để chuẩn bị mọi thứ sẵn sàng trước khi bạn bắt đầu.
-                  </p>
                   {error && (
                     <div className="alert alert-danger" role="alert">
                       {error}
@@ -168,7 +165,6 @@ export default function BusinessRegistration() {
                           value={formData.email}
                           onChange={handleInputChange}
                         />
-                        <small className="text-muted">Chúng tôi sẽ xác minh thông tin này ở bước cuối cùng.</small>
                       </div>
                       <div className="col-md-6 mb-3">
                         <label className="form-label">Số điện thoại liên hệ của bạn</label>
@@ -229,6 +225,7 @@ export default function BusinessRegistration() {
                     <button
                       type="submit"
                       className="btn btn-success w-100"
+                      style={{ backgroundColor: '#00b14f'}}
                       disabled={loading}
                     >
                       {loading ? 'Đang xử lý...' : 'Tiếp theo'}

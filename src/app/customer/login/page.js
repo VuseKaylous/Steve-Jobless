@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 const CrabLogo = () => (
-  <div className="d-flex align-items-center gap-4">
+  <div className="d-flex align-items-center gap-2">
     <svg viewBox="0 0 300 60" style={{ height: '4rem' }}>
       <g fill="#00B14F" transform="translate(0, 10)">
         <path d="M15 8.5C8.4 8.5 3 13.9 3 20.5s5.4 12 12 12c4.4 0 8.2-2.4 10.2-6h-6.1c-1.2 1.2-2.6 2-4.1 2-3.3 0-6-2.7-6-6s2.7-6 6-6c1.5 0 2.9.8 4.1 2h6.1c-2-3.6-5.8-6-10.2-6z" transform="scale(1.5)" />
@@ -12,7 +12,7 @@ const CrabLogo = () => (
         <path d="M95 9.5h-8v22h8c3.9 0 7-1.1 7-5 0-2.4-1.3-4.1-3-4.8 1.7-.7 3-2.4 3-4.2 0-3.9-3.1-8-7-8zm-2 9v-4h2c1.7 0 3 .3 3 2s-1.3 2-3 2h-2zm0 8v-4h2c1.7 0 3 .3 3 2s-1.3 2-3 2h-2z" transform="translate(90) scale(1.5)" />
       </g>
     </svg>
-    <span className="display-6">For Customer</span>
+    <span className="display-6 mt-3">For Customer</span>
   </div>
 );
 
@@ -131,6 +131,7 @@ const LoginPage = () => {
                 <button
                   type="submit"
                   className="btn btn-success w-100 py-2 mb-4"
+                  style={{ backgroundColor: '#00b14f' }}
                   disabled={isLoading}
                 >
                   {isLoading ? 'Đang đăng nhập...' : 'Đăng nhập'}
@@ -141,6 +142,7 @@ const LoginPage = () => {
               <button
                 type="button"
                 onClick={handleSignUpRedirect}
+                style={{ color: '#00b14f' }}
                 className="btn btn-link text-success w-100"
               >
                 Chưa có tài khoản? Đăng ký ngay
