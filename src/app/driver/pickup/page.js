@@ -22,9 +22,29 @@ const DriverPickup = () => {
     }
   }, [router]);
 
-  const handleLogout = () => {
-    localStorage.removeItem("driver");
-    router.push("./login");
+  const handleLogout = async () => {
+    try {
+      const response = await fetch("/api/driver/logout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ driver_id: driver.id }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to log out");
+      }
+
+      // Xóa thông tin tài xế khỏi localStorage
+      localStorage.removeItem("driver");
+
+      // Chuyển hướng đến trang đăng nhập
+      router.push("./login");
+    } catch (error) {
+      console.error("Error logging out:", error);
+      alert("Có lỗi xảy ra khi đăng xuất!");
+    }
   };
 
   // Function to fetch the current order
@@ -75,10 +95,22 @@ const DriverPickup = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ orderId: order.id, driverId: driver.id }),
       });
+
+      if (response.status === 409) {
+        // Đơn hàng đã được nhận bởi tài xế khác
+        alert("Đơn hàng đã được nhận bởi tài xế khác. Đang chờ đơn hàng mới...");
+        setOrder(null); // Xóa thông tin đơn hàng
+        setOrigin(null); // Xóa thông tin vị trí xuất phát
+        setDestination(null); // Xóa thông tin vị trí đích
+        setIsOrderProcessed(false); // Reset trạng thái để tiếp tục quét đơn
+        return; // Kết thúc hàm
+      }
+
       if (!response.ok) throw new Error("Failed to accept order");
+
       alert("Bạn đã chấp nhận đơn hàng!");
-      setOrder(null); // Clear order to avoid showing again
-      setIsOrderProcessed(true); // Mark order as processed
+      setOrder(null); // Xóa thông tin đơn hàng
+      setIsOrderProcessed(true); // Đánh dấu đơn đã xử lý
       setAcceptingOrder(false);
       router.push('/driver/point-to-customer');
     } catch (error) {
@@ -86,6 +118,7 @@ const DriverPickup = () => {
       setAcceptingOrder(false);
     }
   };
+
 
   const handleDeclineOrder = async () => {
     try {

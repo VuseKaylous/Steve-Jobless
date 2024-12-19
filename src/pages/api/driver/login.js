@@ -4,6 +4,7 @@ export default async function handler(req, res) {
   try {
     const { email, password } = req.body;
 
+    // Lấy thông tin tài xế dựa trên email
     const query = 'SELECT id, password, name FROM drivers WHERE email = ?';
     const drivers = await executeQuery(query, [email]);
 
@@ -13,13 +14,18 @@ export default async function handler(req, res) {
 
     const driver = drivers[0];
 
+    // Kiểm tra mật khẩu
     if (password !== driver.password) {
       return res.status(401).json({ error: 'Mật khẩu không đúng' });
     }
 
-    // Don't send password back to client
+    // Cập nhật trạng thái tài xế thành "online" (2 = online)
+    const updateQuery = 'UPDATE drivers SET status = ? WHERE id = ?';
+    await executeQuery(updateQuery, [2, driver.id]);
+
+    // Không gửi mật khẩu về client
     const { password: _, ...driverWithoutPassword } = driver;
-    
+
     return res.json(driverWithoutPassword);
   } catch (error) {
     console.error('Lỗi khi đăng nhập:', error);
