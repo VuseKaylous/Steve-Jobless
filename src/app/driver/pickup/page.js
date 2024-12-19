@@ -11,12 +11,16 @@ const DriverPickup = () => {
   const [order, setOrder] = useState(null);
   const [origin, setOrigin] = useState(null);
   const [destination, setDestination] = useState(null);
-  const driver = JSON.parse(localStorage.getItem("driver"));
   const [acceptingOrder, setAcceptingOrder] = useState(false);
   const geocoder = L.Control.Geocoder.nominatim(); // Instantiate geocoder
 
+  const [driver, setDriver] = useState(() => {
+      const storedDriver = localStorage.getItem('driver');
+      return storedDriver ? JSON.parse(storedDriver) : {name: "", id: ""};
+    });
+
   useEffect(() => {
-    if (!driver) {
+    if (driver.id === "") {
       router.push("./login");
     }
   }, [router]);
