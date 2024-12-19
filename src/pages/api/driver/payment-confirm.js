@@ -1,30 +1,37 @@
 import { executeQuery } from '@/lib/db';
 
 export default async function handler(req, res) {
-    // Chỉ cho phép phương thức POST
     try {
+        const { orderId, driver_id } = req.query;
 
-        const { orderId } = req.query;
-
-        // Kiểm tra xem dữ liệu có đầy đủ không
-        if (!orderId) {
-            console.log("No order id: " + orderId + ": " + req.body)
+        // Kiểm tra xem các tham số có đầy đủ không
+        if (!orderId || !driver_id) {
+            console.log("Missing parameters: orderId or driver_id");
             return res.status(400).json({ error: 'Thiếu tham số yêu cầu' });
         }
 
-        const query = `
+        // Cập nhật trạng thái thanh toán
+        const updatePaymentQuery = `
             UPDATE payments
             SET status = 'hoàn thành'
-            WHERE order_id = ? ;
+            WHERE order_id = ?;
         `;
-        const result = await executeQuery(query, [orderId]);
+        await executeQuery(updatePaymentQuery, [orderId]);
 
-        // Trả về phản hồi thành công với dữ liệu bản ghi vừa thêm
+        // Cập nhật trạng thái driver
+        const updateDriverStatusQuery = `
+            UPDATE drivers
+            SET status = 2
+            WHERE id = ?;
+        `;
+        await executeQuery(updateDriverStatusQuery, [driver_id]);
+
+        // Trả về phản hồi thành công
         return res.status(200).json({
-            message: "Update payment to completed successfully"
+            message: "Payment updated to completed and driver status updated successfully"
         });
     } catch (error) {
-        console.error('Payment insertion error:', error);
-        return res.status(500).json({ error: 'Đã xảy ra lỗi khi thêm thanh toán' });
+        console.error('Error updating payment or driver status:', error);
+        return res.status(500).json({ error: 'Đã xảy ra lỗi khi cập nhật thanh toán hoặc trạng thái tài xế' });
     }
 }

@@ -47,7 +47,7 @@ const Booking = () => {
     if (StartingPoint && DestinationPoint) {
       setIsFindingDriver(true);
       const requestData = JSON.stringify({
-        customer_id: customerId,
+        customer_id: customer.id,
         origin: StartingPoint,
         destination: DestinationPoint,
       });

@@ -25,14 +25,23 @@ const Payment = () => {
 
     const handlePayment = async () => {
         try {
-            const response = await fetch(`/api/driver/payment-confirm?orderId=${order_info.id}`);
+            const driverId = driver?.id; // Lấy driver_id từ localStorage
+            if (!driverId) {
+                console.error('Driver ID is missing');
+                return;
+            }
+
+            const response = await fetch(`/api/driver/payment-confirm?orderId=${order_info.id}&driver_id=${driverId}`);
             if (response.ok) {
-                router.push("./pickup")
+                router.push("./pickup");
+            } else {
+                console.error('Failed to confirm payment');
             }
         } catch (error) {
-            console.error('Lỗi:');
+            console.error('Error:', error);
         }
-    }
+    };
+
 
     useEffect(() => {
         const handleStatus = async () => {
