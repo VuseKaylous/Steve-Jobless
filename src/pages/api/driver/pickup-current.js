@@ -25,10 +25,15 @@ export default async function handler(req, res) {
                   FROM rejected_orders
                   WHERE driver_id = ?
               )
+              AND EXISTS (
+                  SELECT 1
+                  FROM drivers d
+                  WHERE d.id = ? AND d.status = 2
+              )
             LIMIT 1;
         `;
 
-        const orders = await executeQuery(query, [driverId, driverId]);
+        const orders = await executeQuery(query, [driverId, driverId, driverId]);
 
         if (orders.length === 0) {
             return res.status(200).json({ order: null });

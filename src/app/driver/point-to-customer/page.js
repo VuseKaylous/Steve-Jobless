@@ -26,10 +26,29 @@ const PointToCustomer = () => {
     }
   }, [driver]);
 
-  const handleLogout = () => {
-    localStorage.removeItem("driver");
-    setDriver(null);
-    router.push("./login");
+  const handleLogout = async () => {
+    try {
+      const response = await fetch("/api/driver/logout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ driver_id: driver.id }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to log out");
+      }
+
+      // Xóa thông tin tài xế khỏi localStorage
+      localStorage.removeItem("driver");
+
+      // Chuyển hướng đến trang đăng nhập
+      router.push("./login");
+    } catch (error) {
+      console.error("Error logging out:", error);
+      alert("Có lỗi xảy ra khi đăng xuất!");
+    }
   };
 
   const fetchOrder = async () => {
