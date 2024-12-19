@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 const Payment = () => {
@@ -147,4 +147,12 @@ const Payment = () => {
     );
 };
 
-export default Payment;
+const PaymentCompoment = () => {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <Payment></Payment>
+        </Suspense>
+    )
+}
+
+export default PaymentCompoment;

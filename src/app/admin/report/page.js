@@ -55,7 +55,6 @@ const AdminReports = () => {
     };
 
     return (
-        <Suspense fallback={<div>Loading...</div>}>
             <div>
                 {/* Admin Navbar */}
                 <nav className="navbar bg-light">
@@ -217,8 +216,15 @@ const AdminReports = () => {
                     </div>
                 </div>
             </div>
-        </Suspense>
     )
 };
 
-export default AdminReports;
+const AdminReportsRiel = () => {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <AdminReports></AdminReports>
+        </Suspense>
+    )
+}
+
+export default AdminReportsRiel;

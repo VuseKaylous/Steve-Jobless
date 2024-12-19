@@ -1,3 +1,5 @@
+'use client';
+
 import { useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
 import 'leaflet-routing-machine';
@@ -24,6 +26,7 @@ const Map = ({ origin = null, destination = null }) => {
   useEffect(() => {
     // Ensure this runs only in client-side
     if (typeof window === 'undefined') return;
+    if (!window) return;
 
     console.log("Initializing map...");
 

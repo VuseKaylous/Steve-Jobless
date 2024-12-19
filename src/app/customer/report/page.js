@@ -2,7 +2,7 @@
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useRouter, useSearchParams } from 'next/navigation';
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 
 const ReportForm = () => {
     const router = useRouter();
@@ -192,5 +192,13 @@ const ReportForm = () => {
     );
 };
 
-export default ReportForm;
+const Report = () => {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <ReportForm></ReportForm>
+        </Suspense>
+    )
+}
+
+export default Report;
 

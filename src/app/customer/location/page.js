@@ -1,9 +1,11 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
+import React, { Suspense, useEffect, useState } from 'react';
 import styles from "./page.module.css";
 import { useRouter, useSearchParams } from 'next/navigation';
-import Map from "../../../components/Map.js";
+// import Map from "../../../components/Map.js";
+import dynamic from "next/dynamic";
+const Map = dynamic(() => import('../../../components/Map'), { ssr: false});
 
 
 const Location = () => {
@@ -18,14 +20,21 @@ const Location = () => {
     const origin = { lat: parseFloat(olat), lng: parseFloat(olng) };
     const destination = { lat: parseFloat(dlat), lng: parseFloat(dlng) };
 
-    const [customer, setCustomer] = useState(() => {
-        const storedCustomer = localStorage.getItem('customer');
-        return storedCustomer ? JSON.parse(storedCustomer) : {name: "", id: ""};
-    });
+    // const [customer, setCustomer] = useState(() => {
+    //     const storedCustomer = localStorage.getItem('customer');
+    //     return storedCustomer ? JSON.parse(storedCustomer) : {name: "", id: ""};
+    // });
+
+    const [customer, setCustomer] = useState({name: "", id: ""});
     
     useEffect(() => {
         if (customer.id === "") {
             router.push('./login');
+        }
+
+        const storedCustomer = localStorage.getItem('customer');
+        if (storedCustomer) {
+            setCustomer(JSON.parse(storedCustomer));
         }
 
         const checkOrderStatus = async () => {
@@ -78,4 +87,12 @@ const Location = () => {
     )
 };
 
-export default Location;
+const CustomerLocation = () => {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <Location></Location>
+        </Suspense>
+    )
+}
+
+export default CustomerLocation;

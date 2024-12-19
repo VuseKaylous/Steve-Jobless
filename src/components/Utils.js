@@ -1,4 +1,34 @@
+'use client';
 
+import dynamic from "next/dynamic";
+const L = dynamic(() => import("leaflet"), { ssr: false });
+
+const geocodeAddress = (address, callback) => {
+  const geocoder = L.Control.Geocoder.nominatim(); // Instantiate geocoder
+
+  geocoder.geocode(address, (results) => {
+    if (results && results.length > 0) {
+      const { lat, lng } = results[0].center;
+      callback({ lat, lng });
+    } else {
+      console.error("Geocoding failed for address:", address);
+    }
+  });
+};
+
+const geocodeAddressAll = (address, callback) => {
+  const geocoder = L.Control.Geocoder.nominatim(); // Instantiate geocoder
+
+  geocoder.geocode(address, (results) => {
+    callback(results);
+    // if (results && results.length > 0) {
+    //   const { lat, lng } = results[0].center;
+    //   callback({ lat, lng });
+    // } else {
+    //   console.error("Geocoding failed for address:", address);
+    // }
+  });
+}
 
 const calculateDistance = (lat1, lon1, lat2, lon2) => {
     const R = 6371; // Radius of the Earth in kilometers
@@ -16,4 +46,4 @@ const FindCost = (distance) => {
     return (12000 * Math.min(2, distance) + Math.max(distance-2, 0) * 3400).toFixed(0)
 } 
 
-export { FindCost, calculateDistance }
+export { FindCost, calculateDistance, geocodeAddress, geocodeAddressAll }

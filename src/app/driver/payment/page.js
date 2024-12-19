@@ -5,22 +5,29 @@ import { useRouter } from "next/navigation";
 
 
 const Payment = () => {
-    const order_info = JSON.parse(localStorage.getItem("order_info"));
+    // const order_info = JSON.parse(localStorage.getItem("order_info"));
+    const [order_info, setOrderInfo] = useState({id: ""});
     const [customer, setCustomer] = useState("");
     const [start, setStart] = useState("");
     const [destination, setDestination] = useState("");
     const [fee, setFee] = useState(0);
 
     const router = useRouter();
-    const [driver, setDriver] = useState(() => {
-        const storedDriver = localStorage.getItem("driver");
-        return storedDriver ? JSON.parse(storedDriver) : null;
-      });
+    // const [driver, setDriver] = useState(() => {
+    //     const storedDriver = localStorage.getItem("driver");
+    //     return storedDriver ? JSON.parse(storedDriver) : null;
+    //   });
+    const [driver, setDriver] = useState(null)
 
     useEffect(() => {
+        const storedDriver = localStorage.getItem("driver");
+        if (storedDriver) {
+            setDriver(JSON.parse(storedDriver));
+        }
         if (!driver) {
           router.push('./login');
         }
+        setOrderInfo(localStorage.getItem("order_info"));
     }, [router]);
 
     const handlePayment = async () => {

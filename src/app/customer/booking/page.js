@@ -1,13 +1,15 @@
 "use client";
 
-import L from 'leaflet';
+// import L from 'leaflet';
 import 'leaflet-control-geocoder';
 import { useRouter } from 'next/navigation';
 import styles from "./page.module.css"
-import Map from "../../../components/Map.js";
+import dynamic from "next/dynamic";
+const Map = dynamic(() => import('../../../components/Map'), { ssr: false});
+// import Map from "../../../components/Map.js";
 import Found from './found';
 import React, { useState, useEffect } from 'react';
-import { FindCost, calculateDistance } from '@/components/Utils';
+import { FindCost, calculateDistance, geocodeAddress, geocodeAddressAll } from '@/components/Utils';
 
 const Booking = () => {
   const router = useRouter();
@@ -19,7 +21,7 @@ const Booking = () => {
   const [destSuggestions, setDestSuggestions] = useState([]);
   const [origin, setOrigin] = useState(null);
   const [destination, setDestination] = useState(null);
-  const geocoder = L.Control.Geocoder.nominatim();
+  // const geocoder = L.Control.Geocoder.nominatim();
   const [showPanel, setShowPanel] = useState(false);
   const [distance, setDistance] = useState(null);
   const [isFindingDriver, setIsFindingDriver] = useState(false);
@@ -89,15 +91,20 @@ const Booking = () => {
 
 
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (!window) return;
     const startInput = document.querySelector('.leaflet-routing-geocoder-start');
     const destInput = document.querySelector('.leaflet-routing-geocoder-dest');
 
     if (startInput) {
       L.DomEvent.addListener(startInput, 'keydown', (e) => {
         if (e.key === 'Enter') {
-          geocoder.geocode(startInput.value, (results) => {
-            const suggestions = results.map(result => result.name);
-            setStartSuggestions(suggestions);
+          // geocoder.geocode(startInput.value, (results) => {
+          //   const suggestions = results.map(result => result.name);
+          //   setStartSuggestions(suggestions);
+          // });
+          geocodeAddressAll(startInput.value, (results) => {
+            setStartSuggestions(results);
           });
         }
       });
@@ -106,9 +113,12 @@ const Booking = () => {
     if (destInput) {
       L.DomEvent.addListener(destInput, 'keydown', (e) => {
         if (e.key === 'Enter') {
-          geocoder.geocode(destInput.value, (results) => {
-            const suggestions = results.map(result => result.name);
-            setDestSuggestions(suggestions);
+          // geocoder.geocode(destInput.value, (results) => {
+          //   const suggestions = results.map(result => result.name);
+          //   setDestSuggestions(suggestions);
+          // });
+          geocodeAddressAll(destInput.value, (results) => {
+            setDestSuggestions(results);
           });
         }
       });
@@ -126,43 +136,59 @@ const Booking = () => {
   const handleStartingPointKeyDown = (event) => {
     if (event.key === 'Enter') {
       event.preventDefault();
-      geocoder.geocode(originalStartingPoint, (results) => {
-        const suggestions = results.map(result => result.name);
-        setStartSuggestions(suggestions);
-      });
+      // geocoder.geocode(originalStartingPoint, (results) => {
+      //   const suggestions = results.map(result => result.name);
+      //   setStartSuggestions(suggestions);
+      // });
+      geocodeAddressAll(startInput.value, (results) => {
+        setStartSuggestions(results);
+      })
     }
   };
 
   const handleDestinationPointKeyDown = (event) => {
     if (event.key === 'Enter') {
       event.preventDefault();
-      geocoder.geocode(originalDestinationPoint, (results) => {
-        const suggestions = results.map(result => result.name);
-        setDestSuggestions(suggestions);
+      // geocoder.geocode(originalDestinationPoint, (results) => {
+      //   const suggestions = results.map(result => result.name);
+      //   setDestSuggestions(suggestions);
+      // });
+      geocodeAddressAll(destInput.value, (results) => {
+        setDestSuggestions(results);
       });
     }
   };
 
   const handleStartSuggestionClick = (suggestion) => {
-    geocoder.geocode(suggestion, (results) => {
-      if (results.length > 0) {
-        const { center } = results[0];
-        setFinalStartingPoint(suggestion);
-        setOrigin({ lat: center.lat, lng: center.lng });
-        setStartSuggestions([]);
-      }
-    });
+    // geocoder.geocode(suggestion, (results) => {
+    //   if (results.length > 0) {
+    //     const { center } = results[0];
+    //     setFinalStartingPoint(suggestion);
+    //     setOrigin({ lat: center.lat, lng: center.lng });
+    //     setStartSuggestions([]);
+    //   }
+    // });
+    geocodeAddress(suggestion, (results) => {
+      setFinalStartingPoint(suggestion);
+      setStartSuggestions([]);
+      setOrigin(results);
+    })
   };
 
   const handleDestSuggestionClick = (suggestion) => {
-    geocoder.geocode(suggestion, (results) => {
-      if (results.length > 0) {
-        const { center } = results[0];
-        setFinalDestinationPoint(suggestion);
-        setDestination({ lat: center.lat, lng: center.lng });
-        setDestSuggestions([]);
-      }
-    });
+    // geocoder.geocode(suggestion, (results) => {
+    //   if (results.length > 0) {
+    //     const { center } = results[0];
+    //     setFinalDestinationPoint(suggestion);
+    //     setDestination({ lat: center.lat, lng: center.lng });
+    //     setDestSuggestions([]);
+    //   }
+    // });
+    geocodeAddress(suggestion, (results) => {
+      setFinalDestinationPoint(suggestion);
+      setDestSuggestions([]);
+      setDestination(results);
+    })
   };
 
   return (

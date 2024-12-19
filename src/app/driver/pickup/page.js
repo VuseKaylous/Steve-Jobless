@@ -1,10 +1,14 @@
 "use client";
 
-import Map from "../../../components/Map";
+import dynamic from "next/dynamic";
+const Map = dynamic(() => import('../../../components/Map'), { ssr: false});
+// import Map from "../../../components/Map";
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./page.module.css";
-import L from "leaflet";  // Add Leaflet for geocoding
+import { geocodeAddress } from "@/components/Utils";
+// import L from "leaflet";  // Add Leaflet for geocoding
+// const L = dynamic(() => import("leaflet"), { ssr: false });
 
 const DriverPickup = () => {
   const router = useRouter();
@@ -13,17 +17,23 @@ const DriverPickup = () => {
   const [destination, setDestination] = useState(null);
   const [acceptingOrder, setAcceptingOrder] = useState(false);
   const [isOrderProcessed, setIsOrderProcessed] = useState(false); // Track if the order has been processed
-  const geocoder = L.Control.Geocoder.nominatim(); // Instantiate geocoder
+  // const geocoder = L.Control.Geocoder.nominatim(); // Instantiate geocoder
 
-  const [driver, setDriver] = useState(() => {
-      const storedDriver = localStorage.getItem('driver');
-      return storedDriver ? JSON.parse(storedDriver) : {name: "", id: ""};
-    });
+  // const [driver, setDriver] = useState(() => {
+  //     const storedDriver = localStorage.getItem('driver');
+  //     return storedDriver ? JSON.parse(storedDriver) : {name: "", id: ""};
+  //   });
+  const [driver, setDriver] = useState({name: "", id: ""});
 
   useEffect(() => {
+    const storedDriver = localStorage.getItem('driver');
+    if (storedDriver) {
+      setDriver(JSON.parse(storedDriver));
+    }
     if (driver.id === "") {
       router.push("./login");
     }
+
   }, [router]);
 
   const handleLogout = async () => {
@@ -153,16 +163,16 @@ const DriverPickup = () => {
 
 
   // Function to geocode address to coordinates
-  const geocodeAddress = (address, callback) => {
-    geocoder.geocode(address, (results) => {
-      if (results && results.length > 0) {
-        const { lat, lng } = results[0].center;
-        callback({ lat, lng });
-      } else {
-        console.error("Geocoding failed for address:", address);
-      }
-    });
-  };
+  // const geocodeAddress = (address, callback) => {
+  //   geocoder.geocode(address, (results) => {
+  //     if (results && results.length > 0) {
+  //       const { lat, lng } = results[0].center;
+  //       callback({ lat, lng });
+  //     } else {
+  //       console.error("Geocoding failed for address:", address);
+  //     }
+  //   });
+  // };
 
   return (
     <div>
