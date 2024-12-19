@@ -115,6 +115,7 @@ export default function BusinessRegistration() {
       }
 
       console.log('Registration successful:', data);
+      router.push('/customer/login');
 
       // Navigation or success handling can be done here
 
