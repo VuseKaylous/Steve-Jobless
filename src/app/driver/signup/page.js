@@ -89,8 +89,6 @@ export default function BusinessRegistration() {
         vehicle_registration: formData.vehicle_registration
       };
 
-      console.log('Sending data:', requestData);
-
       const response = await fetch('/api/driver/signup', {
         method: 'POST',
         headers: {
@@ -180,7 +178,6 @@ export default function BusinessRegistration() {
                           value={formData.email}
                           onChange={handleInputChange}
                         />
-                        <small className="text-muted">Chúng tôi sẽ xác minh thông tin này ở bước cuối cùng.</small>
                       </div>
                       <div className="col-md-6 mb-3">
                         <label className="form-label">Số điện thoại liên hệ của bạn</label>
@@ -263,6 +260,7 @@ export default function BusinessRegistration() {
                     <button 
                       type="submit" 
                       className="btn btn-success w-100"
+                      style={{backgroundColor: '#00B14F'}}
                       disabled={loading}
                     >
                       {loading ? 'Đang xử lý...' : 'Tiếp theo'}

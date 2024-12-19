@@ -11,8 +11,14 @@
     transition: background-color 0.3s ease;
   }
 
-  .logOut:hover {
-    background-color: #e60000;  /* Màu đỏ đậm khi hover */
+  .logOut {
+    border: none;
+    background-color: transparent;
+    color: #00b14f;
+    cursor: pointer;
+    margin-left: "40px";
+    margin-right: "40px";
+    display: "inline";
   }
 
   .actionButton {
