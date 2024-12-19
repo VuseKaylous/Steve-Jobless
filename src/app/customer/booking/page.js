@@ -20,7 +20,6 @@ const Booking = () => {
   const [origin, setOrigin] = useState(null);
   const [destination, setDestination] = useState(null);
   const geocoder = L.Control.Geocoder.nominatim();
-  const customer = JSON.parse(localStorage.getItem('customer'));
   const [showPanel, setShowPanel] = useState(false);
   const [distance, setDistance] = useState(null);
   const [isFindingDriver, setIsFindingDriver] = useState(false);
@@ -28,25 +27,27 @@ const Booking = () => {
   const [driverId, setDriverId] = useState(null);
   const [orderID, setOrderID] = useState(null);
 
+  const [customer, setCustomer] = useState(() => {
+    const storedCustomer = localStorage.getItem('customer');
+    return storedCustomer ? JSON.parse(storedCustomer) : {name: "", id: ""};
+  });
+
   useEffect(() => {
-    if (!customer) {
+    if (customer.id === "") {
       router.push('./login');
     }
-  }, [router]);
+  }, [customer]);
 
   const handleLogout = () => {
     localStorage.removeItem('customer'); // Remove the token from localStorage
     router.push('./login');
   };
 
-  const customerId = customer ? customer.id : null;
-  const customerName = customer ? customer.name : null;
-
   const handleFindDriverClick = async () => {
     if (StartingPoint && DestinationPoint) {
       setIsFindingDriver(true);
       const requestData = JSON.stringify({
-        customer_id: customerId,
+        customer_id: customer.id,
         origin: StartingPoint,
         destination: DestinationPoint,
       });
@@ -180,7 +181,7 @@ const Booking = () => {
             {/* User Controls */}
             <div className="d-flex">
               <span style={{color: '#00b14f'}} className="me-2">
-                  CHÀO MỪNG, <strong>{customerName.toUpperCase()}</strong>.
+                  CHÀO MỪNG, <strong>{customer.name.toUpperCase()}</strong>.
               </span>
               <button onClick={handleLogout} className={styles.logOut}>
                   ĐĂNG XUẤT

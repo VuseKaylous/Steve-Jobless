@@ -197,11 +197,46 @@ const AdminAccount = () => {
                                     <tbody>
                                         {filteredCustomers.map((customer) => (
                                             <tr key={customer.user_id}>
-                                                <td className="text-center">{customer.name}</td>
-                                                <td className="text-center">{customer.id}</td>
-                                                <td className="text-center">{customer.email}</td>
-                                                <td className="text-center">{customer.phone_number}</td>
-                                                <td className="text-center">{customer.report}</td>
+                                                <td 
+                                                    className="text-center"
+                                                    style={{whiteSpace: "nowrap",
+                                                            overflow: "hidden",
+                                                            textOverflow: "ellipsis"}}
+                                                >
+                                                    {customer.name}
+                                                </td>
+                                                <td 
+                                                    className="text-center"
+                                                    style={{whiteSpace: "nowrap",
+                                                            overflow: "hidden",
+                                                            textOverflow: "ellipsis"}}
+                                                >
+                                                    {customer.id}
+                                                </td>
+                                                <td 
+                                                    className="text-center"
+                                                    style={{whiteSpace: "nowrap",
+                                                            overflow: "hidden",
+                                                            textOverflow: "ellipsis"}}
+                                                >
+                                                    {customer.email}
+                                                </td>
+                                                <td 
+                                                    className="text-center"
+                                                    style={{whiteSpace: "nowrap",
+                                                            overflow: "hidden",
+                                                            textOverflow: "ellipsis"}}
+                                                >
+                                                    {customer.phone_number}
+                                                </td>
+                                                <td 
+                                                    className="text-center"
+                                                    style={{whiteSpace: "nowrap",
+                                                            overflow: "hidden",
+                                                            textOverflow: "ellipsis"}}
+                                                >
+                                                    {customer.report}
+                                                </td>
                                             </tr>
                                         ))}
                                     </tbody>
@@ -221,18 +256,51 @@ const AdminAccount = () => {
                                     <tbody>
                                         {filteredDrivers.map((driver) => (
                                             <tr key={driver.id}>
-                                                <td className="text-center">
+                                                <td 
+                                                    className="text-center"
+                                                    style={{whiteSpace: "nowrap",
+                                                            overflow: "hidden",
+                                                            textOverflow: "ellipsis"}}
+                                                >
+                                                    {driver.name}
+                                                </td>
+                                                <td 
+                                                    className="text-center"
+                                                    style={{whiteSpace: "nowrap",
+                                                            overflow: "hidden",
+                                                            textOverflow: "ellipsis"}}
+                                                >
                                                     <button 
                                                         onClick={() => handleReport(driver.id)} 
                                                         className={styles.Report}
                                                     >
-                                                        {driver.name}
+                                                        {driver.id}
                                                     </button>
                                                 </td>
-                                                <td className="text-center">{driver.id}</td>
-                                                <td className="text-center">{driver.email}</td>
-                                                <td className="text-center">{driver.phone_number}</td>
-                                                <td className="text-center">+{numReports[driver.id-1]}</td>
+                                                <td 
+                                                    className="text-center"
+                                                    style={{whiteSpace: "nowrap",
+                                                            overflow: "hidden",
+                                                            textOverflow: "ellipsis"}}
+                                                >
+                                                    {driver.email}
+                                                </td>
+                                                <td 
+                                                    className="text-center"
+                                                    style={{whiteSpace: "nowrap",
+                                                            overflow: "hidden",
+                                                            textOverflow: "ellipsis"}}
+                                                >
+                                                    {driver.phone_number}
+                                                </td>
+                                                <td 
+                                                    className="text-center"
+                                                    style={{whiteSpace: "nowrap",
+                                                            overflow: "hidden",
+                                                            textOverflow: "ellipsis"}}
+                                                >
+                                                    +{numReports[driver.id-1]}
+                                                </td>
                                             </tr>
                                         ))}
                                     </tbody>

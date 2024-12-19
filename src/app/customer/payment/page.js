@@ -18,6 +18,17 @@ const Payment = () => {
     const [fee, setFee] = useState(0);
     const hasExecuted = useRef(false);
 
+    const [customer, setCustomer] = useState(() => {
+        const storedCustomer = localStorage.getItem('customer');
+        return storedCustomer ? JSON.parse(storedCustomer) : {name: "", id: ""};
+    });
+    
+    useEffect(() => {
+        if (customer.id === "") {
+            router.push('./login');
+        }
+    }, [customer]);
+
     const updateFee = (distance, state) => {
         const fee = (distance ? (12000 * Math.min(2, distance) + Math.max(distance - 2, 0) * 3400).toFixed(0) : 0) / (state === "cancelled" ? 2 : 1);
         setFee(fee);
@@ -74,17 +85,6 @@ const Payment = () => {
                         fee: fee,
                     }),
                 });
-                // console.log(response.json());
-                // if (response.ok) {
-                //     const result = await response.json();
-                //     console.log("Payment create:");
-                //     console.log(result);
-                //     localStorage.setItem('payment_info', JSON.stringify(result));
-                //     console.log("Payment info save: " + localStorage.getItem('payment_info'));
-                //     console.log('Đang chờ khách thanh toán', result);
-                // } else {
-                //     console.error('Lỗi tao thanh toan', response.statusText);
-                // }
             } catch (error) {
                 console.error('Error fetching order information:', error);
             }

@@ -81,7 +81,7 @@ export default function ResetDriverPassword() {
               onChange={(e) => setConfirmPassword(e.target.value)}
             />
           </div>
-          <button className="btn btn-success w-100 py-2 mb-3" onClick={handleResetPassword}>
+          <button className="btn btn-success w-100 py-2 mb-3" style={{backgroundColor: '#00b14f'}} onClick={handleResetPassword}>
             Gửi yêu cầu
           </button>
           {message && <p className="text-center text-info mt-3">{message}</p>}

@@ -26,10 +26,29 @@ const PointToCustomer = () => {
     }
   }, [driver]);
 
-  const handleLogout = () => {
-    localStorage.removeItem("driver");
-    setDriver(null);
-    router.push("./login");
+  const handleLogout = async () => {
+    try {
+      const response = await fetch("/api/driver/logout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ driver_id: driver.id }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to log out");
+      }
+
+      // Xóa thông tin tài xế khỏi localStorage
+      localStorage.removeItem("driver");
+
+      // Chuyển hướng đến trang đăng nhập
+      router.push("./login");
+    } catch (error) {
+      console.error("Error logging out:", error);
+      alert("Có lỗi xảy ra khi đăng xuất!");
+    }
   };
 
   const fetchOrder = async () => {
@@ -40,14 +59,12 @@ const PointToCustomer = () => {
       const data = await response.json();
       if (data.order) {
         setOrder(data.order);
-        console.log("Fetched order:", data.order);
         localStorage.setItem('order_info', JSON.stringify(data.order));
 
         // Kiểm tra nếu địa chỉ đã thay đổi trước khi geocode lại
         if (data.order.origin !== order?.origin) {
           geocodeAddress(data.order.origin, (originCoords) => {
             setDestination(originCoords); // Set destination only if origin changes
-            console.log("Geocoded origin:", originCoords); // Log the origin coords
           });
         }
       } else {
@@ -55,6 +72,20 @@ const PointToCustomer = () => {
       }
     } catch (error) {
       console.error("Error fetching order:", error);
+    }
+  };
+
+  const checkOrderStatus = async (orderId) => {
+    try {
+      const response = await fetch(`/api/driver/status?order_id=${orderId}`);
+      if (!response.ok) throw new Error("Failed to fetch order status");
+  
+      const data = await response.json();
+      if (data.status === "hủy") {
+        router.push("./payment");
+      }
+    } catch (error) {
+      console.error("Error checking order status:", error);
     }
   };
 
@@ -70,7 +101,6 @@ const PointToCustomer = () => {
         (position) => {
           const { latitude, longitude } = position.coords;
           setOrigin({ lat: latitude, lng: longitude });
-          console.log("Current location:", { lat: latitude, lng: longitude }); // Log current location
         },
         (error) => {
           console.error("Error fetching current location:", error);
@@ -83,24 +113,36 @@ const PointToCustomer = () => {
     if (driver) {
       fetchCurrentLocation();
       const locationInterval = setInterval(fetchCurrentLocation, 20000);
-
-      return () => clearInterval(locationInterval);
+  
+      return () => {
+        clearInterval(locationInterval);
+      };
     }
   }, [driver]);
+  
+  useEffect(() => {
+    if (order) {
+      const statusInterval = setInterval(() => {
+        checkOrderStatus(order.id);
+      }, 5000); // Check order status every 5 seconds
+  
+      return () => {
+        clearInterval(statusInterval);
+      };
+    }
+  }, [order]);
 
   const confirmCustomer = async () => {
     setAcceptingOrder(true);
     try {
-      const response = await fetch("/api/driver/customer-confirm", {
+      const response = await fetch(`/api/driver/customer-confirm?orderId=${order.id}&driverId=${driver.id}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ orderId: order.id, driverId: driver.id }),
       });
       if (!response.ok) throw new Error("Failed to accept order");
-      alert("Bạn đã đón khách thành công!");
       setOrder(null);
       setAcceptingOrder(false);
-      router.push("/driver/point-to-finish");
+      router.push("./point-to-finish");
     } catch (error) {
       console.error("Error accepting order:", error);
       setAcceptingOrder(false);
@@ -118,12 +160,6 @@ const PointToCustomer = () => {
       }
     });
   };
-
-  useEffect(() => {
-    // Log origin and destination values
-    console.log("Origin:", origin);
-    console.log("Destination:", destination);
-  }, [origin, destination]);
 
   return (
     <div>

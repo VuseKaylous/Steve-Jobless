@@ -18,17 +18,19 @@ L.Icon.Default.mergeOptions({
 
 const Map = ({ origin = null, destination = null }) => {
   const [userLocation, setUserLocation] = useState(null);
-  const locateButtonRef = useRef(null); // Sử dụng ref để tham chiếu đến nút
+  const locateButtonRef = useRef(null); // Reference for manual locate button
+  const mapExists = useRef(false); // To track if map exists
 
   useEffect(() => {
-    if (typeof window === 'undefined') {
-      return; // Kiểm tra môi trường client-side
-    }
+    // Ensure this runs only in client-side
+    if (typeof window === 'undefined') return;
 
     console.log("Initializing map...");
 
     // Initialize the map
     const map = L.map('map');
+    mapExists.current = true;
+
     console.log("Map initialized:", map);
 
     // Add a tile layer (OpenStreetMap)
@@ -39,7 +41,9 @@ const Map = ({ origin = null, destination = null }) => {
 
     // Handle user manual location
     const locateUser = () => {
-      map.locate({ setView: true, maxZoom: 16 });
+      if (mapExists.current) {
+        map.locate({ setView: true, maxZoom: 16 });
+      }
     };
 
     // Add button for manual location
@@ -53,19 +57,19 @@ const Map = ({ origin = null, destination = null }) => {
       button.style.border = '1px solid #ccc';
       button.style.borderRadius = '5px';
       L.DomEvent.on(button, 'click', () => {
-        locateUser();  // Gọi hàm locateUser khi bấm nút
+        locateUser(); // Trigger location function on click
       });
-      locateButtonRef.current = button; // Lưu tham chiếu đến nút
+      locateButtonRef.current = button;
       return button;
     };
     locateButton.addTo(map);
 
     // Initialize routing control
     const routingControl = L.Routing.control({
-      waypoints: (origin == null || destination == null) ? [] : [
+      waypoints: origin && destination ? [
         L.latLng(origin.lat, origin.lng),
         L.latLng(destination.lat, destination.lng),
-      ],
+      ] : [],
       routeWhileDragging: true,
       geocoder: L.Control.Geocoder.nominatim(),
       suggest: L.Control.Geocoder.nominatim(),
@@ -74,12 +78,10 @@ const Map = ({ origin = null, destination = null }) => {
         styles: [{ color: "blue", opacity: 0.5, weight: 2 }],
       },
       createMarker: function (i, waypoint, n) {
-        console.log(`Creating marker at waypoint ${i}:`, waypoint.latLng);
         const customIcon = L.icon({
-          iconUrl:
-            i === 0
-              ? "https://cdn-icons-png.flaticon.com/512/684/684908.png"
-              : "https://cdn-icons-png.flaticon.com/512/684/684908.png",
+          iconUrl: i === 0
+            ? "https://cdn-icons-png.flaticon.com/512/684/684908.png"
+            : "https://cdn-icons-png.flaticon.com/512/684/684908.png",
           iconSize: [32, 32],
           iconAnchor: [16, 32],
         });
@@ -87,17 +89,16 @@ const Map = ({ origin = null, destination = null }) => {
       },
     }).addTo(map);
 
-    console.log("Routing control initialized:", routingControl);
-
-    // Update waypoints when origin or destination changes
+    // Update waypoints if origin and destination exist
     if (origin && destination) {
-      console.log("Setting waypoints:", origin, destination);
-      routingControl.setWaypoints([
-        L.latLng(origin.lat, origin.lng),
-        L.latLng(destination.lat, destination.lng),
-      ]);
-    } else {
-      console.log("Origin or destination is null. Skipping waypoint update.");
+      try {
+        routingControl.setWaypoints([
+          L.latLng(origin.lat, origin.lng),
+          L.latLng(destination.lat, destination.lng),
+        ]);
+      } catch (err) {
+        console.error("Error setting waypoints:", err);
+      }
     }
 
     // Handle location errors
@@ -106,57 +107,49 @@ const Map = ({ origin = null, destination = null }) => {
       alert('Location access denied or unavailable.');
     });
 
-    // Automatically trigger user location after 3 seconds
+    // Trigger location after 3 seconds
     setTimeout(() => {
       if (locateButtonRef.current) {
-        locateButtonRef.current.click(); // Simulate button click
+        locateButtonRef.current.click();
       }
     }, 3000);
 
-    // Add event listener for location found
+    // Handle location found
     map.on('locationfound', function (e) {
       console.log("Location found:", e);
       const radius = e.accuracy / 2;
 
-      // Define marker icon
       const markerIcon = L.icon({
         iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
         shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
-        iconSize: [25, 41], // Size of the icon
-        iconAnchor: [12, 41], // Anchor point of the icon
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
       });
 
-      // Add marker to map
-      const marker = L.marker(e.latlng, { icon: markerIcon });
-      marker.addTo(map)
+      // Add marker and circle to map
+      L.marker(e.latlng, { icon: markerIcon }).addTo(map)
         .bindPopup(`You are within ${radius} meters from this point`).openPopup();
+      L.circle(e.latlng, radius).addTo(map);
 
-      // Add circle to map
-      const circle = L.circle(e.latlng, radius);
-      circle.addTo(map);
-
-      // If origin and destination are null, set them to the current location
+      // Save user location if origin and destination are not set
       if (!origin && !destination) {
-        setUserLocation(e.latlng); // Save user location in state
-      }
-    });
-
-    // Add safeguard for moveend event
-    map.on('moveend', function () {
-      try {
-        const center = map.getCenter();
-        console.log("Map center moved to:", center);
-      } catch (err) {
-        console.error("Error during map moveend:", err);
+        setUserLocation(e.latlng);
       }
     });
 
     return () => {
       console.log("Cleaning up map...");
-      map.remove(); // Clean up on unmount
-      map.removeControl(routingControl);
+      if (mapExists.current) {
+        if (routingControl && routingControl.getPlan()) {
+          routingControl.getPlan().setWaypoints([]);
+          map.removeControl(routingControl);
+        }
+        map.off();
+        map.remove();
+      }
+      mapExists.current = false;
     };
-  }, [origin, destination]); // Ensure effect runs when origin or destination changes
+  }, [origin, destination]);
 
   return <div id="map" style={{ height: '85vh', width: '100%' }} />;
 };
