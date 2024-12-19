@@ -65,7 +65,7 @@ export default function BusinessRegistration() {
               onChange={(e) => setPhone(e.target.value)}
             />
           </div>
-          <button onClick={handleSubmit} className="btn btn-success w-100 py-2 mb-3">Gửi</button>
+          <button onClick={handleSubmit} className="btn btn-success w-100 py-2 mb-3" style={{backgroundColor: '#00b14f'}}>Gửi</button>
           {message && <p className="text-center">{message}</p>}
           <button onClick={handleBackToLogin} className="btn btn-outline-secondary w-100 py-2">Quay lại Đăng nhập</button>
         </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from "./page.module.css";
 import { useRouter, useSearchParams } from 'next/navigation';
 import Map from "../../../components/Map.js";
@@ -9,18 +9,22 @@ import Map from "../../../components/Map.js";
 const Location = () => {
     const router = useRouter();
     const searchParams = useSearchParams();
-    const customer = JSON.parse(localStorage.getItem('customer'));
-    const olat = searchParams.get('olat');
-    const olng = searchParams.get('olng'); 
-    const dlat = searchParams.get('dlat');
-    const dlng = searchParams.get('dlng');
-    const driverID = searchParams.get('driverID');
-    const order_id = searchParams.get('orderID');
+    const olat = searchParams.get('olat') || 0.0;
+    const olng = searchParams.get('olng') || 0.0; 
+    const dlat = searchParams.get('dlat') || 0.0;
+    const dlng = searchParams.get('dlng') || 0.0;
+    const driverID = searchParams.get('driverID') || 0;
+    const order_id = searchParams.get('orderID') || 0;
     const origin = { lat: parseFloat(olat), lng: parseFloat(olng) };
     const destination = { lat: parseFloat(dlat), lng: parseFloat(dlng) };
+
+    const [customer, setCustomer] = useState(() => {
+        const storedCustomer = localStorage.getItem('customer');
+        return storedCustomer ? JSON.parse(storedCustomer) : {name: "", id: ""};
+    });
     
     useEffect(() => {
-        if (!customer) {
+        if (customer.id === "") {
             router.push('./login');
         }
 

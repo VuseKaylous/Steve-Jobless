@@ -4,7 +4,7 @@ export default async function handler(req, res) {
     // Chỉ cho phép phương thức POST
     try {
 
-        const { orderId } = req.body;
+        const { orderId } = req.query;
 
         // Kiểm tra xem dữ liệu có đầy đủ không
         if (!orderId) {
@@ -18,12 +18,6 @@ export default async function handler(req, res) {
             WHERE order_id = ? ;
         `;
         const result = await executeQuery(query, [orderId]);
-
-        if (result.affectedRows === 0) {
-            return res.status(404).json({ error: 'Order not found or already processed' });
-        }
-
-        console.log("It's supposed to update payment successfully")
 
         // Trả về phản hồi thành công với dữ liệu bản ghi vừa thêm
         return res.status(200).json({

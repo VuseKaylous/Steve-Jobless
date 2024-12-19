@@ -70,7 +70,6 @@ const DriverPickup = () => {
         body: JSON.stringify({ orderId: order.id, driverId: driver.id }),
       });
       if (!response.ok) throw new Error("Failed to accept order");
-      alert("Bạn đã chấp nhận đơn hàng!");
       setOrder(null); // Clear order to avoid showing again
       setAcceptingOrder(false);
       router.push('/driver/point-to-customer');
@@ -88,7 +87,6 @@ const DriverPickup = () => {
         body: JSON.stringify({ orderId: order.id, driverId: driver.id }),
       });
       if (!response.ok) throw new Error("Failed to decline order");
-      alert("Bạn đã từ chối đơn hàng!");
       setOrder(null); // Clear order to avoid showing again
     } catch (error) {
       console.error("Error declining order:", error);
