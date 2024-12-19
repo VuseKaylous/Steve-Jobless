@@ -12,6 +12,7 @@ const DriverPickup = () => {
   const [origin, setOrigin] = useState(null);
   const [destination, setDestination] = useState(null);
   const [acceptingOrder, setAcceptingOrder] = useState(false);
+  const [isOrderProcessed, setIsOrderProcessed] = useState(false); // Track if the order has been processed
   const geocoder = L.Control.Geocoder.nominatim(); // Instantiate geocoder
 
   const [driver, setDriver] = useState(() => {
@@ -32,6 +33,8 @@ const DriverPickup = () => {
 
   // Function to fetch the current order
   const fetchOrder = async () => {
+    if (isOrderProcessed) return; // Don't fetch if the order is already processed
+
     try {
       const response = await fetch(
         `/api/driver/pickup-current?driverId=${driver.id}`
@@ -47,6 +50,7 @@ const DriverPickup = () => {
         geocodeAddress(data.order.destination, (destCoords) => {
           setDestination(destCoords);
         });
+        setIsOrderProcessed(false); // Reset the processed flag when a new order is fetched
       } else {
         setOrder(null);
       }
@@ -55,15 +59,17 @@ const DriverPickup = () => {
     }
   };
 
-  // Set up polling to fetch order every 10 seconds
   useEffect(() => {
-    const interval = setInterval(() => {
-      fetchOrder();
-    }, 10000); // 10 seconds interval
+    if (!order) {  // Chỉ gọi lại fetchOrder khi không có đơn
+      const interval = setInterval(() => {
+        fetchOrder();
+      }, 10000); // 10 giây
 
-    // Cleanup interval on component unmount
-    return () => clearInterval(interval);
-  }, [driver]);
+      // Cleanup interval khi component unmount hoặc có đơn hàng
+      return () => clearInterval(interval);
+    }
+  }, [order]);  // Phụ thuộc vào 'order', chỉ gọi lại khi 'order' thay đổi
+
 
   const handleAcceptOrder = async () => {
     setAcceptingOrder(true);
@@ -75,6 +81,7 @@ const DriverPickup = () => {
       });
       if (!response.ok) throw new Error("Failed to accept order");
       setOrder(null); // Clear order to avoid showing again
+      setIsOrderProcessed(true); // Mark order as processed
       setAcceptingOrder(false);
       router.push('/driver/point-to-customer');
     } catch (error) {
@@ -91,11 +98,25 @@ const DriverPickup = () => {
         body: JSON.stringify({ orderId: order.id, driverId: driver.id }),
       });
       if (!response.ok) throw new Error("Failed to decline order");
-      setOrder(null); // Clear order to avoid showing again
+      alert("Bạn đã từ chối đơn hàng!");
+
+      // Xóa thông tin đơn hàng và địa điểm
+      setOrder(null); // Clear the order to avoid showing again
+      setOrigin(null); // Clear origin location
+      setDestination(null); // Clear destination location
+      setIsOrderProcessed(true); // Mark order as processed
+
+      // Tạo khoảng thời gian nghỉ 5 giây trước khi tiếp tục quét đơn
+      setTimeout(() => {
+        // Quay lại quét đơn sau khi nghỉ 5 giây
+        fetchOrder(); // Force re-fetch the order after declining
+      }, 10000); // 10 giây nghỉ
     } catch (error) {
       console.error("Error declining order:", error);
     }
   };
+
+
 
   // Function to geocode address to coordinates
   const geocodeAddress = (address, callback) => {
