@@ -2,11 +2,11 @@ import { executeQuery } from '@/lib/db';
 
 export default async function handler(req, res) {
     try {
-        if (req.method !== 'GET') {
+        if (req.method !== 'POST') {
             return res.status(405).json({ error: 'Method not allowed' });
         }
 
-        const driverId = req.query.driverId; // Giả sử `driverId` được gửi từ client
+        const driverId = req.body.driverId; // Giả sử `driverId` được gửi từ client
 
         if (!driverId) {
             return res.status(400).json({ error: 'Missing driverId' });

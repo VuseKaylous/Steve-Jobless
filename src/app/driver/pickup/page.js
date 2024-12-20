@@ -1,14 +1,30 @@
 "use client";
 
 import dynamic from "next/dynamic";
-const Map = dynamic(() => import('../../../components/Map'), { ssr: false});
-// import Map from "../../../components/Map";
+const Map = dynamic(() => import('../../../components/Map'), { ssr: false });
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./page.module.css";
-import { geocodeAddress } from "@/components/Utils";
-// import L from "leaflet";  // Add Leaflet for geocoding
-// const L = dynamic(() => import("leaflet"), { ssr: false });
+
+// Hàm để lấy tọa độ từ Nominatim
+const getCoordinates = async (address) => {
+  const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json&addressdetails=1`;
+
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+
+    if (data && data.length > 0) {
+      const { lat, lon } = data[0]; // Lấy lat và lon từ kết quả
+      return { lat, lon };
+    } else {
+      throw new Error("Không tìm thấy địa chỉ");
+    }
+  } catch (error) {
+    console.error("Error fetching coordinates:", error);
+    return null; // Trả về null nếu có lỗi
+  }
+};
 
 const DriverPickup = () => {
   const router = useRouter();
@@ -16,25 +32,101 @@ const DriverPickup = () => {
   const [origin, setOrigin] = useState(null);
   const [destination, setDestination] = useState(null);
   const [acceptingOrder, setAcceptingOrder] = useState(false);
-  const [isOrderProcessed, setIsOrderProcessed] = useState(false); // Track if the order has been processed
-  // const geocoder = L.Control.Geocoder.nominatim(); // Instantiate geocoder
-
-  // const [driver, setDriver] = useState(() => {
-  //     const storedDriver = localStorage.getItem('driver');
-  //     return storedDriver ? JSON.parse(storedDriver) : {name: "", id: ""};
-  //   });
-  const [driver, setDriver] = useState({name: "", id: ""});
+  const [isOrderProcessed, setIsOrderProcessed] = useState(false);
+  const [driver, setDriver] = useState({ name: "", id: "" });
+  const [originCoords, setOriginCoords] = useState(null);
+  const [destinationCoords, setDestinationCoords] = useState(null);
+  const [isMapReady, setIsMapReady] = useState(false); // Trạng thái kiểm soát việc tải bản đồ
 
   useEffect(() => {
-    const storedDriver = localStorage.getItem('driver');
+    const storedDriver = localStorage.getItem("driver");
+    console.log("Stored driver in localStorage:", storedDriver);
+
     if (storedDriver) {
-      setDriver(JSON.parse(storedDriver));
-    }
-    if (driver.id === "") {
+      const parsedDriver = JSON.parse(storedDriver);
+      console.log("Parsed driver from localStorage:", parsedDriver);
+      setDriver(parsedDriver);
+    } else {
+      console.log("No driver in localStorage, redirecting to login.");
       router.push("./login");
     }
-
   }, [router]);
+
+  // Lấy thông tin đơn khi driver.id đã có
+  useEffect(() => {
+    if (driver.id) {
+      console.log("Driver ID:", driver.id);
+      fetchOrder();
+    } else {
+      console.log("Driver ID is missing.");
+    }
+  }, [driver.id]);  // Chỉ gọi fetchOrder khi driver.id thay đổi
+
+  // Hàm lấy đơn hàng hiện tại
+  const fetchOrder = async () => {
+    if (!driver.id) {
+      console.log("Driver ID is missing, cannot fetch order.");
+      return;
+    }
+
+    const url = `/api/driver/pickup-current`;
+    console.log("Request URL:", url);
+
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ driverId: driver.id }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch order");
+      }
+
+      const data = await response.json();
+      console.log("Fetched order data:", data);
+
+      if (data) {
+        // Cập nhật thông tin đơn hàng
+        setOrder(data.order);
+        setOrigin(data.order.origin);
+        setDestination(data.order.destination);
+
+        // Gọi Nominatim API để lấy tọa độ cho các địa điểm
+        const originCoordinates = await getCoordinates(data.order.origin);
+        const destinationCoordinates = await getCoordinates(data.order.destination);
+
+        if (originCoordinates) {
+          console.log("Origin coordinates:", originCoordinates);
+          // Lưu tọa độ của điểm xuất phát
+          setOriginCoords(originCoordinates);
+          console.log("Updated Origin Coordinates:", originCoordinates);
+        }
+
+        if (destinationCoordinates) {
+          console.log("Destination coordinates:", destinationCoordinates);
+          // Lưu tọa độ của điểm đến
+          setDestinationCoords(destinationCoordinates);
+          console.log("Updated Destination Coordinates:", destinationCoordinates);
+        }
+      } else {
+        console.log("No order data found");
+      }
+    } catch (error) {
+      console.error("Error fetching order:", error);
+    }
+  };
+
+  // Sử dụng useEffect để thiết lập việc tải bản đồ sau 3 giây
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsMapReady(true); // Sau 3 giây, cho phép tải bản đồ
+    }, 3000);
+
+    return () => clearTimeout(timer); // Clean up the timeout when the component is unmounted or updated
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -60,46 +152,6 @@ const DriverPickup = () => {
       alert("Có lỗi xảy ra khi đăng xuất!");
     }
   };
-
-  // Function to fetch the current order
-  const fetchOrder = async () => {
-    if (isOrderProcessed) return; // Don't fetch if the order is already processed
-
-    try {
-      const response = await fetch(
-        `/api/driver/pickup-current?driverId=${driver.id}`
-      );
-      if (!response.ok) throw new Error("Failed to fetch order");
-      const data = await response.json();
-      if (data.order) {
-        setOrder(data.order);
-        // Geocode the origin and destination
-        geocodeAddress(data.order.origin, (originCoords) => {
-          setOrigin(originCoords);
-        });
-        geocodeAddress(data.order.destination, (destCoords) => {
-          setDestination(destCoords);
-        });
-        setIsOrderProcessed(false); // Reset the processed flag when a new order is fetched
-      } else {
-        setOrder(null);
-      }
-    } catch (error) {
-      console.error("Error fetching order:", error);
-    }
-  };
-
-  useEffect(() => {
-    if (!order) {  // Chỉ gọi lại fetchOrder khi không có đơn
-      const interval = setInterval(() => {
-        fetchOrder();
-      }, 10000); // 10 giây
-
-      // Cleanup interval khi component unmount hoặc có đơn hàng
-      return () => clearInterval(interval);
-    }
-  }, [order]);  // Phụ thuộc vào 'order', chỉ gọi lại khi 'order' thay đổi
-
 
   const handleAcceptOrder = async () => {
     setAcceptingOrder(true);
@@ -133,7 +185,6 @@ const DriverPickup = () => {
     }
   };
 
-
   const handleDeclineOrder = async () => {
     try {
       const response = await fetch("/api/driver/pickup-decline", {
@@ -160,19 +211,23 @@ const DriverPickup = () => {
     }
   };
 
+  useEffect(() => {
+    // Hàm fetchOrder được gọi ngay lập tức khi component được render
+    if (!order) {
+      fetchOrder();
+    }
 
+    // Thiết lập gọi lại fetchOrder mỗi 10 giây khi không có đơn
+    const intervalId = setInterval(() => {
+      if (!order) {
+        fetchOrder();
+      }
+    }, 10000); // 10 giây
 
-  // Function to geocode address to coordinates
-  // const geocodeAddress = (address, callback) => {
-  //   geocoder.geocode(address, (results) => {
-  //     if (results && results.length > 0) {
-  //       const { lat, lng } = results[0].center;
-  //       callback({ lat, lng });
-  //     } else {
-  //       console.error("Geocoding failed for address:", address);
-  //     }
-  //   });
-  // };
+    // Clean up interval khi component bị hủy hoặc thay đổi
+    return () => clearInterval(intervalId);
+  }, [order]);  // Chạy lại khi order thay đổi
+
 
   return (
     <div>
@@ -193,11 +248,7 @@ const DriverPickup = () => {
       </nav>
 
       <div className="d-flex">
-        <div
-          id="sidebar"
-          className="d-flex flex-column px-3"
-          style={{ width: "33%" }}
-        >
+        <div id="sidebar" className="d-flex flex-column px-3" style={{ width: "33%" }}>
           {!order ? (
             <p style={{ color: "#777" }}>Chưa có đơn</p>
           ) : (
@@ -209,10 +260,10 @@ const DriverPickup = () => {
                 <strong>Số điện thoại:</strong> {order.customer_phone}
               </p>
               <p>
-                <strong>Từ:</strong> {order.origin}
+                <strong>Từ:</strong> {origin}
               </p>
               <p>
-                <strong>Đến:</strong> {order.destination}
+                <strong>Đến:</strong> {destination}
               </p>
               <div className="d-flex">
                 <button
@@ -233,7 +284,11 @@ const DriverPickup = () => {
           )}
         </div>
         <div style={{ flexGrow: 1 }}>
-          <Map origin={origin} destination={destination} />
+          {isMapReady ? (
+            <Map originCoords={originCoords} destinationCoords={destinationCoords} />
+          ) : (
+            <p>Đang tải bản đồ...</p>
+          )}
         </div>
       </div>
     </div>

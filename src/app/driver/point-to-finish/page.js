@@ -21,10 +21,31 @@ const PointToFinish = () => {
   const geocoder = L.Control.Geocoder.nominatim();
 
   useEffect(() => {
-    if (!driver) {
+    const storedDriver = localStorage.getItem("driver");
+    console.log("Stored driver in localStorage:", storedDriver);
+
+    if (storedDriver) {
+      const parsedDriver = JSON.parse(storedDriver);
+      console.log("Parsed driver from localStorage:", parsedDriver);
+      setDriver(parsedDriver);
+    } else {
+      console.log("No driver in localStorage, redirecting to login.");
       router.push("./login");
     }
-  }, [driver]);
+  }, [router]);
+
+  useEffect(() => {
+    console.log("Current driver state:", driver);
+
+    // Chỉ redirect nếu driver.id vẫn chưa có sau khi `localStorage` đã được kiểm tra
+    if (!driver.id) {
+      const storedDriver = localStorage.getItem("driver");
+      if (!storedDriver) {
+        console.log("Driver ID is missing and no data in localStorage, redirecting.");
+        router.push("./login");
+      }
+    }
+  }, [driver, router]);
 
   const handleLogout = async () => {
     try {
@@ -81,7 +102,7 @@ const PointToFinish = () => {
     try {
       const response = await fetch(`/api/driver/status?order_id=${orderId}`);
       if (!response.ok) throw new Error("Failed to fetch order status");
-  
+
       const data = await response.json();
       if (data.status === "hủy") {
         router.push("./payment");
@@ -126,7 +147,7 @@ const PointToFinish = () => {
         const statusInterval = setInterval(() => {
           checkOrderStatus(order.id);
         }, 5000); // Check order status every 5 seconds
-    
+
         return () => {
           clearInterval(statusInterval);
         };

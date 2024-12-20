@@ -49,11 +49,13 @@ const LoginPage = () => {
         throw new Error(data.error || 'Đã xảy ra lỗi khi đăng nhập');
       }
 
-      // Store user data in localStorage or state management solution
+      // Store user data in localStorage
       localStorage.setItem('driver', JSON.stringify(data));
       localStorage.setItem('userId', data['id']);
-      // console.log(data)
-      
+
+      // Log user data to console
+      console.log('Đăng nhập thành công:', data);
+
       // Redirect to dashboard or home page
       router.push('./pickup');
     } catch (err) {
@@ -62,6 +64,7 @@ const LoginPage = () => {
       setIsLoading(false);
     }
   };
+
 
   const handleSignUpRedirect = () => {
     router.push('./signup');  // Redirect to the sign-up page
