@@ -25,13 +25,9 @@ const Map = ({ origin = null, destination = null }) => {
     // Ensure this runs only in client-side
     if (typeof window === 'undefined') return;
 
-    console.log("Initializing map...");
-
     // Initialize the map
     const map = L.map('map');
     mapExists.current = true;
-
-    console.log("Map initialized:", map);
 
     // Add a tile layer (OpenStreetMap)
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -104,7 +100,6 @@ const Map = ({ origin = null, destination = null }) => {
     // Handle location errors
     map.on('locationerror', function (e) {
       console.error('Location error:', e.message);
-      alert('Location access denied or unavailable.');
     });
 
     // Trigger location after 3 seconds
@@ -116,7 +111,6 @@ const Map = ({ origin = null, destination = null }) => {
 
     // Handle location found
     map.on('locationfound', function (e) {
-      console.log("Location found:", e);
       const radius = e.accuracy / 2;
 
       const markerIcon = L.icon({
@@ -138,7 +132,6 @@ const Map = ({ origin = null, destination = null }) => {
     });
 
     return () => {
-      console.log("Cleaning up map...");
       if (mapExists.current) {
         if (routingControl && routingControl.getPlan()) {
           routingControl.getPlan().setWaypoints([]);
@@ -151,7 +144,7 @@ const Map = ({ origin = null, destination = null }) => {
     };
   }, [origin, destination]);
 
-  return <div id="map" style={{ height: '85vh', width: '100%' }} />;
+  return <div id="map" style={{ height: '99vh', width: '100%' }} />;
 };
 
 export default Map;

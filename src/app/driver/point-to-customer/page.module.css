@@ -1,47 +1,41 @@
 /* page.module.css */
 
 .logOut {
-    background-color: #ff4d4d;  /* Màu đỏ */
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    font-size: 16px;
-    cursor: pointer;
-    border-radius: 4px;
-    transition: background-color 0.3s ease;
-  }
+  border: none;
+  background-color: transparent;
+  color: #00b14f;
+  cursor: pointer;
+  margin-left: "40px";
+  margin-right: "40px";
+  display: "inline";
+}
 
-  .logOut:hover {
-    background-color: #e60000;  /* Màu đỏ đậm khi hover */
-  }
+.actionButton {
+  background-color: #00b14f;  /* Màu xanh lá */
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
 
-  .actionButton {
-    background-color: #00b14f;  /* Màu xanh lá */
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    font-size: 16px;
-    cursor: pointer;
-    border-radius: 4px;
-    transition: background-color 0.3s ease;
-  }
+.actionButton:hover {
+  background-color: #009f3e;  /* Màu xanh lá đậm khi hover */
+}
 
-  .actionButton:hover {
-    background-color: #009f3e;  /* Màu xanh lá đậm khi hover */
-  }
+.declineButton {
+  background-color: #ff6f61;  /* Màu cam đỏ */
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
 
-  .declineButton {
-    background-color: #ff6f61;  /* Màu cam đỏ */
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    font-size: 16px;
-    cursor: pointer;
-    border-radius: 4px;
-    transition: background-color 0.3s ease;
-  }
-
-  .declineButton:hover {
-    background-color: #e55d4b;  /* Màu cam đỏ đậm khi hover */
-  }
-
+.declineButton:hover {
+  background-color: #e55d4b;  /* Màu cam đỏ đậm khi hover */
+}
