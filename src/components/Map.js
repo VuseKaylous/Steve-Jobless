@@ -25,13 +25,11 @@ const Map = ({ origin = null, destination = null }) => {
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
-    console.log("Initializing map...");
-
+    // Initialize the map
     const map = L.map('map');
     mapExists.current = true;
 
-    console.log("Map initialized:", map);
-
+    // Add a tile layer (OpenStreetMap)
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
       attribution: '© OpenStreetMap contributors',
@@ -104,7 +102,6 @@ const Map = ({ origin = null, destination = null }) => {
 
     map.on('locationerror', function (e) {
       console.error('Location error:', e.message);
-      alert('Location access denied or unavailable.');
     });
 
     setTimeout(() => {
@@ -114,7 +111,6 @@ const Map = ({ origin = null, destination = null }) => {
     }, 3000);
 
     map.on('locationfound', function (e) {
-      console.log("Location found:", e);
       const radius = e.accuracy / 2;
 
       const markerIcon = L.icon({
@@ -134,7 +130,6 @@ const Map = ({ origin = null, destination = null }) => {
     });
 
     return () => {
-      console.log("Cleaning up map...");
       if (mapExists.current) {
         if (routingControlRef.current) {
           routingControlRef.current.getPlan().setWaypoints([]);
@@ -147,7 +142,7 @@ const Map = ({ origin = null, destination = null }) => {
     };
   }, [origin, destination]);
 
-  return <div id="map" style={{ height: '85vh', width: '100%' }} />;
+  return <div id="map" style={{ height: '99vh', width: '100%' }} />;
 };
 
 export default Map;

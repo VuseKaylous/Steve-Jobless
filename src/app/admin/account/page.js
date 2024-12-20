@@ -18,7 +18,7 @@ const AdminAccount = () => {
 
     const [customers, setCustomers] = useState([]);
     const [drivers, setDrivers] = useState([]);
-    const [numReports, setNumReports] = useState([]);
+    const [numReports, setNumReports] = useState({});
 
     useEffect(() => {
         const fetchData = async () => {
@@ -37,25 +37,27 @@ const AdminAccount = () => {
 
     useEffect(() => {
         if (drivers.length > 0) {
-            drivers.forEach((driver, index) => {
-                fetchNum(driver.id, index);
+            setNumReports({});
+            drivers.forEach(driver => {
+                updateNumReports(driver.id);
             });
         }
     }, [drivers]);
     
-    const fetchNum = async (id, index) => {
+    const updateNumReports = async (id) => {
         try {
             const response = await fetch(`/api/admin/reports?id=${id}`);
             const data = await response.json();
-            setNumReports(prevNumReports => {
-                const newNumReports = [...prevNumReports];
-                newNumReports[index] = data.reportData.length;
-                return newNumReports;
-            });
+            setNumReports(numReports => ({
+                ...numReports,
+                [id]: data.reportData.length
+            }));
         } catch (error) {
             console.error('Error fetching data:', error);
         }
     };
+
+    console.log(numReports);
 
     const router = useRouter();
 
@@ -299,7 +301,7 @@ const AdminAccount = () => {
                                                             overflow: "hidden",
                                                             textOverflow: "ellipsis"}}
                                                 >
-                                                    +{numReports[driver.id-1]}
+                                                    +{numReports[driver.id]}
                                                 </td>
                                             </tr>
                                         ))}

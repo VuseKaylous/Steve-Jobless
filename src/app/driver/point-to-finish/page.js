@@ -1,10 +1,11 @@
 "use client";
 
-import Map from "../../../components/Map";
+import dynamic from "next/dynamic";
+const Map = dynamic(() => import('../../../components/Map'), { ssr: false});
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./page.module.css";
-import L from "leaflet";
+import { getCoordinates } from "@/components/Utils";
 
 const PointToFinish = () => {
   const router = useRouter();
@@ -13,12 +14,11 @@ const PointToFinish = () => {
   const [destination, setDestination] = useState(null);
   const [acceptingOrder, setAcceptingOrder] = useState(false);
 
-  const [driver, setDriver] = useState(() => {
-    const storedDriver = localStorage.getItem("driver");
-    return storedDriver ? JSON.parse(storedDriver) : null;
-  });
-
-  const geocoder = L.Control.Geocoder.nominatim();
+  // const [driver, setDriver] = useState(() => {
+  //   const storedDriver = localStorage.getItem("driver");
+  //   return storedDriver ? JSON.parse(storedDriver) : null;
+  // });
+  const [driver, setDriver] = useState({ name: "", id: "" });
 
   useEffect(() => {
     const storedDriver = localStorage.getItem("driver");
@@ -85,10 +85,12 @@ const PointToFinish = () => {
 
         // Kiểm tra nếu địa chỉ đã thay đổi trước khi geocode lại
         if (data.order.destination !== order?.destination) {
-          geocodeAddress(data.order.destination, (destinationCoords) => {
-            setDestination(destinationCoords); // Set destination only if origin changes
-            console.log("Geocoded origin:", destinationCoords); // Log the origin coords
-          });
+          // geocodeAddress(data.order.destination, (destinationCoords) => {
+          //   setDestination(destinationCoords); // Set destination only if origin changes
+          //   console.log("Geocoded origin:", destinationCoords); // Log the origin coords
+          // });
+          const destinationCoords = await getCoordinates(data.order.destination);
+          setDestination(destinationCoords);
         }
       } else {
         setOrder(null); // Không có đơn hàng thì xóa thông tin order
@@ -171,18 +173,6 @@ const PointToFinish = () => {
       console.error("Error accepting order:", error);
       setAcceptingOrder(false);
     }
-  };
-
-  const geocodeAddress = (address, callback) => {
-    geocoder.geocode(address, (results) => {
-      if (results && results.length > 0) {
-        const { lat, lng } = results[0].center;
-        callback({ lat, lng });
-        console.log("Geocoded address:", address, { lat, lng }); // Log geocoded address
-      } else {
-        console.error("Geocoding failed for address:", address);
-      }
-    });
   };
 
   return (

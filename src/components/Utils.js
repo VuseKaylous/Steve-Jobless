@@ -1,34 +1,44 @@
 'use client';
 
-import dynamic from "next/dynamic";
-const L = dynamic(() => import("leaflet"), { ssr: false });
+// const Map = dynamic(() => import('../../../components/Map'), { ssr: false });
+// const L = dynamic(() => import("leaflet"), { ssr: false });
 
-const geocodeAddress = (address, callback) => {
-  const geocoder = L.Control.Geocoder.nominatim(); // Instantiate geocoder
+const getAllCoordinates = async (address) => {
+  const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json&addressdetails=1`;
 
-  geocoder.geocode(address, (results) => {
-    if (results && results.length > 0) {
-      const { lat, lng } = results[0].center;
-      callback({ lat, lng });
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+
+    if (data) {
+      return data;
     } else {
-      console.error("Geocoding failed for address:", address);
+      throw new Error("Không tìm thấy địa chỉ");
     }
-  });
-};
-
-const geocodeAddressAll = (address, callback) => {
-  const geocoder = L.Control.Geocoder.nominatim(); // Instantiate geocoder
-
-  geocoder.geocode(address, (results) => {
-    callback(results);
-    // if (results && results.length > 0) {
-    //   const { lat, lng } = results[0].center;
-    //   callback({ lat, lng });
-    // } else {
-    //   console.error("Geocoding failed for address:", address);
-    // }
-  });
+  } catch (error) {
+    console.error("Error fetching coordinates:", error);
+    return null; // Trả về null nếu có lỗi
+  }
 }
+
+const getCoordinates = async (address) => {
+  const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json&addressdetails=1`;
+
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+
+    if (data && data.length > 0) {
+      const { lat, lon } = data[0]; // Lấy lat và lon từ kết quả
+      return { lat, lon };
+    } else {
+      throw new Error("Không tìm thấy địa chỉ");
+    }
+  } catch (error) {
+    console.error("Error fetching coordinates:", error);
+    return null; // Trả về null nếu có lỗi
+  }
+};
 
 const calculateDistance = (lat1, lon1, lat2, lon2) => {
     const R = 6371; // Radius of the Earth in kilometers
@@ -46,4 +56,4 @@ const FindCost = (distance) => {
     return (12000 * Math.min(2, distance) + Math.max(distance-2, 0) * 3400).toFixed(0)
 } 
 
-export { FindCost, calculateDistance, geocodeAddress, geocodeAddressAll }
+export { FindCost, calculateDistance, getCoordinates, getAllCoordinates }

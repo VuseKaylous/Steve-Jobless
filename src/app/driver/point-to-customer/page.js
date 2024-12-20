@@ -1,10 +1,12 @@
 "use client";
 
-import Map from "../../../components/Map";
+import dynamic from "next/dynamic";
+const Map = dynamic(() => import('../../../components/Map'), { ssr: false});
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./page.module.css";
-import L from "leaflet";
+// import L from "leaflet";
+import { getCoordinates } from "@/components/Utils";
 
 const PointToCustomer = () => {
   const router = useRouter();
@@ -13,12 +15,11 @@ const PointToCustomer = () => {
   const [destination, setDestination] = useState(null);
   const [acceptingOrder, setAcceptingOrder] = useState(false);
 
-  const [driver, setDriver] = useState(() => {
-    const storedDriver = localStorage.getItem("driver");
-    return storedDriver ? JSON.parse(storedDriver) : null;
-  });
-
-  const geocoder = L.Control.Geocoder.nominatim();
+  // const [driver, setDriver] = useState(() => {
+  //   const storedDriver = localStorage.getItem("driver");
+  //   return storedDriver ? JSON.parse(storedDriver) : null;
+  // });
+  const [driver, setDriver] = useState({ name: "", id: "" });
 
   useEffect(() => {
     const storedDriver = localStorage.getItem("driver");
@@ -84,9 +85,11 @@ const PointToCustomer = () => {
 
         // Kiểm tra nếu địa chỉ đã thay đổi trước khi geocode lại
         if (data.order.origin !== order?.origin) {
-          geocodeAddress(data.order.origin, (originCoords) => {
-            setDestination(originCoords); // Set destination only if origin changes
-          });
+          // geocodeAddress(data.order.origin, (originCoords) => {
+          //   setDestination(originCoords); // Set destination only if origin changes
+          // });
+          const originCoords = await getCoordinates(data.order.origin);
+          setDestination(originCoords);
         }
       } else {
         setOrder(null); // Không có đơn hàng thì xóa thông tin order
@@ -125,6 +128,8 @@ const PointToCustomer = () => {
   }, [driver]); // Only depend on driver
 
   const fetchCurrentLocation = () => {
+    if (typeof window === 'undefined') return;
+
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -178,17 +183,6 @@ const PointToCustomer = () => {
     }
   };
 
-  const geocodeAddress = (address, callback) => {
-    geocoder.geocode(address, (results) => {
-      if (results && results.length > 0) {
-        const { lat, lng } = results[0].center;
-        callback({ lat, lng });
-        console.log("Geocoded address:", address, { lat, lng }); // Log geocoded address
-      } else {
-        console.error("Geocoding failed for address:", address);
-      }
-    });
-  };
 
   return (
     <div>
