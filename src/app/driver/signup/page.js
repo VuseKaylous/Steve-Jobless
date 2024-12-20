@@ -1,4 +1,5 @@
 'use client';
+import { useRouter } from "next/navigation";
 import { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -16,6 +17,7 @@ export default function BusinessRegistration() {
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   // Handler for input changes
   const handleInputChange = (e) => {
@@ -115,7 +117,7 @@ export default function BusinessRegistration() {
       }
 
       console.log('Registration successful:', data);
-      router.push('/customer/login');
+      router.push('./login');
 
       // Navigation or success handling can be done here
 

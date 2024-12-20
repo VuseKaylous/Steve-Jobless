@@ -172,7 +172,7 @@ const DriverPickup = () => {
             CrabForDriver
           </span>
           <div className="d-flex">
-            <span style={{ color: "#00b14f" }} className="mt-2 me-1">
+            <span style={{ color: "#00b14f" }} className="me-1">
               CHÀO MỪNG, <strong>{driver.name.toUpperCase()}</strong>.
             </span>
             <button onClick={handleLogout} className={styles.logOut}>
