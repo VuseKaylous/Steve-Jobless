@@ -47,7 +47,6 @@ Steve-Jobless là một hệ thống quản lý dịch vụ vận chuyển, kế
 
 ### Clone Dự Án
 
-Clone repository về máy của bạn:
 
 ```bash
 # 1. Clone repository về máy của bạn
