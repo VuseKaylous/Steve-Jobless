@@ -50,15 +50,15 @@ Steve-Jobless là một hệ thống quản lý dịch vụ vận chuyển, kế
 Clone repository về máy của bạn:
 
 ```bash
+# 1. Clone repository về máy của bạn
 git clone https://github.com/VuseKaylous/Steve-Jobless.git
 
-### Cài đặt các dependencies
+# 2. Chuyển vào thư mục dự án
 cd Steve-Jobless
+
+# 3. Cài đặt các dependencies
 npm install
 
-### Chạy dự án
+# 4. Chạy dự án
 npm start
 
-Dự án sẽ chạy tại http://localhost:3000.
-
-Cấu hình kết nối databse: \src\lib\db.js
