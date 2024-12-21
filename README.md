@@ -1,29 +1,63 @@
-This is a Next.js project bootstrapped with create-next-app.
 
-Getting Started
-First, run the development server:
+## Giới Thiệu
 
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-Open http://localhost:3000 with your browser to see the result.
+Steve-Jobless là một hệ thống quản lý dịch vụ vận chuyển, kết nối khách hàng, tài xế. Dự án giúp kết nối tài xế và khách hàng một cách nhanh chóng và hiệu quả. Hệ thống chia thành 3 vai trò chính:
+- **Khách hàng**: Đặt xe, theo dõi lịch sử chuyến đi và thanh toán.
+- **Tài xế**: Nhận yêu cầu chuyến đi, hoàn thành chuyến đi, theo dõi thông tin khách hàng.
+- **Admin**: Quản lý hệ thống, người dùng, tài xế và khách hàng.
 
-You can start editing the page by modifying app/page.js. The page auto-updates as you edit the file.
+## Chức Năng
 
-This project uses next/font to automatically optimize and load Geist, a new font family for Vercel.
+- **Khách hàng:**
+  - Đăng ký và đăng nhập vào hệ thống.
+  - Đặt xe, theo dõi tình trạng chuyến đi.
+  - Xem lịch sử chuyến đi, đánh giá tài xế sau khi hoàn thành chuyến đi.
+  - Thanh toán trực tuyến.
 
-Learn More
-To learn more about Next.js, take a look at the following resources:
+- **Tài xế:**
+  - Đăng nhập vào hệ thống và nhận yêu cầu chuyến đi.
+  - Theo dõi lộ trình và thông tin khách hàng.
+  - Hoàn thành chuyến đi và cập nhật trạng thái.
 
-Next.js Documentation - learn about Next.js features and API.
-Learn Next.js - an interactive Next.js tutorial.
-You can check out the Next.js GitHub repository - your feedback and contributions are welcome!
+- **Admin:**
+  - Quản lý người dùng (Khách hàng, Tài xế).
+  - Xem báo cáo về các chuyến đi, lịch sử giao dịch.
+  - Quản lý các cài đặt của hệ thống.
 
-Deploy on Vercel
-The easiest way to deploy your Next.js app is to use the Vercel Platform from the creators of Next.js.
+## Đường Link Đăng Nhập
 
-Check out our Next.js deployment documentation for more details.
+### 1. Đăng Nhập Khách Hàng
+
+- **URL đăng nhập**: http://localhost:3000/login/customer
+
+### 2. Đăng Nhập Tài Xế
+
+- **URL đăng nhập**: http://localhost:3000/login/driver
+
+### 3. Đăng Nhập Quản Trị Viên
+
+- **URL đăng nhập**: http://localhost:3000/login/admin
+
+
+## Hướng Dẫn Cài Đặt
+
+### Cài Đặt Môi Trường
+
+Để chạy dự án này trên máy của bạn, bạn cần cài đặt Node.js và npm (Node Package Manager). Nếu chưa có, bạn có thể tải và cài đặt từ [Node.js Official Website](https://nodejs.org/).
+
+### Clone Dự Án
+
+
+```bash
+# 1. Clone repository về máy của bạn
+git clone https://github.com/VuseKaylous/Steve-Jobless.git
+
+# 2. Chuyển vào thư mục dự án
+cd Steve-Jobless
+
+# 3. Cài đặt các dependencies
+npm install
+
+# 4. Chạy dự án
+npm start
+
