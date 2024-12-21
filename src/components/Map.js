@@ -131,7 +131,10 @@ const Map = ({ origin = null, destination = null }) => {
 
     return () => {
       if (mapExists.current) {
-        if (routingControlRef.current) {
+        console.log(routingControlRef.current.getPlan().getWaypoints());
+        // console.log("From map: " + origin + " " + destination);
+        if (!routingControlRef.current) {
+        // if (!origin || !destination) {
           routingControlRef.current.getPlan().setWaypoints([]);
           map.removeControl(routingControlRef.current);
         }

@@ -43,6 +43,10 @@ const PointToFinish = () => {
       if (!storedDriver) {
         console.log("Driver ID is missing and no data in localStorage, redirecting.");
         router.push("./login");
+      } else {
+        const parsedDriver = JSON.parse(storedDriver);
+        console.log("Found driver in localStorage: " + storedDriver);
+        setDriver(parsedDriver);
       }
     }
   }, [driver, router]);
@@ -74,7 +78,15 @@ const PointToFinish = () => {
 
   const fetchOrder = async () => {
     try {
+      console.log("Test driver id: " + driver.id);
       const response = await fetch(`/api/driver/finish-current?driverId=${driver.id}`);
+      // const response = await fetch('/api/driver/finish-current', {
+      //   method: 'GET',
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //   },
+      //   body: JSON.stringify({ driverId: driver.id }) // Gửi orderId trong body dưới dạng JSON
+      // });
       if (!response.ok) throw new Error("Failed to fetch order");
 
       const data = await response.json();
@@ -102,10 +114,19 @@ const PointToFinish = () => {
 
   const checkOrderStatus = async (orderId) => {
     try {
-      const response = await fetch(`/api/driver/status?order_id=${orderId}`);
+      // const response = await fetch(`/api/driver/status?orderId=${orderId}`);
+      const response = await fetch('/api/driver/status', {
+        method: 'POST', // Thay đổi phương thức thành POST
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ orderId: orderId }) // Gửi orderId trong body dưới dạng JSON
+      });
+      const data = await response.json();
+      console.log(data);
       if (!response.ok) throw new Error("Failed to fetch order status");
 
-      const data = await response.json();
+      // const data = await response.json();
       if (data.status === "hủy") {
         router.push("./payment");
       }
@@ -115,18 +136,18 @@ const PointToFinish = () => {
   };
 
   useEffect(() => {
-    if (driver) {
+    if (driver.id) {
       fetchOrder(); // Fetch order when driver is available
     }
-  }, [driver]); // Only depend on driver
+  }, [driver.id]); // Only depend on driver
 
   const fetchCurrentLocation = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
-          setOrigin({ lat: latitude, lng: longitude });
-          console.log("Current location:", { lat: latitude, lng: longitude }); // Log current location
+          setOrigin({ lat: latitude, lon: longitude });
+          console.log("Current location:", { lat: latitude, lon: longitude }); // Log current location
         },
         (error) => {
           console.error("Error fetching current location:", error);

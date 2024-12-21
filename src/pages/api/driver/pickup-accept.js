@@ -8,8 +8,9 @@ export default async function handler(req, res) {
 
         const { orderId, driverId } = req.body;
 
-        if (!orderId || !driverId) {
-            return res.status(400).json({ error: 'Missing orderId or driverId' });
+        if (orderId === null || orderId === undefined || driverId == null || driverId === undefined) {
+            console.log("From pickup-accept api: " + orderId + " " + driverId);
+            return res.status(400).json({ error: 'Missing orderId or driverId: ' + orderId + " + " + driverId });
         }
 
         // Cập nhật trạng thái đơn hàng nếu driver_id là NULL

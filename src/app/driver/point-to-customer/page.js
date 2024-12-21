@@ -33,7 +33,7 @@ const PointToCustomer = () => {
       console.log("No driver in localStorage, redirecting to login.");
       router.push("./login");
     }
-  }, [router]);
+  }, []);
 
   useEffect(() => {
     console.log("Current driver state:", driver);
@@ -45,8 +45,9 @@ const PointToCustomer = () => {
         console.log("Driver ID is missing and no data in localStorage, redirecting.");
         router.push("./login");
       }
+      setDriver(JSON.parse(storedDriver));
     }
-  }, [driver, router]);
+  }, [driver]);
 
   const handleLogout = async () => {
     try {
@@ -106,10 +107,10 @@ const PointToCustomer = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ orderId }) // Gửi orderId trong body dưới dạng JSON
+        body: JSON.stringify({ orderId: orderId }) // Gửi orderId trong body dưới dạng JSON
       });
 
-      if (!response.ok) throw new Error('Failed to fetch order status');
+      if (!response.ok) throw new Error('Failed to fetch order status: ');
 
       const data = await response.json();
       if (data.status === 'hủy') {
@@ -122,10 +123,10 @@ const PointToCustomer = () => {
 
 
   useEffect(() => {
-    if (driver) {
+    if (driver.id) {
       fetchOrder(); // Fetch order when driver is available
     }
-  }, [driver]); // Only depend on driver
+  }, [driver.id]); // Only depend on driver
 
   const fetchCurrentLocation = () => {
     if (typeof window === 'undefined') return;
@@ -134,7 +135,7 @@ const PointToCustomer = () => {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
-          setOrigin({ lat: latitude, lng: longitude });
+          setOrigin({ lat: latitude, lon: longitude });
         },
         (error) => {
           console.error("Error fetching current location:", error);

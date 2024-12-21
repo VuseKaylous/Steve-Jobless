@@ -1,7 +1,6 @@
 "use client";
 
 // import L from 'leaflet';
-// import 'leaflet-control-geocoder';
 import { useRouter } from 'next/navigation';
 import styles from "./page.module.css"
 import dynamic from "next/dynamic";
@@ -46,7 +45,7 @@ const Booking = () => {
     // if (customer.id === "") {
     //   router.push('./login');
     // }
-  }, [customer]);
+  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem('customer'); // Remove the token from localStorage
@@ -89,7 +88,7 @@ const Booking = () => {
     if (StartingPoint && DestinationPoint) {
       setShowPanel(true);
       if (origin && destination) {
-        const dist = calculateDistance(origin.lat, origin.lng, destination.lat, destination.lng);
+        const dist = calculateDistance(origin.lat, origin.lon, destination.lat, destination.lon);
         setDistance(dist);
       }
     } else {
@@ -113,7 +112,8 @@ const Booking = () => {
       //   setStartSuggestions(suggestions);
       // });
       const results = await getAllCoordinates(originalStartingPoint);
-      const suggestions = results.map(result => result.name);
+      const suggestions = results.map(result => String(result.display_name));
+      setFinalStartingPoint(suggestions[0]);
       setStartSuggestions(suggestions);
       // geocodeAddressAll(startInput.value, (results) => {
       //   setStartSuggestions(results);
@@ -129,7 +129,7 @@ const Booking = () => {
       //   setDestSuggestions(suggestions);
       // });
       const results = await getAllCoordinates(originalDestinationPoint);
-      const suggestions = results.map(result => result.name);
+      const suggestions = results.map(result => result.display_name);
       setDestSuggestions(suggestions);
       // geocodeAddressAll(destInput.value, (results) => {
       //   setDestSuggestions(results);
@@ -147,9 +147,11 @@ const Booking = () => {
     //   }
     // });
     setFinalStartingPoint(suggestion);
+    // console.log(suggestion);
+    // console.log(StartingPoint);
     setStartSuggestions([]);
-    const results = await getCoordinates(data.order.origin);
-    setOrigin(results);
+    const results = await getCoordinates(suggestion);
+    setOrigin({lat: results.lat, lon: results.lon});
     // geocodeAddress(suggestion, (results) => {
     //   setOrigin(results);
     // })
@@ -166,8 +168,8 @@ const Booking = () => {
     // });
     setFinalDestinationPoint(suggestion);
     setDestSuggestions([]);
-    const results = await getCoordinates(data.order.origin);
-    setDestination(results);
+    const results = await getCoordinates(suggestion);
+    setDestination({lat: results.lat, lon: results.lon});
     // geocodeAddress(suggestion, (results) => {
     //   setDestination(results);
     // })

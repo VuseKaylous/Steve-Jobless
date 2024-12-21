@@ -54,6 +54,24 @@ const calculateDistance = (lat1, lon1, lat2, lon2) => {
 
 const FindCost = (distance) => {
     return (12000 * Math.min(2, distance) + Math.max(distance-2, 0) * 3400).toFixed(0)
-} 
+}
 
-export { FindCost, calculateDistance, getCoordinates, getAllCoordinates }
+const findCostFromAddress = async (origin, destination) => {
+  const originCoords = await getCoordinates(origin);
+  const destinationCoords = await getCoordinates(destination);
+
+  if (originCoords && destinationCoords) {
+    const distance = calculateDistance(
+      originCoords.lat,
+      originCoords.lon,
+      destinationCoords.lat,
+      destinationCoords.lon
+    );
+
+    return FindCost(distance);
+  } else {
+    return null;
+  }
+};
+
+export { FindCost, calculateDistance, getCoordinates, getAllCoordinates, findCostFromAddress };

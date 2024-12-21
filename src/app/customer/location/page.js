@@ -26,15 +26,29 @@ const Location = () => {
     // });
 
     const [customer, setCustomer] = useState({name: "", id: ""});
+
+    useEffect(() => {
+        const storedCustomer = localStorage.getItem('customer');
+        if (storedCustomer) {
+          const parsedCustomer = JSON.parse(storedCustomer);
+          setCustomer(parsedCustomer);
+        } else {
+          router.push("./login");
+        }
+        // if (customer.id === "") {
+        //   router.push('./login');
+        // }
+      }, []);
     
     useEffect(() => {
-        if (customer.id === "") {
-            router.push('./login');
-        }
-
         const storedCustomer = localStorage.getItem('customer');
         if (storedCustomer) {
             setCustomer(JSON.parse(storedCustomer));
+        } else {
+            router.push('./login');
+        }
+        if (customer.id === "") {
+            router.push('./login');
         }
 
         const checkOrderStatus = async () => {

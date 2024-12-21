@@ -40,31 +40,29 @@ const DriverPickup = () => {
 
   useEffect(() => {
     const storedDriver = localStorage.getItem("driver");
-    console.log("Stored driver in localStorage:", storedDriver);
 
     if (storedDriver) {
       const parsedDriver = JSON.parse(storedDriver);
-      console.log("Parsed driver from localStorage:", parsedDriver);
       setDriver(parsedDriver);
     } else {
       console.log("No driver in localStorage, redirecting to login.");
       router.push("./login");
     }
-  }, [router]);
+  }, []);
 
   // Lấy thông tin đơn khi driver.id đã có
   useEffect(() => {
+    console.log(driver);
     if (driver.id) {
-      console.log("Driver ID:", driver.id);
-      fetchOrder();
+      fetchOrder(driver.id);
     } else {
       console.log("Driver ID is missing.");
     }
   }, [driver.id]);  // Chỉ gọi fetchOrder khi driver.id thay đổi
 
   // Hàm lấy đơn hàng hiện tại
-  const fetchOrder = async () => {
-    if (!driver.id) {
+  const fetchOrder = async (driver_id) => {
+    if (!driver_id) {
       console.log("Driver ID is missing, cannot fetch order.");
       return;
     }
@@ -78,7 +76,7 @@ const DriverPickup = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ driverId: driver.id }),
+        body: JSON.stringify({ driverId: driver_id }),
       });
 
       if (!response.ok) {
@@ -88,7 +86,7 @@ const DriverPickup = () => {
       const data = await response.json();
       console.log("Fetched order data:", data);
 
-      if (data) {
+      if (data.order) {
         // Cập nhật thông tin đơn hàng
         setOrder(data.order);
         setOrigin(data.order.origin);
@@ -144,6 +142,7 @@ const DriverPickup = () => {
 
       // Xóa thông tin tài xế khỏi localStorage
       localStorage.removeItem("driver");
+      console.log("Driver info removed from localStorage");
 
       // Chuyển hướng đến trang đăng nhập
       router.push("./login");
@@ -181,6 +180,7 @@ const DriverPickup = () => {
       router.push('/driver/point-to-customer');
     } catch (error) {
       console.error("Error accepting order:", error);
+      console.log(order.id + " " + driver.id);
       setAcceptingOrder(false);
     }
   };
@@ -204,23 +204,33 @@ const DriverPickup = () => {
       // Tạo khoảng thời gian nghỉ 5 giây trước khi tiếp tục quét đơn
       setTimeout(() => {
         // Quay lại quét đơn sau khi nghỉ 5 giây
-        fetchOrder(); // Force re-fetch the order after declining
+        fetchOrder(driver.id); // Force re-fetch the order after declining
       }, 10000); // 10 giây nghỉ
+      // ??? :D
     } catch (error) {
       console.error("Error declining order:", error);
     }
   };
 
   useEffect(() => {
+    const storedDriver = localStorage.getItem("driver");
+    let driver_id = -1;
+    if (storedDriver) {
+      const parsedDriver = JSON.parse(storedDriver);
+      // setDriver(parsedDriver);
+      driver_id = parsedDriver.id;
+    } else {
+      console.log("No driver in localStorage, redirecting to login.");
+      router.push("./login");
+    }
     // Hàm fetchOrder được gọi ngay lập tức khi component được render
     if (!order) {
-      fetchOrder();
+      fetchOrder(driver_id);
     }
-
     // Thiết lập gọi lại fetchOrder mỗi 10 giây khi không có đơn
     const intervalId = setInterval(() => {
       if (!order) {
-        fetchOrder();
+        fetchOrder(driver_id);
       }
     }, 10000); // 10 giây
 

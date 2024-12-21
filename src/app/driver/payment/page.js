@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useRouter } from "next/navigation";
+import { findCostFromAddress } from '@/components/Utils';
 
 
 const Payment = () => {
@@ -23,11 +24,17 @@ const Payment = () => {
         const storedDriver = localStorage.getItem("driver");
         if (storedDriver) {
             setDriver(JSON.parse(storedDriver));
+        } else {
+            router.push('./login');
         }
-        if (!driver) {
-          router.push('./login');
+        // if (!driver) {
+        //   router.push('./login');
+        // }
+        const storedOrder = localStorage.getItem("order_info");
+        if (storedOrder) {
+            setOrderInfo(JSON.parse(storedOrder));
         }
-        setOrderInfo(localStorage.getItem("order_info"));
+        // setOrderInfo(localStorage.getItem("order_info"));
     }, [router]);
 
     const handlePayment = async () => {
@@ -58,7 +65,8 @@ const Payment = () => {
             setCustomer(data.customer_name);
             setStart(data.origin);
             setDestination(data.destination);
-            setFee(parseInt(data.fee).toFixed(2));
+            setFee(findCostFromAddress(data.origin, data.destination));
+            // setFee(parseInt(data.fee).toFixed(2));
           } catch (error) {
             console.error('Lỗi:', error);
           }
