@@ -45,8 +45,16 @@ Steve-Jobless là một hệ thống quản lý dịch vụ vận chuyển, kế
 
 Để chạy dự án này trên máy của bạn, bạn cần cài đặt Node.js và npm (Node Package Manager). Nếu chưa có, bạn có thể tải và cài đặt từ [Node.js Official Website](https://nodejs.org/).
 
-### Clone Dự Án
+### Dựng database
 
+Để chạy dự án này, bạn cần có MySQL trên máy, và dựng 1 Database sử dụng file `fall2024c56g8_crab.sql` trong này. Sau đó, bạn cần vào file `src/lib/db.js` và chỉnh sửa theo nội dung sau:
+
+- host: 'localhost' nếu bạn chạy MySQL ở máy bạn, hoặc đường link dẫn đến MySQL online
+- user: Tên người dùng MySQL của bạn, mặc định là 'root' ở local
+- password: Mật khẩu MySQL của bạn
+- database: Tên Database được tạo sử dụng file `fall2024c56g8_crab.sql`.
+
+### Thử nghiệm dự án:
 
 ```bash
 # 1. Clone repository về máy của bạn
@@ -59,5 +67,26 @@ cd Steve-Jobless
 npm install
 
 # 4. Chạy dự án
-npm start
+npm run dev
 
+```
+
+### Chạy dự án:
+
+```bash
+# 1. Clone repository về máy của bạn
+git clone https://github.com/VuseKaylous/Steve-Jobless.git
+
+# 2. Chuyển vào thư mục dự án
+cd Steve-Jobless
+
+# 3. Cài đặt các dependencies
+npm install
+
+# 4. Tạo file bulid
+npm run build
+
+# 5. Chạy dự án
+npm run start
+
+```
