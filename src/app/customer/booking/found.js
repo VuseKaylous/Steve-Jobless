@@ -33,7 +33,7 @@ const Found = ({ driverId, origin, destination , orderID}) => {
 
   useEffect(() => {
     if (Object.keys(driverInfo).length > 0) {
-      router.push(`./location?dlat=${destination.lat}&dlng=${destination.lng}&olat=${origin.lat}&olng=${origin.lng}&orderID=${orderID}&driverID=${driverId}`);
+      router.push(`./location?dlat=${destination.lat}&dlng=${destination.lon}&olat=${origin.lat}&olng=${origin.lon}&orderID=${orderID}&driverID=${driverId}`);
     }
   }, [driverInfo, router]);
   

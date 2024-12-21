@@ -18,16 +18,24 @@ const Payment = () => {
     const [fee, setFee] = useState(0);
     const hasExecuted = useRef(false);
 
-    const [customer, setCustomer] = useState(() => {
-        const storedCustomer = localStorage.getItem('customer');
-        return storedCustomer ? JSON.parse(storedCustomer) : {name: "", id: ""};
-    });
+    // const [customer, setCustomer] = useState(() => {
+    //     const storedCustomer = localStorage.getItem('customer');
+    //     return storedCustomer ? JSON.parse(storedCustomer) : {name: "", id: ""};
+    // });
+    const [customer, setCustomer] = useState({name: "", id: ""});
     
     useEffect(() => {
-        if (customer.id === "") {
-            router.push('./login');
+        const storedCustomer = localStorage.getItem('customer');
+        if (storedCustomer) {
+            const parsedCustomer = JSON.parse(storedCustomer);
+            setCustomer(parsedCustomer);
+        } else {
+            router.push("./login");
         }
-    }, [customer]);
+        // if (customer.id === "") {
+        //     router.push('./login');
+        // }
+    }, []);
 
     const updateFee = (distance, state) => {
         const fee = (distance ? (12000 * Math.min(2, distance) + Math.max(distance - 2, 0) * 3400).toFixed(0) : 0) / (state === "cancelled" ? 2 : 1);
@@ -72,7 +80,9 @@ const Payment = () => {
     }, [olat, olng, dlat, dlng]);
 
     useEffect(() => {
+        console.log("Begin create payment " + order_id + " " + fee + " " + hasExecuted.current);
         const handlePayment = async () => {
+            console.log("Create payment");
             try {
                 // const response = await fetch(`/api/customer/payment?orderID=${order_id}&fee=${fee}`);
                 const response = await fetch('/api/customer/payment', {
@@ -85,12 +95,15 @@ const Payment = () => {
                         fee: fee,
                     }),
                 });
+                if (!response.ok) {
+                    console.error('Failed to create payment');
+                }
             } catch (error) {
                 console.error('Error fetching order information:', error);
             }
         };
 
-        if (order_id && fee && !hasExecuted.current) {
+        if (order_id != undefined && fee != undefined && !hasExecuted.current) {
             handlePayment();
             hasExecuted.current = true;
         }
@@ -100,6 +113,9 @@ const Payment = () => {
         const handleFinish = async () => {
             try {
                 const response = await fetch(`/api/customer/finish?orderID=${order_id}`);
+                if (!response.ok) {
+                    console.error('Failed to finish payment');
+                }
                 const data = await response.json();
                 if (data.message === 'Payment completed') {
                     router.push('./booking');
@@ -109,6 +125,7 @@ const Payment = () => {
             }
         };
         if (order_id) {
+            console.log("Begin finish payment");
             handleFinish();
         }
     }, [order_id]);

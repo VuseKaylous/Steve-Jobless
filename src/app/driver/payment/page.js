@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useRouter } from "next/navigation";
 import { findCostFromAddress } from '@/components/Utils';
@@ -34,8 +34,32 @@ const Payment = () => {
         if (storedOrder) {
             setOrderInfo(JSON.parse(storedOrder));
         }
+        const order_info = JSON.parse(storedOrder);
+        console.log("Order info: " + order_info.id);
+        const handleStatus = async () => {
+            try {
+                console.log("Order id: " + order_info.id);
+            //   const response = await fetch(`/api/driver/status?orderId=${order_info.id}`);
+                const response = await fetch('/api/driver/status', {
+                    method: 'POST', // Thay đổi phương thức thành POST
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ orderId: order_info.id }) // Gửi orderId trong body dưới dạng JSON
+                });
+                const data = await response.json();
+                setCustomer(data.customer_name);
+                setStart(data.origin);
+                setDestination(data.destination);
+                setFee(findCostFromAddress(data.origin, data.destination));
+                // setFee(parseInt(data.fee).toFixed(2));
+            } catch (error) {
+              console.error('Lỗi:', error);
+            }
+        };
+        handleStatus();
         // setOrderInfo(localStorage.getItem("order_info"));
-    }, [router]);
+    }, []);
 
     const handlePayment = async () => {
         try {
@@ -57,22 +81,23 @@ const Payment = () => {
     };
 
 
-    useEffect(() => {
-        const handleStatus = async () => {
-          try {
-            const response = await fetch(`/api/driver/status?order_id=${order_info.id}`);
-            const data = await response.json();
-            setCustomer(data.customer_name);
-            setStart(data.origin);
-            setDestination(data.destination);
-            setFee(findCostFromAddress(data.origin, data.destination));
-            // setFee(parseInt(data.fee).toFixed(2));
-          } catch (error) {
-            console.error('Lỗi:', error);
-          }
-        };
-        handleStatus();
-      }, [order_info]);
+    // useEffect(() => {
+    //     const handleStatus = async () => {
+    //       try {
+    //         console.log("Order id: " + order_info.id);
+    //         const response = await fetch(`/api/driver/status?orderId=${order_info.id}`);
+    //         const data = await response.json();
+    //         setCustomer(data.customer_name);
+    //         setStart(data.origin);
+    //         setDestination(data.destination);
+    //         setFee(findCostFromAddress(data.origin, data.destination));
+    //         // setFee(parseInt(data.fee).toFixed(2));
+    //       } catch (error) {
+    //         console.error('Lỗi:', error);
+    //       }
+    //     };
+    //     handleStatus();
+    //   }, [order_info.id]);
 
 
     return (
@@ -116,4 +141,12 @@ const Payment = () => {
     );
 };
 
-export default Payment;
+const SuspensePayment = () => {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <Payment />
+        </Suspense>
+    );
+}
+
+export default SuspensePayment;

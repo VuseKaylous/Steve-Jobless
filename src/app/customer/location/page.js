@@ -17,8 +17,8 @@ const Location = () => {
     const dlng = searchParams.get('dlng') || 0.0;
     const driverID = searchParams.get('driverID') || 0;
     const order_id = searchParams.get('orderID') || 0;
-    const origin = { lat: parseFloat(olat), lng: parseFloat(olng) };
-    const destination = { lat: parseFloat(dlat), lng: parseFloat(dlng) };
+    const origin = { lat: parseFloat(olat), lon: parseFloat(olng) };
+    const destination = { lat: parseFloat(dlat), lon: parseFloat(dlng) };
 
     // const [customer, setCustomer] = useState(() => {
     //     const storedCustomer = localStorage.getItem('customer');
@@ -41,15 +41,15 @@ const Location = () => {
       }, []);
     
     useEffect(() => {
-        const storedCustomer = localStorage.getItem('customer');
-        if (storedCustomer) {
-            setCustomer(JSON.parse(storedCustomer));
-        } else {
-            router.push('./login');
-        }
-        if (customer.id === "") {
-            router.push('./login');
-        }
+        // const storedCustomer = localStorage.getItem('customer');
+        // if (storedCustomer) {
+        //     setCustomer(JSON.parse(storedCustomer));
+        // } else {
+        //     router.push('./login');
+        // }
+        // if (customer.id === "") {
+        //     router.push('./login');
+        // }
 
         const checkOrderStatus = async () => {
             try {
