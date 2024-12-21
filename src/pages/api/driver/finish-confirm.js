@@ -8,7 +8,7 @@ export default async function handler(req, res) {
 
         const { orderId, driverId } = req.body;
 
-        if (!orderId || !driverId) {
+        if (orderId === null || orderId === undefined || driverId == null || driverId === undefined) {
             return res.status(400).json({ error: 'Missing orderId or driverId' });
         }
 

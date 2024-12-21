@@ -1,10 +1,11 @@
 "use client";
 
-import Map from "../../../components/Map";
+import dynamic from "next/dynamic";
+const Map = dynamic(() => import('../../../components/Map'), { ssr: false});
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./page.module.css";
-import L from "leaflet";
+import { getCoordinates } from "@/components/Utils";
 
 const PointToFinish = () => {
   const router = useRouter();
@@ -13,18 +14,42 @@ const PointToFinish = () => {
   const [destination, setDestination] = useState(null);
   const [acceptingOrder, setAcceptingOrder] = useState(false);
 
-  const [driver, setDriver] = useState(() => {
-    const storedDriver = localStorage.getItem("driver");
-    return storedDriver ? JSON.parse(storedDriver) : null;
-  });
-
-  const geocoder = L.Control.Geocoder.nominatim();
+  // const [driver, setDriver] = useState(() => {
+  //   const storedDriver = localStorage.getItem("driver");
+  //   return storedDriver ? JSON.parse(storedDriver) : null;
+  // });
+  const [driver, setDriver] = useState({ name: "", id: "" });
 
   useEffect(() => {
-    if (!driver) {
+    const storedDriver = localStorage.getItem("driver");
+    console.log("Stored driver in localStorage:", storedDriver);
+
+    if (storedDriver) {
+      const parsedDriver = JSON.parse(storedDriver);
+      console.log("Parsed driver from localStorage:", parsedDriver);
+      setDriver(parsedDriver);
+    } else {
+      console.log("No driver in localStorage, redirecting to login.");
       router.push("./login");
     }
-  }, [driver]);
+  }, [router]);
+
+  useEffect(() => {
+    console.log("Current driver state:", driver);
+
+    // Chỉ redirect nếu driver.id vẫn chưa có sau khi `localStorage` đã được kiểm tra
+    if (!driver.id) {
+      const storedDriver = localStorage.getItem("driver");
+      if (!storedDriver) {
+        console.log("Driver ID is missing and no data in localStorage, redirecting.");
+        router.push("./login");
+      } else {
+        const parsedDriver = JSON.parse(storedDriver);
+        console.log("Found driver in localStorage: " + storedDriver);
+        setDriver(parsedDriver);
+      }
+    }
+  }, [driver, router]);
 
   const handleLogout = async () => {
     try {
@@ -53,7 +78,15 @@ const PointToFinish = () => {
 
   const fetchOrder = async () => {
     try {
+      console.log("Test driver id: " + driver.id);
       const response = await fetch(`/api/driver/finish-current?driverId=${driver.id}`);
+      // const response = await fetch('/api/driver/finish-current', {
+      //   method: 'GET',
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //   },
+      //   body: JSON.stringify({ driverId: driver.id }) // Gửi orderId trong body dưới dạng JSON
+      // });
       if (!response.ok) throw new Error("Failed to fetch order");
 
       const data = await response.json();
@@ -64,10 +97,12 @@ const PointToFinish = () => {
 
         // Kiểm tra nếu địa chỉ đã thay đổi trước khi geocode lại
         if (data.order.destination !== order?.destination) {
-          geocodeAddress(data.order.destination, (destinationCoords) => {
-            setDestination(destinationCoords); // Set destination only if origin changes
-            console.log("Geocoded origin:", destinationCoords); // Log the origin coords
-          });
+          // geocodeAddress(data.order.destination, (destinationCoords) => {
+          //   setDestination(destinationCoords); // Set destination only if origin changes
+          //   console.log("Geocoded origin:", destinationCoords); // Log the origin coords
+          // });
+          const destinationCoords = await getCoordinates(data.order.destination);
+          setDestination(destinationCoords);
         }
       } else {
         setOrder(null); // Không có đơn hàng thì xóa thông tin order
@@ -79,10 +114,19 @@ const PointToFinish = () => {
 
   const checkOrderStatus = async (orderId) => {
     try {
-      const response = await fetch(`/api/driver/status?order_id=${orderId}`);
-      if (!response.ok) throw new Error("Failed to fetch order status");
-  
+      // const response = await fetch(`/api/driver/status?orderId=${orderId}`);
+      const response = await fetch('/api/driver/status', {
+        method: 'POST', // Thay đổi phương thức thành POST
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ orderId: orderId }) // Gửi orderId trong body dưới dạng JSON
+      });
       const data = await response.json();
+      console.log(data);
+      if (!response.ok) throw new Error("Failed to fetch order status");
+
+      // const data = await response.json();
       if (data.status === "hủy") {
         router.push("./payment");
       }
@@ -92,18 +136,18 @@ const PointToFinish = () => {
   };
 
   useEffect(() => {
-    if (driver) {
+    if (driver.id) {
       fetchOrder(); // Fetch order when driver is available
     }
-  }, [driver]); // Only depend on driver
+  }, [driver.id]); // Only depend on driver
 
   const fetchCurrentLocation = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
-          setOrigin({ lat: latitude, lng: longitude });
-          console.log("Current location:", { lat: latitude, lng: longitude }); // Log current location
+          setOrigin({ lat: latitude, lon: longitude });
+          console.log("Current location:", { lat: latitude, lon: longitude }); // Log current location
         },
         (error) => {
           console.error("Error fetching current location:", error);
@@ -126,7 +170,7 @@ const PointToFinish = () => {
         const statusInterval = setInterval(() => {
           checkOrderStatus(order.id);
         }, 5000); // Check order status every 5 seconds
-    
+
         return () => {
           clearInterval(statusInterval);
         };
@@ -150,18 +194,6 @@ const PointToFinish = () => {
       console.error("Error accepting order:", error);
       setAcceptingOrder(false);
     }
-  };
-
-  const geocodeAddress = (address, callback) => {
-    geocoder.geocode(address, (results) => {
-      if (results && results.length > 0) {
-        const { lat, lng } = results[0].center;
-        callback({ lat, lng });
-        console.log("Geocoded address:", address, { lat, lng }); // Log geocoded address
-      } else {
-        console.error("Geocoding failed for address:", address);
-      }
-    });
   };
 
   return (

@@ -2,6 +2,9 @@ import { executeQuery } from '@/lib/db';
 
 export default async function handler(req, res) {
     const { customer_id, origin, destination } = req.body;
+    if (customer_id === null || customer_id === undefined || origin === null || origin === undefined || destination === null || destination === undefined) {
+        return res.status(400).json({ error: 'Missing customer_id, origin, or destination' });
+    }
     const insertQuery = 'INSERT INTO orders (status, customer_id, pickup_location, dropoff_location) VALUES (?, ?, ?, ?)';
     const result = await executeQuery(insertQuery, ["tìm tài xế", customer_id, origin, destination]);
     const insertedOrderId = result.insertId;

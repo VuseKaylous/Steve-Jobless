@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -137,4 +137,12 @@ const Cancellation = () => {
   );
 };
 
-export default Cancellation;
+const CustomerCancel = () => {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <Cancellation></Cancellation>
+    </Suspense>
+  )
+}
+
+export default CustomerCancel;

@@ -20,9 +20,9 @@ const Map = ({ origin = null, destination = null }) => {
   const [userLocation, setUserLocation] = useState(null);
   const locateButtonRef = useRef(null); // Reference for manual locate button
   const mapExists = useRef(false); // To track if map exists
+  const routingControlRef = useRef(null); // Reference to routing control to update waypoints
 
   useEffect(() => {
-    // Ensure this runs only in client-side
     if (typeof window === 'undefined') return;
 
     // Initialize the map
@@ -35,37 +35,8 @@ const Map = ({ origin = null, destination = null }) => {
       attribution: '© OpenStreetMap contributors',
     }).addTo(map);
 
-    // Handle user manual location
-    const locateUser = () => {
-      if (mapExists.current) {
-        map.locate({ setView: true, maxZoom: 16 });
-      }
-    };
-
-    // Add button for manual location
-    const locateButton = L.control({ position: 'topright' });
-    locateButton.onAdd = () => {
-      const button = L.DomUtil.create('button', 'locate-button');
-      button.innerHTML = 'Locate Me';
-      button.style.padding = '10px';
-      button.style.cursor = 'pointer';
-      button.style.backgroundColor = '#fff';
-      button.style.border = '1px solid #ccc';
-      button.style.borderRadius = '5px';
-      L.DomEvent.on(button, 'click', () => {
-        locateUser(); // Trigger location function on click
-      });
-      locateButtonRef.current = button;
-      return button;
-    };
-    locateButton.addTo(map);
-
-    // Initialize routing control
     const routingControl = L.Routing.control({
-      waypoints: origin && destination ? [
-        L.latLng(origin.lat, origin.lng),
-        L.latLng(destination.lat, destination.lng),
-      ] : [],
+      waypoints: [],
       routeWhileDragging: true,
       geocoder: L.Control.Geocoder.nominatim(),
       suggest: L.Control.Geocoder.nominatim(),
@@ -85,31 +56,60 @@ const Map = ({ origin = null, destination = null }) => {
       },
     }).addTo(map);
 
-    // Update waypoints if origin and destination exist
-    if (origin && destination) {
-      try {
-        routingControl.setWaypoints([
-          L.latLng(origin.lat, origin.lng),
-          L.latLng(destination.lat, destination.lng),
-        ]);
-      } catch (err) {
-        console.error("Error setting waypoints:", err);
-      }
-    }
+    routingControlRef.current = routingControl;
 
-    // Handle location errors
+    const updateWaypoints = () => {
+      if (origin && destination && routingControlRef.current) {
+        console.log("Updating origin and destination:");
+        console.log("Origin:", origin);
+        console.log("Destination:", destination);
+
+        try {
+          routingControl.setWaypoints([
+            L.latLng(origin.lat, origin.lon),
+            L.latLng(destination.lat, destination.lon),
+          ]);
+        } catch (err) {
+          console.error("Error setting waypoints:", err);
+        }
+      }
+    };
+
+    updateWaypoints();
+
+    const locateUser = () => {
+      if (mapExists.current) {
+        map.locate({ setView: true, maxZoom: 16 });
+      }
+    };
+
+    const locateButton = L.control({ position: 'topright' });
+    locateButton.onAdd = () => {
+      const button = L.DomUtil.create('button', 'locate-button');
+      button.innerHTML = 'Locate Me';
+      button.style.padding = '10px';
+      button.style.cursor = 'pointer';
+      button.style.backgroundColor = '#fff';
+      button.style.border = '1px solid #ccc';
+      button.style.borderRadius = '5px';
+      L.DomEvent.on(button, 'click', () => {
+        locateUser();
+      });
+      locateButtonRef.current = button;
+      return button;
+    };
+    locateButton.addTo(map);
+
     map.on('locationerror', function (e) {
       console.error('Location error:', e.message);
     });
 
-    // Trigger location after 3 seconds
     setTimeout(() => {
       if (locateButtonRef.current) {
         locateButtonRef.current.click();
       }
     }, 3000);
 
-    // Handle location found
     map.on('locationfound', function (e) {
       const radius = e.accuracy / 2;
 
@@ -120,12 +120,10 @@ const Map = ({ origin = null, destination = null }) => {
         iconAnchor: [12, 41],
       });
 
-      // Add marker and circle to map
       L.marker(e.latlng, { icon: markerIcon }).addTo(map)
         .bindPopup(`You are within ${radius} meters from this point`).openPopup();
       L.circle(e.latlng, radius).addTo(map);
 
-      // Save user location if origin and destination are not set
       if (!origin && !destination) {
         setUserLocation(e.latlng);
       }
@@ -133,9 +131,12 @@ const Map = ({ origin = null, destination = null }) => {
 
     return () => {
       if (mapExists.current) {
-        if (routingControl && routingControl.getPlan()) {
-          routingControl.getPlan().setWaypoints([]);
-          map.removeControl(routingControl);
+        console.log(routingControlRef.current.getPlan().getWaypoints());
+        // console.log("From map: " + origin + " " + destination);
+        if (!routingControlRef.current) {
+        // if (!origin || !destination) {
+          routingControlRef.current.getPlan().setWaypoints([]);
+          map.removeControl(routingControlRef.current);
         }
         map.off();
         map.remove();

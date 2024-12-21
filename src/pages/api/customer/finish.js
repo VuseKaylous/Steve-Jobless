@@ -1,11 +1,21 @@
 import { executeQuery } from '../../../lib/db';
 
 export default async function handler(req, res) {
-    const { orderID } = req.query;
+    
     try {
+        const { orderID } = req.query;
+
+        if (orderID === undefined) {
+            return res.status(400).json({ error: 'Missing orderID' });
+        }
+
         const checkStatus = async () => {
             const checkStatusQuery = 'SELECT status FROM payments WHERE order_id = ?';
             const result = await executeQuery(checkStatusQuery, [orderID]);
+
+            if (result.length === 0) {
+                return res.status(404).json({ error: 'Payment not found' });
+            }
 
             if (result.length > 0 && result[0].status === "hoàn thành") {
                 clearInterval(intervalId);
