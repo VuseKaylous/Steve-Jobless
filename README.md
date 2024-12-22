@@ -47,12 +47,12 @@ Steve-Jobless là một hệ thống quản lý dịch vụ vận chuyển, kế
 
 ### Dựng database
 
-Để chạy dự án này, bạn cần có MySQL trên máy, và dựng 1 Database sử dụng file `fall2024c56g8_crab.sql` trong này. Sau đó, bạn cần vào file `src/lib/db.js` và chỉnh sửa theo nội dung sau:
+Để chạy dự án này, bạn cần có MySQL trên máy, và dựng 1 Database sử dụng file `fall2024c56g8_crab.sql` trong này. Sau đó, bạn cần tạo 1 file `.env.local` su dung template từ file `env.local.example` và chỉnh sửa theo nội dung sau:
 
-- host: 'localhost' nếu bạn chạy MySQL ở máy bạn, hoặc đường link dẫn đến MySQL online
-- user: Tên người dùng MySQL của bạn, mặc định là 'root' ở local
-- password: Mật khẩu MySQL của bạn
-- database: Tên Database được tạo sử dụng file `fall2024c56g8_crab.sql`.
+- DB_HOST: 'localhost' nếu bạn chạy MySQL ở máy bạn, hoặc đường link dẫn đến MySQL online
+- DB_USER: Tên người dùng MySQL của bạn, mặc định là 'root' ở local
+- DB_PASSWORD: Mật khẩu MySQL của bạn
+- DB_NAME: Tên Database được tạo sử dụng file `fall2024c56g8_crab.sql`.
 
 ### Thử nghiệm dự án:
 
